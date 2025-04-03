@@ -1,0 +1,47 @@
+/* Changer la couleur et border du dropdown menu du paginator PrimeReact */
+.p-dropdown {
+    @apply bg-transparent border border-primary/30 ;
+}
+
+/* Changer la couleur de sélection d'un élément du paginator PrimeReact */
+.p-paginator .p-paginator-pages .p-paginator-page.p-highlight {
+    /* @apply bg-primary text-white */
+    @apply bg-primary text-white
+}
+
+/* Changer la couleur d'hover d'un élément du paginator PrimeReact */
+.p-paginator .p-paginator-pages .p-paginator-page:not(.p-highlight):hover {
+    @apply bg-accent/70 text-white; 
+}
+
+/* Changer la couleur de fond du dropdown */
+.p-dropdown-panel {
+    @apply bg-base-100;
+}
+
+/* Changer la couleur de fond des éléments du dropdown à l'état normal */
+.p-dropdown-items .p-dropdown-item {
+    @apply bg-base-100;
+}
+
+/* Changer la couleur de fond de l'option au survol */
+.p-dropdown-items .p-dropdown-item:hover {
+    @apply bg-accent/70;
+}
+
+/* Changer la couleur de fond de l'option sélectionnée */
+.p-dropdown-items .p-dropdown-item.p-highlight {
+    @apply bg-primary/50;
+}
+
+/* Changer la couleur de fond des boutons d'actions au survol */
+.p-paginator .p-paginator-first:hover, .p-paginator .p-paginator-prev:hover, 
+.p-paginator .p-paginator-next:hover, .p-paginator .p-paginator-last:hover {
+    @apply bg-accent/70;
+}
+
+/* Changer la couleur de fond des boutons d'actions désactivés */
+.p-paginator .p-paginator-first.p-disabled, .p-paginator .p-paginator-prev.p-disabled, 
+.p-paginator .p-paginator-next.p-disabled, .p-paginator .p-paginator-last.p-disabled {
+    @apply bg-base-200;
+}

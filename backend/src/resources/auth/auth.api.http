@@ -1,0 +1,16 @@
+# auth CRUD routes
+@url = http://localhost:3000/api/auth
+
+### Login
+POST {{url}}/login
+Content-Type: application/json
+
+{
+  "username": "{{USERNAME}}",
+  "password": "{{PASSWORD}}"
+}
+
+### Me
+GET {{url}}/me
+Authorization: Bearer {{TOKEN}}
+Content-Type: application/json

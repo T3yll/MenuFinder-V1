@@ -1,0 +1,33 @@
+import { I{{pascalCase name}} } from '@/modules/{{pascalCase name}}/models/I{{pascalCase name}}';
+import apiClient from '@/common/service/apiConfig';
+import { CONTENT_JSON } from '@/common/constants/API/APIContentType';
+
+const moduleUrl = '/{{camelCase name}}s';
+
+const {{pascalCase name}}Service = {
+  create{{pascalCase name}}: async (data: I{{pascalCase name}}): Promise<I{{pascalCase name}}> => {
+    try {
+      const response = await apiClient(CONTENT_JSON).post<I{{pascalCase name}}>(
+        moduleUrl,
+        data
+      );
+      return response.data;
+    } catch (error) {
+      console.error('Error creating {{camelCase name}}:', error);
+      throw error;
+    }
+  },
+  get{{pascalCase name}}s: async (page?: number, offset?: number, search?: string) => {
+    try {
+      const response = await apiClient(CONTENT_JSON).get(moduleUrl, {
+        params: { page, offset, search },
+      });
+      return response.data;
+    } catch (error) {
+      console.error('Error getting {{camelCase name}}s:', error);
+      throw error;
+    }
+  },
+};
+
+export default {{pascalCase name}}Service;

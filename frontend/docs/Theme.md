@@ -1,0 +1,1 @@
+# Règle d'utilisation des thèmes

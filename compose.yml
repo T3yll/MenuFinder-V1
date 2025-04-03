@@ -1,0 +1,62 @@
+services:
+  frontend:
+    build: 
+      context: .
+      dockerfile: ./frontend/Dockerfile
+    working_dir: /var/www/tuile/frontend
+    ports:
+      - "${FRONTEND_PORT}:3000"
+    expose:
+      - "3000"
+    networks:
+      - app-network
+    volumes:
+      - ./frontend:/var/www/tuile/frontend
+      - /var/www/tuile/frontend/node_modules
+    command: npm run dev
+
+  backend:
+    build: 
+      context: .
+      dockerfile: ./backend/Dockerfile
+    working_dir: /var/www/tuile/backend 
+    ports:
+      - "${BACKEND_PORT}:4000"
+    expose:
+      - "4000"
+    environment:
+      NODE_ENV: development
+      DB_HOST: ${DB_HOST}
+      DB_PORT: ${DB_PORT}
+      DB_USER: ${DB_USER}
+      DB_PASSWORD: ${DB_PASSWORD}
+      DB_NAME: ${DB_NAME}
+      JWT_SECRET: ${JWT_SECRET}
+      JWT_EXPIRATION: ${JWT_EXPIRATION}
+    networks:
+      - app-network
+    depends_on:
+      - postgres
+    volumes:
+      - ./backend:/var/www/tuile/backend 
+    command: npm run dev
+
+  postgres:
+    image: postgres
+    environment:
+      POSTGRES_USER: ${DB_USER}
+      POSTGRES_PASSWORD: ${DB_PASSWORD}
+      POSTGRES_DB: ${DB_NAME}
+    ports:
+      - "${DB_PORT}:5432"
+    networks:
+      - app-network
+    volumes:
+      - postgres-data:/var/lib/postgresql/data
+
+networks:
+  app-network:
+    driver: bridge
+
+volumes:
+  postgres-data:

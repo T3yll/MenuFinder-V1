@@ -1,0 +1,80 @@
+services:
+  nginx:
+    image: nginx:latest
+    container_name: nginx
+    restart: always
+    ports:
+      - "80:80"
+      - "443:443"
+    networks:
+      - app-network
+    volumes:
+      - ./nginx/nginx.conf:/etc/nginx/nginx.conf:ro
+      - ./nginx/certs:/etc/nginx/certs
+    depends_on:
+      - frontend
+      - backend
+
+  frontend:
+    build: 
+      context: .
+      dockerfile: ./frontend/Dockerfile
+    working_dir: /var/www/tuile/frontend
+    ports:
+      - "${FRONTEND_PORT}:3000"
+    expose:
+      - "3000"
+    networks:
+      - app-network
+    volumes:
+      - ./frontend:/var/www/tuile/frontend
+      - /var/www/tuile/frontend/node_modules
+    env_file:
+      - .env.production
+    command: sh -c "NODE_ENV=development npm install && npm run build && npm run preview"
+
+  backend:
+    build: 
+      context: .
+      dockerfile: ./backend/Dockerfile
+    working_dir: /var/www/tuile/backend
+    ports:
+      - "${BACKEND_PORT}:4000"
+    environment:
+      - NODE_ENV=production
+      - DB_HOST=${DB_HOST}
+      - DB_PORT=${DB_PORT}
+      - DB_USER=${DB_USER}
+      - DB_PASSWORD=${DB_PASSWORD}
+      - DB_NAME=${DB_NAME}
+      - JWT_SECRET=${JWT_SECRET}
+      - JWT_EXPIRATION=${JWT_EXPIRATION}
+    networks:
+      - app-network
+    depends_on:
+      - postgres
+    volumes:
+      - ./backend:/var/www/tuile/backend
+    env_file:
+      - .env.production
+    command: sh -c "npm run build && node dist/main.js"
+
+  postgres:
+    image: postgres
+    environment:
+      POSTGRES_USER: ${DB_USER}
+      POSTGRES_PASSWORD: ${DB_PASSWORD}
+      POSTGRES_DB: ${DB_NAME}
+    ports:
+      - "${DB_PORT}:5432"
+    networks:
+      - app-network
+    volumes:
+      - postgres-data:/var/lib/postgresql/data
+
+networks:
+  app-network:
+    driver: bridge
+
+volumes:
+  postgres-data:

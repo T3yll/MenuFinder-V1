@@ -1,0 +1,103 @@
+@url = http://localhost:3000/api/users
+
+@id = 1
+
+@teamId = 1
+
+### GET DATA
+GET {{url}}
+Authorization: Bearer {{TOKEN}}
+Content-Type: application/json
+
+### GET DATA BY ID
+GET {{url}}/{{id}}
+Authorization: Bearer {{TOKEN}}
+Content-Type: application/json
+
+### POST DATA
+POST {{url}}
+Authorization: Bearer {{TOKEN}}
+Content-Type: application/json
+
+{
+    "username": "mohamed", 
+    "password": "mohamed",
+    "userRIO": "463021",
+    "cheopsId": 123456,
+    "dialogId": 654321,
+    "assignmentServiceId": 789012,
+    "operationalServiceId": 210987,
+    "anonymizedOperationalServiceId": 345678,
+    "anonymizedAssignmentServiceId": 876543,
+    "rankId": 1,
+    "corpsId": 2,
+    "statusCorpsId": "3",
+    "responsabilityId": "4",
+    "salutation": "Mr.",
+    "birthName": "Doe",
+    "lastName": "Smith",
+    "firstName": "John",
+    "birthDate": "1990-01-01",
+    "phoneNumber": "0123456789",
+    "mobilePhoneNumber": "0987654321",
+    "email": "john.smith@example.com",
+    "anonymityLevel": 1,
+    "reservist": 12
+}
+
+### PATCH DATA
+PATCH {{url}}/{{id}}
+Authorization: Bearer {{TOKEN}}
+Content-Type: application/json
+
+{
+    "teams": [
+        
+    ]
+}
+
+### DELETE DATA
+DELETE {{url}}/{{id}}
+Authorization: Bearer {{TOKEN}}
+Content-Type: application/json
+
+### PATCH DATA
+PUT {{url}}/{{id}}/team/{{teamId}}
+Authorization: Bearer {{TOKEN}}
+Content-Type: application/json
+
+{
+    "username": "test", 
+    "password": "user",
+    "userRIO": "463021",
+    "cheopsId": 123456,
+    "dialogId": 654321,
+    "assignmentServiceId": 789012,
+    "operationalServiceId": 210987,
+    "anonymizedOperationalServiceId": 345678,
+    "anonymizedAssignmentServiceId": 876543,
+    "rankId": 1,
+    "corpsId": 2,
+    "statusCorpsId": "3",
+    "responsabilityId": "4",
+    "salutation": "Mr.",
+    "birthName": "Doe",
+    "lastName": "Smith",
+    "firstName": "John",
+    "birthDate": "1990-01-01",
+    "phoneNumber": "0123456789",
+    "mobilePhoneNumber": "0987654321",
+    "email": "john.smith@example.com",
+    "anonymityLevel": 1,
+    "reservist": 12
+}
+
+### ADD TEAM TO USER
+POST {{url}}/{{id}}/teams/{{teamId}}
+Authorization: Bearer {{TOKEN}}
+Content-Type: application/json
+
+### SET CURRENT TEAM
+PUT {{url}}/{{id}}/team/{{teamId}}
+Authorization: Bearer {{TOKEN}}
+Content-Type: application/json

@@ -1,0 +1,40 @@
+# team CRUD routes
+
+@url = http://localhost:3000/api/teams
+
+@id = 1
+
+
+### Get All teams
+GET {{url}}
+Authorization: Bearer {{TOKEN}}
+Content-Type: application/json
+
+### Get One team by ID
+GET {{url}}/{{id}}
+Authorization: Bearer {{TOKEN}}
+Content-Type: application/json
+
+### Create team
+POST {{url}}
+Authorization: Bearer {{TOKEN}}
+Content-Type: application/json
+
+{
+  "label": "Blagnac",
+  "description": "La team Blagnac"
+}
+
+### Update team by ID
+PATCH {{url}}/{{id}}
+Authorization: Bearer {{TOKEN}}
+Content-Type: application/json
+
+{
+  "key": "new value"
+}
+
+### Delete team by ID
+DELETE {{url}}/{{id}}
+Authorization: Bearer {{TOKEN}}
+Content-Type: application/json

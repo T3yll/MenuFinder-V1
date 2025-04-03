@@ -1,0 +1,42 @@
+import { NestFactory, Reflector } from '@nestjs/core';
+import { AppModule } from './app.module';
+import { DocumentBuilder, SwaggerModule } from '@nestjs/swagger';
+import { writeFileSync } from 'fs';
+import * as dotenv from 'dotenv';
+import { ValidationPipe } from '@nestjs/common';
+import { WinstonModule } from 'nest-winston';
+import { instance } from '@/common/logger/winston.logger';
+
+dotenv.config();
+
+async function bootstrap() {
+  const app = await NestFactory.create(AppModule, {
+    logger: WinstonModule.createLogger({
+      instance: instance,
+    }),
+  });
+  app.useGlobalPipes(new ValidationPipe());
+
+  app.enableCors({
+    origin: '*',
+    methods: 'GET,HEAD,PUT,PATCH,POST,DELETE',
+    credentials: true,
+  });
+
+  const port = process.env.PORT ?? 4000;
+
+  // Config Swagger
+  const config = new DocumentBuilder()
+    .setTitle('Tuile')
+    .setDescription("Documentation de l'API")
+    .setVersion('1.0')
+    .addBearerAuth()
+    .build();
+  const document = SwaggerModule.createDocument(app, config);
+  writeFileSync('./swagger.json', JSON.stringify(document));
+  SwaggerModule.setup('api', app, document);
+
+  await app.listen(port);
+}
+
+bootstrap();

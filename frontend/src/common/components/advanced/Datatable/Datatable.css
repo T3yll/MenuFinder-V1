@@ -1,0 +1,63 @@
+/* Changer la couleur de fond du header du DataTable */
+.p-datatable .p-datatable-header {
+  @apply bg-base-200;
+}
+
+/* Appliquer un style striped aux lignes du DataTable */
+.p-datatable .p-datatable-tbody > tr:nth-child(odd) {
+  @apply bg-base-200;
+}
+.p-datatable .p-datatable-tbody > tr:nth-child(even) {
+  @apply bg-base-300;
+}
+
+/* Changer la couleur de la bordure extérieure du DataTable */
+.p-datatable {
+  @apply border-primary;
+}
+
+.p-datatable .p-datatable-thead > tr > th:first-child,
+.p-datatable .p-datatable-tbody > tr > td:first-child {
+  @apply border-primary/30 border-x-0; /* Applique une bordure gauche */
+}
+
+/* Changer la couleur des bordures des cellules et en-têtes */
+.p-datatable .p-datatable-thead > tr > th,
+.p-datatable .p-datatable-tbody > tr > td {
+  @apply border-primary/30;
+}
+
+/* Cible la bordure droite de la dernière cellule de chaque ligne */
+.p-datatable .p-datatable-thead > tr > th:last-child,
+.p-datatable .p-datatable-tbody > tr > td:last-child {
+  @apply border-primary/30 border-r-0; /* Applique une bordure droite */
+}
+
+/* Change la couleur des séparateurs de colonnes */
+.p-datatable .p-column-divider {
+  @apply border-neutral-content;
+}
+
+/* Changer la couleur de fond du paginateur (du datatable) */
+.p-datatable .p-paginator {
+  @apply bg-transparent;
+}
+
+/* Changer la couleur de la bordure du paginateur */
+.p-datatable .p-paginator {
+  @apply border-transparent;
+}
+
+/* Changer la couleur de la bordure du header du DataTable */
+.p-datatable .p-datatable-header {
+  @apply border-none;
+}
+
+.p-datatable-thead > tr > th {
+  @apply bg-base-300;
+}
+
+/* Cibler le conteneur des filtres dans chaque colonne */
+.p-datatable-thead > tr > th {
+  @apply bg-base-200;
+}

@@ -1,0 +1,33 @@
+stages:
+  - test
+
+test:
+  stage: test
+  image: node:latest
+  services:
+    - docker:dind
+  variables:
+    DOCKER_DRIVER: overlay2
+  script:
+    - apt-get update && apt-get install -y curl  # Installer curl
+    - cd backend
+    - npm install
+    - npm run test:ci
+  after_script:
+    - >
+      if [ $? -eq 0 ]; then
+        STATUS="success"
+        EMOJI="✅"
+        MESSAGE="Tests passed successfully!"
+      else
+        STATUS="failure"
+        EMOJI="❌"
+        MESSAGE="Tests failed!"
+      fi
+    - DATE=$(date +"%Y-%m-%d %H:%M:%S")  # Obtenir la date actuelle
+    - >
+      curl -X POST -H "Content-Type: application/json" -d "{\"content\": \"$EMOJI **$MESSAGE**\nDate: $DATE\"}" $DISCORD_WEBHOOK
+  rules:
+    - if: $CI_PIPELINE_SOURCE == "merge_request_event" && $CI_MERGE_REQUEST_TARGET_BRANCH_NAME =~ /^(develop\/.+)$/
+      when: always
+    - if: '$CI_PIPELINE_SOURCE == "web"'

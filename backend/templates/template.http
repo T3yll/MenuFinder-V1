@@ -1,0 +1,39 @@
+# {{module}} CRUD routes
+@entity = entity_placeholder
+
+@url = http://localhost:3000/api/{{entity}}
+
+@id = 1
+
+### Get All {{entity}}
+GET {{url}}
+Authorization: Bearer {{TOKEN}}
+Content-Type: application/json
+
+### Get One {{module}} by ID
+GET {{url}}/{{id}}
+Authorization: Bearer {{TOKEN}}
+Content-Type: application/json
+
+### Create {{module}}
+POST {{url}}
+Authorization: Bearer {{TOKEN}}
+Content-Type: application/json
+
+{
+  "key": "value"
+}
+
+### Update {{module}} by ID
+PATCH {{url}}/{{id}}
+Authorization: Bearer {{TOKEN}}
+Content-Type: application/json
+
+{
+  "key": "new value"
+}
+
+### Delete {{module}} by ID
+DELETE {{url}}/{{id}}
+Authorization: Bearer {{TOKEN}}
+Content-Type: application/json

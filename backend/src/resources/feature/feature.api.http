@@ -1,0 +1,38 @@
+# feature CRUD routes
+
+@url = http://localhost:3000/api/features
+@id = 1
+
+### Get All features
+GET {{url}}
+Authorization: Bearer {{TOKEN}}
+Content-Type: application/json
+
+### Get One feature by ID
+GET {{url}}/{{id}}
+Authorization: Bearer {{TOKEN}}
+Content-Type: application/json
+
+### Create feature
+POST {{url}}
+Authorization: Bearer {{TOKEN}}
+Content-Type: application/json
+
+{
+  "label": "infos",
+  "isEnabled": true
+}
+
+### Update feature by ID
+PATCH {{url}}/{{id}}
+Authorization: Bearer {{TOKEN}}
+Content-Type: application/json
+
+{
+  "label": "teams"
+}
+
+### Delete feature by ID
+DELETE {{url}}/{{id}}
+Authorization: Bearer {{TOKEN}}
+Content-Type: application/json

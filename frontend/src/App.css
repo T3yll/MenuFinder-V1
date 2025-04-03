@@ -1,0 +1,56 @@
+@import url('https://code.ionicframework.com/ionicons/2.0.1/css/ionicons.min.css');
+@import url('https://cdnjs.cloudflare.com/ajax/libs/flag-icon-css/3.3.0/css/flag-icon.min.css');
+@import url('https://fonts.googleapis.com/css2?family=Roboto:wght@400;500;700&display=swap');
+
+@import '../node_modules/@fortawesome/fontawesome-free/css/all.min.css';
+@import '../node_modules/@fortawesome/fontawesome-free/css/brands.min.css';
+
+@import '@/common/components/advanced/Datatable/Datatable.css';
+@import '@/common/components/advanced/Paginator/Paginator.css';
+
+@layer tailwind-base, primereact, tailwind-utilities;
+
+@layer tailwind-base {
+  @tailwind base;
+}
+
+@layer tailwind-utilities {
+  @tailwind components;
+  @tailwind utilities;
+}
+
+body,
+.page-container {
+  @apply bg-gray-400/20 font-sans;
+  font-family: 'Roboto';
+}
+
+/* Appliquer Roboto à tous les éléments PrimeReact */
+[class^='p-'],
+[class*=' p-'] {
+  font-family: 'Roboto' !important;
+}
+
+/* Applique une animation de rotation à la border du bouton ThemeHandler */
+@keyframes rotate-border-colors {
+  0%,
+  100% {
+    background-position: 0% 0%;
+  }
+  50% {
+    background-position: 100% 100%;
+  }
+}
+
+.rotate-border-hover:hover {
+  animation: rotate-border-colors 3s linear infinite;
+  background-size: 300% 300%;
+}
+
+.no-scrollbar::-webkit-scrollbar {
+  display: none; /* Safari and Chrome */
+}
+.no-scrollbar {
+  -ms-overflow-style: none; /* IE and Edge */
+  scrollbar-width: none; /* Firefox */
+}

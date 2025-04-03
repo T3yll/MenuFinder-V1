@@ -1,0 +1,32 @@
+/* Change la couleur de texte global (hors composants Prime react malheureusement) */
+body {
+    @apply text-white; 
+}
+
+/* Change la couleur des éléments de Panel (utilisés dans le show) de prime react */
+.p-panel-header, .p-panel-content {
+    @apply text-white; 
+}
+
+/* Change la couleur des titles du datatable */
+.p-column-title	 {
+    @apply text-white; 
+}
+
+/* Change la couleur des lignes du datatable */
+.p-datatable-tbody > tr > td {
+    @apply text-white; 
+}
+
+/* Change la couleur de l'icone (sortable) des columns du datatable */
+.p-datatable .p-sortable-column .p-sortable-column-icon {
+    @apply text-white; 
+}
+
+[class^="p-"], [class*=" p-"] {
+    @apply text-white; 
+}
+
+.btn-profile {
+    @apply text-white; 
+}

@@ -1,0 +1,30 @@
+.border-sidebar {
+    @apply border-gray-600;
+  }
+  
+  /* Changement du comportement des boutons du tab-menu (couleurs de borders et d'hover) */
+  .bouton-menu {
+    @apply border-gray-700 text-gray-700 hover:border-primary hover:text-primary;
+  }
+  
+  /* Changement du coloris de certains éléments de formulaire */
+  .p-multiselect,
+  .p-inputmask,
+  .p-inputtext {
+    @apply bg-transparent border-gray-300 focus:border-primary focus:border-2 focus:ring-0;
+  }
+  
+  /* Changement du fond du panel du multiselect */
+  .p-multiselect-panel {
+    @apply bg-base-200 border-gray-300;
+  }
+  
+  /* Changement du fond des items lors du survol */
+  .p-multiselect-items .p-multiselect-item:hover {
+    @apply bg-gray-300 text-white;
+  }
+  
+  /* Optionnel: Changement de la couleur de la bordure du panel du multiselect */
+  .p-multiselect-panel {
+    @apply border-gray-300;
+  }
