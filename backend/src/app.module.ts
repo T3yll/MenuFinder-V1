@@ -2,7 +2,6 @@ import { Logger, MiddlewareConsumer, Module, NestModule } from '@nestjs/common';
 import { AppController } from '@/app.controller';
 import { AppService } from '@/app.service';
 import { TypeOrmModule } from '@nestjs/typeorm';
-import { TeamsModule } from '@/resources/team/team.module';
 import { UserModule } from '@/resources/user/user.module';
 import { AuthModule } from '@/resources/auth/auth.module';
 import { APP_GUARD } from '@nestjs/core';
@@ -25,7 +24,6 @@ import { ConfigModule } from '@nestjs/config';
       synchronize: true,
     }),
     UserModule,
-    TeamsModule,
     AuthModule,
   ],
   controllers: [AppController],

@@ -85,35 +85,4 @@ export class UserController {
       throw error;
     }
   }
-
-  @ApiOperation({ summary: 'Update user teams' })
-  @ApiResponse({ status: 200, description: 'Teams successfully updated' })
-  @ApiResponse({ status: 404, description: 'User not found' })
-  @Put(':id/teams')
-  async updateUserTeams(
-    @Param('id') userId: number,
-    @Body('teamIds') teamIds: number[]
-  ) {
-    return this.userService.updateTeams(userId, teamIds);
-  }
-
-  @ApiOperation({ summary: 'Set user current team' })
-  @ApiResponse({
-    status: 200,
-    description: 'Current team successfully updated',
-  })
-  @ApiResponse({ status: 404, description: 'User or team not found' })
-  @Put(':id/team/:teamId')
-  async setCurrentTeam(
-    @Param('id') userId: number,
-    @Param('teamId') teamId: number
-  ) {
-    return this.userService.setCurrentTeam(userId, teamId);
-  }
-
-  @Post(':userId/teams/:teamId')
-  async addTeamToUser(@Param('userId') userId: number, @Param('teamId') teamId: number) {
-    return this.userService.addTeamToUser(userId, teamId);
-  }
-
 }
