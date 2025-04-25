@@ -7,6 +7,17 @@ import { AuthModule } from '@/resources/auth/auth.module';
 import { APP_GUARD } from '@nestjs/core';
 import { JwtAuthGuard } from '@/resources/auth/guards/jwt-auth.guard';
 import { ConfigModule } from '@nestjs/config';
+import { ReviewModule } from './resources/review/review.module';
+import { RestaurantModule } from './resources/restaurant/restaurant.module';
+import { TagModule } from './resources/tag/tag.module';
+import { MenuModule } from './resources/menu/menu.module';
+import { RestauranttagModule } from './resources/restauranttag/restauranttag.module';
+import { ResponseModule } from './resources/response/response.module';
+import { BookmarkModule } from './resources/bookmark/bookmark.module';
+import { AdressModule } from './resources/adress/adress.module';
+import { FileModule } from './resources/file/file.module';
+import { MealcategoryModule } from './resources/mealcategory/mealcategory.module';
+import { MealModule } from './resources/meal/meal.module';
 
 @Module({
   imports: [
@@ -25,6 +36,17 @@ import { ConfigModule } from '@nestjs/config';
     }),
     UserModule,
     AuthModule,
+    RestaurantModule,
+    ReviewModule,
+    TagModule,
+    MenuModule,
+    ResponseModule,
+    BookmarkModule,
+    AdressModule,
+    FileModule,
+    MealModule,
+    MealcategoryModule,
+    RestauranttagModule,
   ],
   controllers: [AppController],
   providers: [
