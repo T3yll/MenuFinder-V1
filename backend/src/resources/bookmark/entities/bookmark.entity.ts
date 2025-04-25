@@ -14,7 +14,7 @@ export class Bookmark {
   @JoinColumn({ name: 'restaurant_id' })
   restaurant: Restaurant;
 
-  @OneToOne(() => User, user => user.favoris)
+  @OneToOne(() => User, user => user.bookmarks)
   @JoinColumn({ name: 'user_id' })
   user: User;
 }

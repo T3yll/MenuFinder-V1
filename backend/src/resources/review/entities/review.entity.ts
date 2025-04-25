@@ -22,14 +22,14 @@ export class Review {
   @Column('date')
   updated_at: Date;
 
-  @ManyToOne(() => Restaurant, restaurant => restaurant.avis)
+  @ManyToOne(() => Restaurant, restaurant => restaurant.review)
   @JoinColumn({ name: 'restaurant_id' })
   restaurant: Restaurant;
 
-  @ManyToOne(() => User, user => user.avis)
+  @ManyToOne(() => User, user => user.review)
   @JoinColumn({ name: 'user_id' })
   user: User;
 
-  @OneToMany(() => Response, reponse => response.review)
+  @OneToMany(() => Response, response => response.review)
   responses: Response[];
 }

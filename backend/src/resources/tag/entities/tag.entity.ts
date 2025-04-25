@@ -1,3 +1,4 @@
+import { RestaurantTag } from '@/resources/restauranttag/entities/restauranttag.entity';
 import { Entity, PrimaryGeneratedColumn, Column, OneToMany } from 'typeorm';
 
 @Entity('Tag')
@@ -8,6 +9,6 @@ export class Tag {
   @Column()
   name: number; // Notez que dans le SQL, c'est un BIGINT, mais c'est probablement une erreur et devrait être un TEXT
 
-  @OneToMany(() => TagRestaurant, tagRestaurant => tagRestaurant.tag)
-  tagRestaurants: TagRestaurant[];
+  @OneToMany(() => RestaurantTag, restaurantTag => restaurantTag.tag)
+  tagRestaurants: RestaurantTag[];
 }

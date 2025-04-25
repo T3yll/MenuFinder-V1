@@ -1,7 +1,7 @@
-import { Avis } from '@/resources/avis/entities/avis.entity';
-import { Favori } from '@/resources/favori/entities/favori.entity';
+import { Bookmark } from '@/resources/bookmark/entities/bookmark.entity';
 import { Response } from '@/resources/response/entities/response.entity';
 import { Restaurant } from '@/resources/restaurant/entities/restaurant.entity';
+import { Review } from '@/resources/review/entities/review.entity';
 import {
   Entity,
   Column,
@@ -42,17 +42,17 @@ export class User {
   @JoinColumn({ name: 'image_file_id' })
   image: File;
 
-  @OneToMany(() => Restaurant, restaurant => restaurant.proprietaire)
+  @OneToMany(() => Restaurant, restaurant => restaurant.owner)
   restaurants: Restaurant[];
 
-  @OneToMany(() => Avis, avis => avis.user)
-  avis: Avis[];
+  @OneToMany(() => Review, review => review.user)
+  review: Review[];
 
   @OneToMany(() => Response, response => response.user)
   responses: Response[];
 
-  @OneToOne(() => Favori, favori => favori.user)
-  favoris: Favori[];
+  @OneToOne(() => Bookmark, bookmark => bookmark.user)
+  bookmarks: Bookmark[];
 
   getUsername(): string {
     return this.username;

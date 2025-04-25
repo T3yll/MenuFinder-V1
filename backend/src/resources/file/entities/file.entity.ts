@@ -1,3 +1,4 @@
+import { Meal } from '@/resources/meal/entities/meal.entity';
 import { Restaurant } from '@/resources/restaurant/entities/restaurant.entity';
 import { User } from '@/resources/user/entities/user.entity';
 import { Entity, PrimaryGeneratedColumn, Column, OneToMany } from 'typeorm';

@@ -1,3 +1,4 @@
+import { MealCategory } from '@/resources/mealcategory/entities/mealcategory.entity';
 import { Menu } from '@/resources/menu/entities/menu.entity';
 import { Entity, PrimaryGeneratedColumn, Column, ManyToOne, JoinColumn } from 'typeorm';
 

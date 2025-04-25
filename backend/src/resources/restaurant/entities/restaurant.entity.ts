@@ -1,5 +1,10 @@
+import { Adress } from '@/resources/adress/entities/adress.entity';
 import { User } from '@/resources/user/entities/user.entity';
+import { Review } from '@/resources/review/entities/review.entity';
 import { Entity, PrimaryGeneratedColumn, Column, ManyToOne, OneToMany, JoinColumn } from 'typeorm';
+import { Menu } from '@/resources/menu/entities/menu.entity';
+import { RestaurantTag } from '@/resources/restauranttag/entities/restauranttag.entity';
+import { Bookmark } from '@/resources/bookmark/entities/bookmark.entity';
 
 @Entity('Restaurant')
 export class Restaurant {
@@ -33,8 +38,8 @@ export class Restaurant {
   @JoinColumn({ name: 'image_file_id' })
   image: File;
 
-  @OneToMany(() => Rewiew, rewiew => rewiew.restaurant)
-  rewiews: Rewiew[];
+  @OneToMany(() => Review, rewiew => rewiew.restaurant)
+  rewiews: Review[];
 
   @OneToMany(() => Menu, menu => menu.restaurant)
   menus: Menu[];
@@ -42,6 +47,6 @@ export class Restaurant {
   @OneToMany(() => RestaurantTag, restaurantTag => RestaurantTag.restaurant)
   tagRestaurants: RestaurantTag[];
 
-  @OneToMany(() => BookMark, bookmark => bookmark.restaurant)
-  bookmarks: BookMark[];
+  @OneToMany(() => Bookmark, bookmark => bookmark.restaurant)
+  bookmarks: Bookmark[];
 }
