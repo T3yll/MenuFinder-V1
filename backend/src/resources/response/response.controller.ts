@@ -1,8 +1,9 @@
 import { Controller, Get, Post, Body, Param, Put, Delete } from '@nestjs/common';
+import { Response } from './entities/response.entity';
 import { ResponseService } from './response.service';
 
-@Controller('reponses')
-export class ReponseController {
+@Controller('responses')
+export class ResponseController {
   constructor(private readonly responseService: ResponseService) {}
 
   @Post()

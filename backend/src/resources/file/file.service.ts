@@ -12,24 +12,24 @@ export class FileService {
     private fileRepository: Repository<File>,
   ) {}
 
-  async create(file: Express.Multer.File, fileData: any): Promise<File> {
-    const uploadDir = 'uploads';
-    if (!fs.existsSync(uploadDir)) {
-      fs.mkdirSync(uploadDir, { recursive: true });
-    }
+  // async create(file: Express.Multer.File, fileData: any): Promise<File> {
+  //   const uploadDir = 'uploads';
+  //   if (!fs.existsSync(uploadDir)) {
+  //     fs.mkdirSync(uploadDir, { recursive: true });
+  //   }
 
-    const fileName = Date.now() + path.extname(file.originalname);
-    const filePath = path.join(uploadDir, fileName);
+  //   const fileName = Date.now() + path.extname(file.originalname);
+  //   const filePath = path.join(uploadDir, fileName);
     
-    fs.writeFileSync(filePath, file.buffer);
+  //   fs.writeFileSync(filePath, file.buffer);
 
-    const newFile = new File();
-    newFile.name = file.originalname;
-    newFile.path = filePath;
-    newFile.type = file.mimetype;
+  //   const newFile = new File();
+  //   newFile.name = file.originalname;
+  //   newFile.path = filePath;
+  //   newFile.type = file.mimetype;
 
-    return this.fileRepository.save(newFile);
-  }
+  //   return this.fileRepository.save(newFile);
+  // }
 
   findAll(): Promise<File[]> {
     return this.fileRepository.find();

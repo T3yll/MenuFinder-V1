@@ -1,9 +1,9 @@
 import { Module } from '@nestjs/common';
-import { RestauranttagService } from './restauranttag.service';
-import { RestauranttagController } from './restauranttag.controller';
+import { RestaurantTagController } from './restauranttag.controller';
+import { RestaurantTagService } from './restauranttag.service';
 
 @Module({
-  controllers: [RestauranttagController],
-  providers: [RestauranttagService],
+  controllers: [RestaurantTagController],
+  providers: [RestaurantTagService],
 })
 export class RestauranttagModule {}

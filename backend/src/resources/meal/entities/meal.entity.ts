@@ -1,6 +1,7 @@
 import { MealCategory } from '@/resources/mealcategory/entities/mealcategory.entity';
 import { Menu } from '@/resources/menu/entities/menu.entity';
 import { Entity, PrimaryGeneratedColumn, Column, ManyToOne, JoinColumn } from 'typeorm';
+import { File } from '@/resources/file/entities/file.entity';
 
 @Entity('meal')
 export class Meal {

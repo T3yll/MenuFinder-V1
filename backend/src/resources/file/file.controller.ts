@@ -8,10 +8,6 @@ export class FileController {
   constructor(private readonly fileService: FileService) {}
 
   @Post()
-  @UseInterceptors(FileInterceptor('file'))
-  create(@UploadedFile() file: Express.Multer.File, @Body() fileData: any): Promise<File> {
-    return this.fileService.create(file, fileData);
-  }
 
   @Get()
   findAll(): Promise<File[]> {

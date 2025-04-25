@@ -3,7 +3,7 @@ import { Bookmark } from './entities/bookmark.entity';
 import { BookmarkService } from './bookmark.service';
 
 @Controller('bookmarks')
-export class FavoriController {
+export class BookmarkController {
   constructor(private readonly bookmarkService: BookmarkService) {}
 
   @Post()

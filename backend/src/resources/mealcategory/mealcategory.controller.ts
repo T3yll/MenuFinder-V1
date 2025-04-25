@@ -4,7 +4,7 @@ import { MealCategory } from './entities/mealcategory.entity';
 import { MealCategoryService } from './mealcategory.service';
 
 @Controller('meal-category')
-export class CategoriePlatController {
+export class MealCategoryController {
   constructor(private readonly mealCategoryService: MealCategoryService) {}
 
   @Post()
