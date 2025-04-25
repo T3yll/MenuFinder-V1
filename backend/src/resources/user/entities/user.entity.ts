@@ -1,4 +1,5 @@
 import { Bookmark } from '@/resources/bookmark/entities/bookmark.entity';
+import { File } from '@/resources/file/entities/file.entity';
 import { Response } from '@/resources/response/entities/response.entity';
 import { Restaurant } from '@/resources/restaurant/entities/restaurant.entity';
 import { Review } from '@/resources/review/entities/review.entity';

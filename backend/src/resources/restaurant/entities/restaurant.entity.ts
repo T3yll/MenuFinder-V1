@@ -5,6 +5,7 @@ import { Entity, PrimaryGeneratedColumn, Column, ManyToOne, OneToMany, JoinColum
 import { Menu } from '@/resources/menu/entities/menu.entity';
 import { RestaurantTag } from '@/resources/restauranttag/entities/restauranttag.entity';
 import { Bookmark } from '@/resources/bookmark/entities/bookmark.entity';
+import { File } from '@/resources/file/entities/file.entity';
 
 @Entity('Restaurant')
 export class Restaurant {
