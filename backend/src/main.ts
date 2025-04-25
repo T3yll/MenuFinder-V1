@@ -27,7 +27,7 @@ async function bootstrap() {
 
   // Config Swagger
   const config = new DocumentBuilder()
-    .setTitle('Tuile')
+    .setTitle('Menufinder')
     .setDescription("Documentation de l'API")
     .setVersion('1.0')
     .addBearerAuth()

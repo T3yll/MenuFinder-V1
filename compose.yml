@@ -1,20 +1,4 @@
 services:
-  frontend:
-    build: 
-      context: .
-      dockerfile: ./frontend/Dockerfile
-    working_dir: /var/www/tuile/frontend
-    ports:
-      - "${FRONTEND_PORT}:3000"
-    expose:
-      - "3000"
-    networks:
-      - app-network
-    volumes:
-      - ./frontend:/var/www/tuile/frontend
-      - /var/www/tuile/frontend/node_modules
-    command: npm run dev
-
   backend:
     build: 
       context: .

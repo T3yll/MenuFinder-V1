@@ -2,15 +2,11 @@ import { Logger, MiddlewareConsumer, Module, NestModule } from '@nestjs/common';
 import { AppController } from '@/app.controller';
 import { AppService } from '@/app.service';
 import { TypeOrmModule } from '@nestjs/typeorm';
-import { InfoModule } from '@/resources/info/info.module';
-import { FeatureModule } from '@/resources/feature/feature.module';
 import { TeamsModule } from '@/resources/team/team.module';
-import { FeatureToggleMiddleware } from '@/common/middlewares/feature-toggle.middleware';
 import { UserModule } from '@/resources/user/user.module';
 import { AuthModule } from '@/resources/auth/auth.module';
 import { APP_GUARD } from '@nestjs/core';
 import { JwtAuthGuard } from '@/resources/auth/guards/jwt-auth.guard';
-import { UniteModule } from './resources/unite/unite.module';
 import { ConfigModule } from '@nestjs/config';
 
 @Module({
@@ -29,11 +25,8 @@ import { ConfigModule } from '@nestjs/config';
       synchronize: true,
     }),
     UserModule,
-    UniteModule,
-    FeatureModule,
     TeamsModule,
     AuthModule,
-    InfoModule,
   ],
   controllers: [AppController],
   providers: [
@@ -45,8 +38,4 @@ import { ConfigModule } from '@nestjs/config';
     },
   ],
 })
-export class AppModule implements NestModule {
-  configure(consumer: MiddlewareConsumer) {
-    consumer.apply(FeatureToggleMiddleware).forRoutes('*');
-  }
-}
+export class AppModule {}
