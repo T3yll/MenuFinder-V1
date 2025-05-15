@@ -1,20 +1,14 @@
-FROM node:18
+FROM node:20
 
 WORKDIR /app
 
-# Copier le package.json et installer les dépendances
-COPY frontend/package*.json ./
+COPY ./package*.json ./
+
+# Installer les dépendances
 RUN npm install
 
-# Copier le reste du code
-COPY frontend/ ./
+COPY . .
 
-# Créer un lien symbolique pour react-refresh dans src/node_modules
-RUN mkdir -p src/node_modules && \
-    ln -sf /app/node_modules/react-refresh src/node_modules/
-
-# Exposer le port
 EXPOSE 3000
 
-# Démarrer l'application
-CMD ["npm", "start"]
+# Pas de CMD ici, car il sera fourni par docker-compose

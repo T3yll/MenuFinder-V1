@@ -5,25 +5,30 @@ services:
       dockerfile: ./backend/Dockerfile
     working_dir: /var/www/tuile/backend 
     ports:
-      - "${BACKEND_PORT}:4000"
+      - "${BACKEND_PORT:-4000}:4000"
     expose:
       - "4000"
     environment:
       NODE_ENV: development
-      DB_HOST: ${DB_HOST}
-      DB_PORT: ${DB_PORT}
-      DB_USER: ${DB_USER}
-      DB_PASSWORD: ${DB_PASSWORD}
-      DB_NAME: ${DB_NAME}
-      JWT_SECRET: ${JWT_SECRET}
-      JWT_EXPIRATION: ${JWT_EXPIRATION}
+      DB_HOST: ${DB_HOST:-postgres}
+      DB_PORT: ${DB_PORT:-5432}
+      DB_USER: ${DB_USER:-postgres}
+      DB_PASSWORD: ${DB_PASSWORD:-postgres}
+      DB_NAME: ${DB_NAME:-postgres}
+      JWT_SECRET: ${JWT_SECRET:-secret}
+      JWT_EXPIRATION: ${JWT_EXPIRATION:-1d}
     networks:
       - app-network
     depends_on:
       - postgres
     volumes:
-      - ./backend:/var/www/tuile/backend 
-    command: npm run dev
+      - ./backend:/var/www/tuile/backend
+      - backend_node_modules:/var/www/tuile/backend/node_modules
+    command: >
+      sh -c "
+      npm install &&
+      npm run dev
+      "
 
   frontend:
     image: node:20
@@ -36,20 +41,23 @@ services:
       - app-network
     volumes:
       - ./frontend:/app
-      - /app/node_modules
+      - frontend_node_modules:/app/node_modules
     command: >
+      sh -c "
+      npm install &&
       npm run dev
+      "
     depends_on:
       - backend
 
   postgres:
     image: postgres
     environment:
-      POSTGRES_USER: ${DB_USER}
-      POSTGRES_PASSWORD: ${DB_PASSWORD}
-      POSTGRES_DB: ${DB_NAME}
+      POSTGRES_USER: ${DB_USER:-postgres}
+      POSTGRES_PASSWORD: ${DB_PASSWORD:-postgres}
+      POSTGRES_DB: ${DB_NAME:-postgres}
     ports:
-      - "${DB_PORT}:5432"
+      - "${DB_PORT:-5432}:5432"
     networks:
       - app-network
     volumes:
@@ -61,3 +69,5 @@ networks:
 
 volumes:
   postgres-data:
+  frontend_node_modules:
+  backend_node_modules:
