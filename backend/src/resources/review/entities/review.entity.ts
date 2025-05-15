@@ -1,3 +1,4 @@
+import { Response } from '@/resources/response/entities/response.entity';
 import { Restaurant } from '@/resources/restaurant/entities/restaurant.entity';
 import { User } from '@/resources/user/entities/user.entity';
 import { Entity, PrimaryGeneratedColumn, Column, ManyToOne, OneToMany, JoinColumn } from 'typeorm';

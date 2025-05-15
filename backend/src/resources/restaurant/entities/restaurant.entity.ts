@@ -13,7 +13,7 @@ export class Restaurant {
   restaurant_id: number;
 
   @Column()
-  adresse_id: number;
+  adress_id: number;
 
   @Column()
   owner_id: number;
@@ -45,7 +45,7 @@ export class Restaurant {
   @OneToMany(() => Menu, menu => menu.restaurant)
   menus: Menu[];
 
-  @OneToMany(() => RestaurantTag, restaurantTag => RestaurantTag)
+  @OneToMany(() => RestaurantTag, restaurantTag => RestaurantTag.restaurant)
   tagRestaurants: RestaurantTag[];
 
   @OneToMany(() => Bookmark, bookmark => bookmark.restaurant)
