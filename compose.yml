@@ -25,6 +25,21 @@ services:
       - ./backend:/var/www/tuile/backend 
     command: npm run dev
 
+  frontend:
+    build:
+      context: .
+      dockerfile: ./frontend/Dockerfile
+    working_dir: /var/www/tuile/frontend
+    ports:
+      - "${FRONTEND_PORT:-3000}:3000"
+    networks:
+      - app-network
+    volumes:
+      - ./frontend:/var/www/tuile/frontend
+    command: npm run dev
+    depends_on:
+      - backend
+
   postgres:
     image: postgres
     environment:

@@ -1,0 +1,43 @@
+@import "../base/_variables.scss";
+
+.navbar-container {
+  background-color: $color-light;
+}
+
+.navbar-brand {
+  color: $color-dark;
+  display: flex;
+  align-items: center;
+
+  &:hover {
+    opacity: 0.9;
+  }
+}
+
+.navbar-logo {
+  height: 40px;
+  width: auto;
+  transition: transform 0.3s ease;
+
+  &:hover {
+    transform: scale(1.05);
+  }
+}
+
+.btn-primary {
+  background-color: $color-secondary;
+
+  &:hover {
+    background-color: darken($color-secondary, 10%);
+  }
+}
+
+.btn-outline {
+  color: $color-secondary;
+  border-color: $color-secondary;
+
+  &:hover {
+    background-color: $color-secondary;
+    color: white;
+  }
+}

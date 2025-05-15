@@ -2,14 +2,14 @@
   "name": "tuile",
   "private": true,
   "scripts": {
+    "dev": "turbo run dev",
     "build": "turbo run build",
-    "dev": "turbo run dev --parallel",
-    "lint": "turbo lint",
-    "format": "prettier --write \"**/*.{ts,tsx,md}\""
+    "lint": "turbo run lint",
+    "test": "turbo run test"
   },
   "devDependencies": {
     "prettier": "^3.2.5",
-    "turbo": "^2.2.4",
+    "turbo": "latest",
     "typescript": "5.5.4"
   },
   "engines": {
@@ -17,8 +17,8 @@
   },
   "packageManager": "npm@10.8.3",
   "workspaces": [
-    "apps/*",
-    "packages/*"
+    "backend",
+    "frontend"
   ],
   "dependencies": {
     "@nestjs/mapped-types": "*",

@@ -1,0 +1,16 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 800 600">
+  <!-- Couronne jaune -->
+  <path fill="#fda928" d="M310,230 L350,170 L460,230 L420,290 Z"/>
+  <path fill="#fda928" d="M460,230 L500,290 L640,230 L600,290 Z"/>
+  <path fill="#fda928" d="M310,230 L350,290 L200,230 L240,290 Z"/>
+  
+  <!-- Texte "KING" -->
+  <text x="460" y="330" font-family="Arial Black, sans-serif" font-size="140" font-weight="bold" fill="#fda928">KING</text>
+  
+  <!-- Texte "EATS" -->
+  <text x="460" y="470" font-family="Arial Black, sans-serif" font-size="140" font-weight="bold" fill="#245ba5">EATS</text>
+  
+  <!-- Mégaphone bleu -->
+  <path fill="#245ba5" d="M245,380 C245,380 180,280 245,230 L380,340 C380,340 320,420 245,380 Z"/>
+  <path fill="#FFFFFF" d="M270,315 L205,250 C205,250 180,290 230,340 Z"/>
+</svg>

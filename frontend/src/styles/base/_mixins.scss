@@ -1,0 +1,116 @@
+// Breakpoints
+@mixin xs {
+    @media (min-width: 360px) {
+        @content;
+    }
+}
+
+@mixin sm {
+    @media (min-width: 576px) {
+        @content;
+    }
+}
+
+@mixin md {
+    @media (min-width: 768px) {
+        @content;
+    }
+}
+
+@mixin lg {
+    @media (min-width: 992px) {
+        @content;
+    }
+}
+
+@mixin xl {
+    @media (min-width: 1200px) {
+        @content;
+    }
+}
+
+// Flex layout
+@mixin flex($direction: row, $justify: flex-start, $align: stretch) {
+    display: flex;
+    flex-direction: $direction;
+    justify-content: $justify;
+    align-items: $align;
+}
+
+// Box shadow
+@mixin shadow($level: 1) {
+    @if $level ==1 {
+        box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+    }
+
+    @else if $level ==2 {
+        box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    }
+
+    @else if $level ==3 {
+        box-shadow: 0 8px 16px rgba(0, 0, 0, 0.1);
+    }
+
+    @else if $level ==4 {
+        box-shadow: 0 12px 24px rgba(0, 0, 0, 0.15);
+    }
+}
+
+// Text truncation with ellipsis
+@mixin truncate($lines: 1) {
+    @if $lines ==1 {
+        overflow: hidden;
+        text-overflow: ellipsis;
+        white-space: nowrap;
+    }
+
+    @else {
+        overflow: hidden;
+        text-overflow: ellipsis;
+        display: -webkit-box;
+        -webkit-line-clamp: $lines;
+        -webkit-box-orient: vertical;
+    }
+}
+
+// Transition
+@mixin transition($property: all, $duration: 0.3s, $timing: ease) {
+    transition: $property $duration $timing;
+}
+
+// Button styles
+@mixin button($bg-color, $text-color, $padding-x: 1rem, $padding-y: 0.5rem) {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    padding: $padding-y $padding-x;
+    background-color: $bg-color;
+    color: $text-color;
+    border: none;
+    border-radius: $border-radius-sm;
+    font-weight: 500;
+    cursor: pointer;
+    text-decoration: none;
+    @include transition;
+
+    &:hover {
+        background-color: darken($bg-color, 10%);
+    }
+
+    &:active {
+        transform: translateY(1px);
+    }
+
+    &:disabled {
+        opacity: 0.6;
+        cursor: not-allowed;
+
+        &:hover {
+            background-color: $bg-color;
+        }
+
+        &:active {
+            transform: none;
+        }
+    }
+}

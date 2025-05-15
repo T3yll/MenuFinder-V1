@@ -1,0 +1,430 @@
+// Import des variables et mixins
+@import '../base/variables';
+@import '../base/mixins';
+
+//
+
+// Styles spécifiques à la page Restaurants
+.restaurants {
+
+  .category-slider-wrapper {
+    padding: $spacing-lg;
+  }
+
+
+  &-header {
+    margin-bottom: $spacing-lg;
+    position: relative;
+
+    &-content {
+      max-width: 1200px;
+      margin: 0 auto;
+    }
+  }
+
+
+  &-title {
+    font-size: 1.875rem;
+    font-weight: 700;
+    color: $color-dark;
+    margin-bottom: $spacing-sm;
+
+    @include md {
+      font-size: 2.25rem;
+    }
+  }
+
+  &-subtitle {
+    font-size: 1rem;
+    color: rgba($color-dark, 0.7);
+  }
+
+  &-filters {
+    @include flex(column, flex-start, flex-start);
+    gap: $spacing-md;
+    margin-bottom: $spacing-lg;
+
+    @include md {
+      @include flex(row, flex-start, center);
+    }
+  }
+
+  &-grid {
+    display: grid;
+    grid-template-columns: repeat(1, 1fr);
+    gap: $spacing-lg;
+
+    @include sm {
+      grid-template-columns: repeat(2, 1fr);
+    }
+
+    @include md {
+      grid-template-columns: repeat(3, 1fr);
+    }
+
+    @include lg {
+      grid-template-columns: repeat(4, 1fr);
+    }
+  }
+}
+
+// Composant de filtres
+.filter {
+  &-group {
+    @include flex(column, flex-start, flex-start);
+    gap: $spacing-xs;
+    margin-right: $spacing-lg;
+    width: 100%;
+
+    @include md {
+      width: auto;
+    }
+  }
+
+  &-label {
+    font-size: 0.875rem;
+    font-weight: 500;
+    color: $color-dark;
+  }
+
+  &-select {
+    padding: $spacing-sm $spacing-md;
+    border: 1px solid rgba($color-dark, 0.2);
+    border-radius: $border-radius-sm;
+    background-color: white;
+    color: $color-dark;
+    font-size: 0.875rem;
+    @include transition;
+    width: 100%;
+
+    @include md {
+      width: auto;
+    }
+
+    &:focus {
+      outline: none;
+      border-color: $color-primary;
+      box-shadow: 0 0 0 2px rgba($color-primary, 0.1);
+    }
+  }
+
+  &-tags {
+    @include flex(row, flex-start, center);
+    flex-wrap: wrap;
+    gap: $spacing-xs;
+    margin-top: $spacing-sm;
+  }
+
+  &-tag {
+    font-size: 0.75rem;
+    padding: $spacing-xs $spacing-sm;
+    background-color: rgba($color-primary, 0.1);
+    color: $color-primary;
+    border-radius: $border-radius-full;
+    cursor: pointer;
+    @include transition;
+
+    &:hover {
+      background-color: rgba($color-primary, 0.2);
+    }
+
+    &.active {
+      background-color: $color-primary;
+      color: white;
+    }
+  }
+
+  &-search {
+    position: relative;
+    width: 100%;
+
+    @include md {
+      width: 300px;
+    }
+  }
+
+  &-input {
+    width: 100%;
+    padding: $spacing-sm $spacing-md;
+    padding-left: $spacing-xl;
+    border: 1px solid rgba($color-dark, 0.2);
+    border-radius: $border-radius-sm;
+    color: $color-dark;
+    font-size: 0.875rem;
+    @include transition;
+
+    &:focus {
+      outline: none;
+      border-color: $color-primary;
+      box-shadow: 0 0 0 2px rgba($color-primary, 0.1);
+    }
+  }
+
+  &-search-icon {
+    position: absolute;
+    left: $spacing-sm;
+    top: 50%;
+    transform: translateY(-50%);
+    color: rgba($color-dark, 0.4);
+    font-size: 1rem;
+  }
+}
+
+// Carte de restaurant
+
+
+
+
+.price-tag {
+  position: absolute;
+  top: 15px;
+  right: 15px;
+  background-color: rgba(0, 0, 0, 0.7);
+  color: white;
+  padding: 5px 12px;
+  border-radius: 20px;
+  font-weight: 500;
+  z-index: 1;
+}
+
+.restaurant-card {
+  &-favorite {
+    position: absolute;
+    top: $spacing-sm;
+    right: $spacing-sm;
+    background-color: white;
+    border-radius: 50%;
+    width: 36px;
+    height: 36px;
+    @include flex(row, center, center);
+    cursor: pointer;
+    @include shadow(2);
+    @include transition;
+
+    &:hover {
+      transform: scale(1.1);
+    }
+
+    &.active {
+      color: #EF4444;
+    }
+  }
+
+  &-content {
+    padding: $spacing-md;
+  }
+
+  &-header {
+    margin-bottom: $spacing-sm;
+  }
+
+  &-title {
+    font-size: 1.25rem;
+    font-weight: 600;
+    color: $color-dark;
+    margin-bottom: $spacing-xs;
+    @include truncate(1);
+  }
+
+  &-meta {
+    @include flex(row, flex-start, center);
+    flex-wrap: wrap;
+    gap: $spacing-xs $spacing-md;
+    font-size: 0.875rem;
+    color: rgba($color-dark, 0.7);
+    margin-bottom: $spacing-sm;
+  }
+
+  &-rating {
+    @include flex(row, flex-start, center);
+    gap: $spacing-xs;
+    color: $color-secondary;
+    font-weight: 500;
+  }
+
+  &-description {
+    font-size: 0.875rem;
+    color: rgba($color-dark, 0.7);
+    margin-bottom: $spacing-md;
+    @include truncate(3);
+  }
+
+  &-footer {
+    @include flex(row, space-between, center);
+    padding-top: $spacing-sm;
+    border-top: 1px solid rgba($color-dark, 0.1);
+  }
+
+  &-price {
+    font-weight: 500;
+    color: $color-dark;
+  }
+
+  &-button {
+    @include button($color-primary, white, $spacing-md, $spacing-xs);
+    font-size: 0.75rem;
+  }
+}
+
+/* Styles pour les catégories */
+.categories-nav {
+  background-color: white;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  position: sticky;
+  top: 0;
+  z-index: 30;
+  padding: 0.75rem 0;
+}
+
+.categories-container {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 0 1rem;
+}
+
+.categories-scroll {
+  display: flex;
+  overflow-x: auto;
+  padding: 12px 0;
+  -webkit-overflow-scrolling: touch;
+  scrollbar-width: none;
+  scroll-behavior: smooth;
+
+  &::-webkit-scrollbar {
+    display: none;
+  }
+}
+
+.categories-list {
+  display: flex;
+  gap: 0.9rem;
+  padding: 5px 0;
+  justify-content: center;
+}
+
+.category-btn {
+  display: flex;
+  align-items: center;
+  padding: 0.5rem 1.1rem;
+  border-radius: 30px;
+  white-space: nowrap;
+  transition: all 0.3s ease;
+  font-size: 0.95rem;
+  border: 1px solid #e5e7eb;
+  box-shadow: 0 1px 2px rgba(0, 0, 0, 0.05);
+  height: 40px;
+  background-color: white;
+  cursor: pointer;
+
+  .category-emoji {
+    margin-right: 6px;
+    font-size: 1.1rem;
+  }
+
+  &:hover {
+    background-color: #f9fafb;
+    transform: translateY(-1px);
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  }
+
+  &.active {
+    background-color: #f2f7ff;
+    border-color: #c7d2fe;
+    color: #4f46e5;
+    font-weight: 500;
+  }
+}
+
+/* Emoji pour les catégories */
+.category-emoji {
+  margin-right: 0.5rem;
+  font-size: 1.1rem;
+}
+
+// Pagination
+.pagination {
+  @include flex(row, center, center);
+  gap: $spacing-xs;
+  margin-top: $spacing-xl;
+
+  &-item {
+    width: 36px;
+    height: 36px;
+    @include flex(row, center, center);
+    border-radius: $border-radius-sm;
+    border: 1px solid rgba($color-dark, 0.1);
+    color: $color-dark;
+    font-size: 0.875rem;
+    cursor: pointer;
+    @include transition;
+
+    &:hover {
+      border-color: $color-primary;
+      color: $color-primary;
+    }
+
+    &.active {
+      background-color: $color-primary;
+      border-color: $color-primary;
+      color: white;
+    }
+
+    &.disabled {
+      opacity: 0.5;
+      cursor: not-allowed;
+
+      &:hover {
+        border-color: rgba($color-dark, 0.1);
+        color: $color-dark;
+      }
+    }
+  }
+}
+
+.restaurants-container {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  width: 100%;
+  max-width: 1200px;
+  height: 100%;
+  margin: 50px auto;
+  padding: 0 1rem;
+
+  .restaurant-card {
+    background-color: white;
+    border-radius: $border-radius-lg;
+    overflow: hidden;
+    @include shadow(2);
+    @include transition;
+    border: 1px solid #f0f0f0;
+
+    &:hover {
+      transform: translateY(-4px);
+      @include shadow(3);
+
+      .restaurant-image {
+        width: 100%;
+        height: 200px;
+        background-size: cover;
+        background-position: center;
+        position: relative;
+        transition: transform 0.5s ease;
+        transform: scale(1.05);
+        transition: all 500ms ease;
+
+
+
+        &-overlay {
+          position: absolute;
+          top: 0;
+          left: 0;
+          right: 0;
+          bottom: 0;
+          background: linear-gradient(to bottom, transparent 60%, rgba($color-dark, 0.5));
+        }
+      }
+    }
+  }
+}

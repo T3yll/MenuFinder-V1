@@ -1,0 +1,663 @@
+// Import des variables et mixins
+@import '../base/variables';
+@import '../base/mixins';
+
+// Styles spécifiques à la page Menus
+.menus {
+  &-page {
+    padding: $spacing-md;
+
+    @include md {
+      padding: $spacing-lg;
+    }
+  }
+
+  &-header {
+    margin-bottom: $spacing-lg;
+    position: relative;
+
+    &-content {
+      max-width: 1200px;
+      margin: 0 auto;
+    }
+  }
+
+  &-title {
+    font-size: 1.875rem;
+    font-weight: 700;
+    color: $color-dark;
+    margin-bottom: $spacing-sm;
+
+    @include md {
+      font-size: 2.25rem;
+    }
+  }
+
+  &-subtitle {
+    font-size: 1rem;
+    color: rgba($color-dark, 0.7);
+  }
+
+  &-filters {
+    @include flex(column, flex-start, flex-start);
+    gap: $spacing-md;
+    margin-bottom: $spacing-lg;
+
+    @include md {
+      @include flex(row, flex-start, center);
+    }
+  }
+
+  &-grid {
+    display: grid;
+    grid-template-columns: repeat(1, 1fr);
+    gap: $spacing-lg;
+
+    @include sm {
+      grid-template-columns: repeat(2, 1fr);
+    }
+
+    @include md {
+      grid-template-columns: repeat(3, 1fr);
+    }
+  }
+}
+
+// Composant de filtres
+.filter {
+  &-group {
+    @include flex(column, flex-start, flex-start);
+    gap: $spacing-xs;
+    margin-right: $spacing-lg;
+    width: 100%;
+
+    @include md {
+      width: auto;
+    }
+  }
+
+  &-label {
+    font-size: 0.875rem;
+    font-weight: 500;
+    color: $color-dark;
+  }
+
+  &-select {
+    padding: $spacing-sm $spacing-md;
+    border: 1px solid rgba($color-dark, 0.2);
+    border-radius: $border-radius-sm;
+    background-color: white;
+    color: $color-dark;
+    font-size: 0.875rem;
+    @include transition;
+    width: 100%;
+
+    @include md {
+      width: auto;
+    }
+
+    &:focus {
+      outline: none;
+      border-color: $color-primary;
+      box-shadow: 0 0 0 2px rgba($color-primary, 0.1);
+    }
+  }
+
+  &-tags {
+    @include flex(row, flex-start, center);
+    flex-wrap: wrap;
+    gap: $spacing-xs;
+    margin-top: $spacing-sm;
+  }
+
+  &-tag {
+    font-size: 0.75rem;
+    padding: $spacing-xs $spacing-sm;
+    background-color: rgba($color-primary, 0.1);
+    color: $color-primary;
+    border-radius: $border-radius-full;
+    cursor: pointer;
+    @include transition;
+
+    &:hover {
+      background-color: rgba($color-primary, 0.2);
+    }
+
+    &.active {
+      background-color: $color-primary;
+      color: white;
+    }
+  }
+
+  &-search {
+    position: relative;
+    width: 100%;
+
+    @include md {
+      width: 300px;
+    }
+  }
+
+  &-input {
+    width: 100%;
+    padding: $spacing-sm $spacing-md;
+    padding-left: $spacing-xl;
+    border: 1px solid rgba($color-dark, 0.2);
+    border-radius: $border-radius-sm;
+    color: $color-dark;
+    font-size: 0.875rem;
+    @include transition;
+
+    &:focus {
+      outline: none;
+      border-color: $color-primary;
+      box-shadow: 0 0 0 2px rgba($color-primary, 0.1);
+    }
+  }
+
+  &-search-icon {
+    position: absolute;
+    left: $spacing-sm;
+    top: 50%;
+    transform: translateY(-50%);
+    color: rgba($color-dark, 0.4);
+    font-size: 1rem;
+  }
+}
+
+// Carte de menu
+.menu-card {
+  background-color: white;
+  border-radius: $border-radius-lg;
+  overflow: hidden;
+  @include shadow(2);
+  @include transition;
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+
+  &:hover {
+    transform: translateY(-4px);
+    @include shadow(3);
+  }
+
+  &-image {
+    width: 100%;
+    height: 180px;
+    background-size: cover;
+    background-position: center;
+    position: relative;
+
+    &-overlay {
+      position: absolute;
+      top: 0;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      background: linear-gradient(to bottom, transparent 60%, rgba($color-dark, 0.5));
+    }
+
+    &-logo {
+      position: absolute;
+      bottom: -20px;
+      left: $spacing-md;
+      width: 50px;
+      height: 50px;
+      border-radius: 50%;
+      @include shadow(2);
+      background-color: white;
+      background-size: cover;
+      background-position: center;
+      border: 2px solid white;
+    }
+  }
+
+  &-content {
+    padding: $spacing-md;
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+  }
+
+  &-header {
+    margin-top: $spacing-xs;
+    margin-bottom: $spacing-sm;
+  }
+
+  &-restaurant {
+    font-size: 0.75rem;
+    color: $color-primary;
+    margin-bottom: $spacing-xs;
+    font-weight: 500;
+    display: flex;
+    align-items: center;
+
+    svg {
+      margin-right: $spacing-xs;
+    }
+  }
+
+  &-title {
+    font-size: 1.25rem;
+    font-weight: 600;
+    color: $color-dark;
+    margin-bottom: $spacing-xs;
+    @include truncate(1);
+  }
+
+  &-meta {
+    @include flex(row, flex-start, center);
+    flex-wrap: wrap;
+    gap: $spacing-xs $spacing-md;
+    font-size: 0.875rem;
+    color: rgba($color-dark, 0.7);
+    margin-bottom: $spacing-sm;
+  }
+
+  &-rating {
+    @include flex(row, flex-start, center);
+    gap: $spacing-xs;
+    color: $color-secondary;
+    font-weight: 500;
+  }
+
+  &-description {
+    font-size: 0.875rem;
+    color: rgba($color-dark, 0.7);
+    margin-bottom: $spacing-md;
+    @include truncate(3);
+  }
+
+  &-items {
+    margin-bottom: $spacing-md;
+  }
+
+  &-item {
+    font-size: 0.875rem;
+    margin-bottom: $spacing-xs;
+    color: rgba($color-dark, 0.8);
+    display: flex;
+    align-items: center;
+
+    &:before {
+      content: "•";
+      margin-right: $spacing-xs;
+      color: $color-secondary;
+    }
+  }
+
+  &-footer {
+    @include flex(row, space-between, center);
+    padding-top: $spacing-sm;
+    border-top: 1px solid rgba($color-dark, 0.1);
+    margin-top: auto;
+  }
+
+  &-price {
+    font-weight: 500;
+    color: $color-dark;
+  }
+
+  &-tags {
+    display: flex;
+    flex-wrap: wrap;
+    gap: $spacing-xs;
+    margin-bottom: $spacing-sm;
+  }
+
+  &-tag {
+    font-size: 0.75rem;
+    padding: 2px $spacing-xs;
+    background-color: rgba($color-primary, 0.1);
+    color: $color-primary;
+    border-radius: $border-radius-full;
+  }
+
+  &-button {
+    @include button($color-primary, white, $spacing-md, $spacing-xs);
+    font-size: 0.75rem;
+  }
+}
+
+// Pagination
+.pagination {
+  @include flex(row, center, center);
+  gap: $spacing-xs;
+  margin-top: $spacing-xl;
+
+  &-item {
+    width: 36px;
+    height: 36px;
+    @include flex(row, center, center);
+    border-radius: $border-radius-sm;
+    border: 1px solid rgba($color-dark, 0.1);
+    color: $color-dark;
+    font-size: 0.875rem;
+    cursor: pointer;
+    @include transition;
+
+    &:hover {
+      border-color: $color-primary;
+      color: $color-primary;
+    }
+
+    &.active {
+      background-color: $color-primary;
+      border-color: $color-primary;
+      color: white;
+    }
+
+    &.disabled {
+      opacity: 0.5;
+      cursor: not-allowed;
+
+      &:hover {
+        border-color: rgba($color-dark, 0.1);
+        color: $color-dark;
+      }
+    }
+  }
+}
+
+/* Page des menus */
+.menus-page {
+  padding: 0;
+  min-height: 100vh;
+  background-color: $background-color;
+}
+
+/* Section Héro */
+.menus-hero {
+  position: relative;
+  height: 300px;
+  background: linear-gradient(135deg, $primary-color, $secondary-color);
+  color: white;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+
+  &::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-image: url('https://images.unsplash.com/photo-1424847651672-bf20a4b0982b?q=80&w=2070&auto=format&fit=crop');
+    background-size: cover;
+    background-position: center;
+    opacity: 0.2;
+  }
+}
+
+.hero-content {
+  position: relative;
+  z-index: 1;
+  max-width: 800px;
+  padding: 0 20px;
+
+  h1 {
+    font-size: 2.5rem;
+    margin-bottom: 1rem;
+    font-weight: 700;
+  }
+
+  p {
+    font-size: 1.2rem;
+    margin-bottom: 2rem;
+    opacity: 0.9;
+  }
+}
+
+
+/* Slider de catégories */
+
+/* Conteneur des menus */
+.menus-container {
+  max-width: 1200px;
+  margin: 2rem auto;
+  padding: 0 1rem;
+}
+
+.section-title {
+  text-align: center;
+  margin-bottom: 2rem;
+  font-size: 1.8rem;
+  font-weight: 600;
+  color: $text-color;
+}
+
+.menus-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(350px, 1fr));
+  gap: 2rem;
+}
+
+.menu-card {
+  background-color: white;
+  border-radius: $card-border-radius;
+  overflow: hidden;
+  box-shadow: 0 3px 12px $shadow-light;
+  transition: transform 0.3s, box-shadow 0.3s;
+
+  &:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 8px 20px $shadow-medium;
+  }
+}
+
+.menu-image {
+  width: 100%;
+  height: 200px;
+  object-fit: cover;
+  display: block;
+  position: relative;
+}
+
+.price-tag {
+  position: absolute;
+  top: 15px;
+  right: 15px;
+  background-color: rgba(0, 0, 0, 0.7);
+  color: white;
+  padding: 5px 12px;
+  border-radius: 20px;
+  font-weight: 500;
+}
+
+.menu-content {
+  padding: 1.5rem;
+}
+
+.menu-name {
+  font-size: 1.4rem;
+  margin-bottom: 0.5rem;
+  font-weight: 600;
+  color: $text-color;
+}
+
+.restaurant-name {
+  margin-bottom: 0.5rem;
+
+  a {
+    color: $color-primary;
+    text-decoration: none;
+    font-weight: 500;
+    transition: color 0.2s;
+
+    &:hover {
+      color: $secondary-color;
+    }
+  }
+}
+
+.menu-category {
+  display: inline-block;
+  padding: 4px 10px;
+  background-color: $background-color;
+  border-radius: 20px;
+  font-size: 0.9rem;
+  color: #555;
+  margin-bottom: 0.5rem;
+}
+
+.menu-rating {
+  display: flex;
+  align-items: center;
+  margin-bottom: 0.5rem;
+
+  .stars {
+    display: flex;
+    margin-right: 8px;
+
+    .star {
+      color: #FFD700;
+      margin-right: 2px;
+
+      &.empty {
+        color: #ddd;
+      }
+
+      &.half {
+        position: relative;
+        overflow: hidden;
+
+        &::after {
+          content: '★';
+          position: absolute;
+          left: 0;
+          top: 0;
+          width: 50%;
+          overflow: hidden;
+          color: #ddd;
+        }
+      }
+    }
+  }
+
+  .reviews-count {
+    font-size: 0.9rem;
+    color: #666;
+  }
+}
+
+.menu-description {
+  margin-bottom: 1rem;
+  color: #666;
+  line-height: 1.5;
+}
+
+.menu-tags {
+  display: flex;
+  flex-wrap: wrap;
+  margin-bottom: 1rem;
+
+  .menu-tag {
+    margin-right: 8px;
+    margin-bottom: 8px;
+    padding: 3px 8px;
+    background-color: #eff2f7;
+    border-radius: 4px;
+    font-size: 0.8rem;
+  }
+}
+
+.menu-actions {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-top: 1rem;
+
+  .view-details-button {
+    padding: 8px 16px;
+    background-color: $color-primary;
+    color: white;
+    border: none;
+    border-radius: 6px;
+    font-weight: 500;
+    cursor: pointer;
+    transition: background-color 0.3s;
+    text-decoration: none;
+    display: inline-block;
+
+    &:hover {
+      background-color: darken($primary-color, 10%);
+    }
+  }
+
+  .save-button {
+    width: 36px;
+    height: 36px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background-color: white;
+    border: 1px solid #e0e0e0;
+    border-radius: 50%;
+    cursor: pointer;
+    transition: all 0.2s;
+    color: #777;
+
+    &:hover {
+      color: $secondary-color;
+      border-color: $secondary-color;
+    }
+  }
+}
+
+.no-results {
+  text-align: center;
+  padding: 3rem 1rem;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+
+  svg {
+    width: 80px;
+    height: 80px;
+    color: #ccc;
+  }
+
+  h3 {
+    font-size: 1.5rem;
+    margin: 1rem 0;
+    color: $text-color;
+  }
+
+  p {
+    color: #666;
+    max-width: 500px;
+    margin: 0 auto;
+  }
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+  .hero-content h1 {
+    font-size: 2rem;
+  }
+
+  .menus-grid {
+    grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+  }
+
+  .menu-card {
+    margin-bottom: 1.5rem;
+  }
+}
+
+@media (max-width: 576px) {
+  .menus-hero {
+    height: 250px;
+  }
+
+  .hero-content h1 {
+    font-size: 1.8rem;
+  }
+
+  .menus-grid {
+    grid-template-columns: 1fr;
+  }
+}

@@ -1,0 +1,20 @@
+<svg width="200" height="50" viewBox="0 0 200 50" fill="none" xmlns="http://www.w3.org/2000/svg">
+  <!-- Assiette stylisée -->
+  <circle cx="35" cy="25" r="20" fill="#F7FFF7" stroke="#245ba5" stroke-width="2"/>
+  <circle cx="35" cy="25" r="15" fill="none" stroke="#fda928" stroke-width="2"/>
+  
+  <!-- Ustensiles stylisés -->
+  <path d="M30 15 L30 35" stroke="#245ba5" stroke-width="2" stroke-linecap="round"/>
+  <path d="M40 15 L40 35" stroke="#245ba5" stroke-width="2" stroke-linecap="round"/>
+  <path d="M30 15 C30 15, 35 10, 40 15" stroke="#245ba5" stroke-width="2" stroke-linecap="round"/>
+  
+  <!-- Texte MenuFinder -->
+  <path d="M70 15 L70 35 M70 15 L75 25 L80 15 L80 35" fill="none" stroke="#245ba5" stroke-width="2" stroke-linecap="round"/>
+  <path d="M85 15 L85 35 M85 15 L95 15 M85 25 L93 25 M85 35 L95 35" fill="none" stroke="#245ba5" stroke-width="2" stroke-linecap="round"/>
+  <path d="M100 15 L100 35 M100 15 L110 15 M100 25 L107 25" fill="none" stroke="#245ba5" stroke-width="2" stroke-linecap="round"/>
+  <path d="M115 15 L115 35 M115 15 L125 15 M115 35 L125 35" fill="none" stroke="#245ba5" stroke-width="2" stroke-linecap="round"/>
+  <path d="M130 15 L130 35 M130 15 L140 15" fill="none" stroke="#245ba5" stroke-width="2" stroke-linecap="round"/>
+  <path d="M145 15 L145 35 M145 15 L153 15 M145 25 L150 25" fill="none" stroke="#245ba5" stroke-width="2" stroke-linecap="round"/>
+  <path d="M160 15 L160 35 M160 15 L168 15 M160 25 L166 25 M160 35 L168 35" fill="none" stroke="#245ba5" stroke-width="2" stroke-linecap="round"/>
+  <path d="M175 15 L175 35 M175 15 L182 25 L190 15 L190 35" fill="none" stroke="#245ba5" stroke-width="2" stroke-linecap="round"/>
+</svg> 
