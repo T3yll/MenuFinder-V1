@@ -23,7 +23,7 @@ services:
       - postgres
     volumes:
       - ./backend:/var/www/tuile/backend 
-    command: npm i && npm run dev
+    command: npm run dev
 
   frontend:
     build:
