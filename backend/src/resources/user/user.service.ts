@@ -17,26 +17,35 @@ export class UserService {
   ) {}
 
   async findAll(page: number = 1, offset: number = 10, search?: string) {
-    const query = this.usersRepository
-      .createQueryBuilder('user')
-      .leftJoinAndSelect('user.userDetail', 'userDetail')
-      .leftJoinAndSelect('user.teams', 'teams');
+  // Création de la requête de base
+  const query = this.usersRepository
+    .createQueryBuilder('user')
+    .leftJoinAndSelect('user.image', 'image'); // Jointure avec la table image
 
-    if (search) {
-      query.where('user.username ILIKE :search', { search: `%${search}%` });
-    }
-
-    const [data, totalRecords] = await query
-      .skip((page - 1) * offset)
-      .take(offset)
-      .orderBy('user.createdAt', 'DESC')
-      .getManyAndCount();
-
-    return {
-      data,
-      totalRecords,
-    };
+  // Ajout du filtre de recherche si fourni
+  if (search) {
+    query.where(
+      'user.username ILIKE :search OR user.nom ILIKE :search OR user.prenom ILIKE :search OR user.email ILIKE :search',
+      { search: `%${search}%` }
+    );
   }
+
+  // Exécution de la requête avec pagination
+  const [data, totalRecords] = await query
+    .skip((page - 1) * offset)
+    .take(offset)
+    .orderBy('user.id', 'DESC') // Utilisation de l'ID à la place de createdAt
+    .getManyAndCount();
+
+  // Retourne les données et le total
+  return {
+    data,
+    totalRecords,
+    currentPage: page,
+    totalPages: Math.ceil(totalRecords / offset),
+    pageSize: offset
+  };
+}
 
   async findOne(id: number): Promise<User> {
     const user = await this.usersRepository.findOne({
@@ -59,24 +68,41 @@ export class UserService {
     return user;
   }
 
-  async create(createUserDto: CreateUserDto): Promise<User> {
-    const saltRounds = 10;
+async create(createUserDto: CreateUserDto): Promise<User> {
+  const saltRounds = 10;
 
-    const hashedPassword = await bcrypt.hash(
-      createUserDto.password,
-      saltRounds
-    );
+  const hashedPassword = await bcrypt.hash(
+    createUserDto.password,
+    saltRounds
+  );
 
-    const { username, password, ...userDetailFields } = createUserDto;
+  // Extraire tous les champs du DTO
+  const { 
+    username, 
+    password, 
+    nom, 
+    prenom, 
+    email, 
+    bAdmin,
+    image_file_id
+  } = createUserDto;
 
-    const newUser = this.usersRepository.create({
-      username,
-      password: hashedPassword,
-    });
-    await this.usersRepository.save(newUser);
+  // Créer l'utilisateur avec tous les champs obligatoires
+  const newUser = this.usersRepository.create({
+    username,
+    password: hashedPassword,
+    nom,
+    prenom,
+    email,
+    bAdmin: bAdmin || false,
+    image_file_id
+  });
 
-    return newUser;
-  }
+  // Sauvegarder l'utilisateur
+  await this.usersRepository.save(newUser);
+
+  return newUser;
+}
 
   async update(id: number, updateUserDto: UpdateUserDto): Promise<User> {
     const user = await this.findOne(id);

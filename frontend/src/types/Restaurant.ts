@@ -1,36 +1,104 @@
+// Types basés sur vos entités backend NestJS
+
 export interface Restaurant {
-  id: number;
+  restaurant_id: number;
+  adress_id: number;
+  owner_id: number;
   name: string;
-  address: string;
-  cuisine?: string;
+  type: string;
+  image_file_id: number;
+  adress?: Adress;
+  owner?: User;
+  image?: FileEntity;
+  rewiews?: Review[];
+  menus?: Menu[];
+  tagRestaurants?: RestaurantTag[];
+  bookmarks?: Bookmark[];
+}
+
+export interface Adress {
+  adress_id: number;
+  street: string;
+  city: string;
+  state?: string;
+  zip_code: string;
+  country: string;
+  latitude?: number;
+  longitude?: number;
+}
+
+export interface User {
+  user_id: number;
+  username: string;
+  email: string;
+  password_hash: string;
+  role: string;
+  created_at: Date;
+  updated_at: Date;
+  restaurants?: Restaurant[];
+}
+
+export interface FileEntity {
+  file_id: number;
+  name: string;
+  path: string;
+  type: string;
+  users?: User[];
+  restaurants?: Restaurant[];
+  meals?: any[];
+}
+
+export interface Review {
+  review_id: number;
+  restaurant_id: number;
+  user_id: number;
   rating: number;
-  distance?: number; // Distance par rapport à l'utilisateur
-  imageUrl?: string;
-  openingHours?: string;
-  category?: string;
-  reviewCount?: number;
-  specialties?: string[];
-  priceRange?: string;
-  coordinates?: {
-    latitude: number;
-    longitude: number;
-  };
+  comment: string;
+  created_at: Date;
+  restaurant?: Restaurant;
+  user?: User;
 }
 
 export interface Menu {
-  id: string;
-  restaurantId: string;
+  menu_id: number;
+  restaurant_id: number;
   name: string;
-  description?: string;
-  items: MenuItem[];
+  description: string;
+  restaurant?: Restaurant;
+  items?: MenuItem[];
 }
 
 export interface MenuItem {
-  id: string;
+  item_id: number;
+  menu_id: number;
   name: string;
-  description?: string;
+  description: string;
   price: number;
-  imageUrl?: string;
-  category?: string;
-  tags?: string[];
+  category: string;
+  image_file_id?: number;
+  menu?: Menu;
+  image?: FileEntity;
+}
+
+export interface RestaurantTag {
+  restaurant_tag_id: number;
+  restaurant_id: number;
+  tag_id: number;
+  restaurant?: Restaurant;
+  tag?: Tag;
+}
+
+export interface Tag {
+  tag_id: number;
+  name: string;
+  tagRestaurants?: RestaurantTag[];
+}
+
+export interface Bookmark {
+  bookmark_id: number;
+  user_id: number;
+  restaurant_id: number;
+  created_at: Date;
+  user?: User;
+  restaurant?: Restaurant;
 }

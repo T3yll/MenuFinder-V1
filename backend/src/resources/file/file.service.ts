@@ -5,6 +5,19 @@ import * as fs from 'fs';
 import * as path from 'path';
 import { File } from './entities/file.entity';
 
+// Interface pour le fichier uploadé, pour éviter les erreurs de type Express.Multer
+interface MulterFile {
+  fieldname: string;
+  originalname: string;
+  encoding: string;
+  mimetype: string;
+  size: number;
+  destination: string;
+  filename: string;
+  path: string;
+  buffer: Buffer;
+}
+
 @Injectable()
 export class FileService {
   constructor(
@@ -12,24 +25,24 @@ export class FileService {
     private fileRepository: Repository<File>,
   ) {}
 
-  // async create(file: Express.Multer.File, fileData: any): Promise<File> {
-  //   const uploadDir = 'uploads';
-  //   if (!fs.existsSync(uploadDir)) {
-  //     fs.mkdirSync(uploadDir, { recursive: true });
-  //   }
+  async create(file: MulterFile): Promise<File> {
+    const uploadDir = 'uploads';
+    if (!fs.existsSync(uploadDir)) {
+      fs.mkdirSync(uploadDir, { recursive: true });
+    }
 
-  //   const fileName = Date.now() + path.extname(file.originalname);
-  //   const filePath = path.join(uploadDir, fileName);
+    const fileName = Date.now() + path.extname(file.originalname);
+    const filePath = path.join(uploadDir, fileName);
     
-  //   fs.writeFileSync(filePath, file.buffer);
+    fs.writeFileSync(filePath, file.buffer);
 
-  //   const newFile = new File();
-  //   newFile.name = file.originalname;
-  //   newFile.path = filePath;
-  //   newFile.type = file.mimetype;
+    const newFile = new File();
+    newFile.name = file.originalname;
+    newFile.path = filePath;
+    newFile.type = file.mimetype;
 
-  //   return this.fileRepository.save(newFile);
-  // }
+    return this.fileRepository.save(newFile);
+  }
 
   findAll(): Promise<File[]> {
     return this.fileRepository.find();

@@ -1,16 +1,19 @@
 import { Controller, Get, Post, Body, Param, Put, Delete } from '@nestjs/common';
 import { Adress } from './entities/adress.entity';
 import { AdressService } from './adress.service';
+import { Public } from '@/common/decorators/security/public.decorator';
 
 @Controller('adresses')
 export class AdressController {
   constructor(private readonly adressService: AdressService) {}
 
+  @Public()
   @Post()
   create(@Body() adresse: Adress): Promise<Adress> {
     return this.adressService.create(adresse);
   }
 
+  @Public()
   @Get()
   findAll(): Promise<Adress[]> {
     return this.adressService.findAll();
