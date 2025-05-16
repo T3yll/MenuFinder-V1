@@ -210,7 +210,7 @@ const Restaurants: React.FC = () => {
         <div className="restaurants-grid">
           {filteredRestaurants.length > 0 ? (
             filteredRestaurants.map(restaurant => (
-              <div key={restaurant.restaurant_id} className="restaurant-card">
+              <Link to={`/restaurants/${restaurant.restaurant_id}`} key={restaurant.restaurant_id} className="restaurant-card">
                 <div className="restaurant-image" style={{ backgroundImage: `url(${getImageUrl(restaurant)})` }}>
                   <div className="restaurant-image-overlay"></div>
                   <div className="price-tag">{restaurant.priceRange}</div>
@@ -218,16 +218,13 @@ const Restaurants: React.FC = () => {
 
                 <div className="restaurant-content">
                   <h3 className="restaurant-name">{restaurant.name}</h3>
-
                   <div className="restaurant-category">
                     {categories.find(c => c.id.toLowerCase() === restaurant.type.toLowerCase())?.name || restaurant.type}
                   </div>
-
                   <div className="restaurant-rating">
                     <div className="stars">{renderStars(restaurant.rating || 4)}</div>
                     <span className="reviews-count">({restaurant.reviewCount || 0})</span>
                   </div>
-
                   <div className="restaurant-address">
                     <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
                       <path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"></path>
@@ -235,14 +232,12 @@ const Restaurants: React.FC = () => {
                     </svg>
                     {getFormattedAddress(restaurant)}
                   </div>
-
                   <div className="restaurant-owner">
                     <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
                       <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path>
                       <circle cx="12" cy="7" r="4"></circle>
                     </svg>
                   </div>
-
                   <div className="restaurant-hours">
                     <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
                       <circle cx="12" cy="12" r="10"></circle>
@@ -250,13 +245,11 @@ const Restaurants: React.FC = () => {
                     </svg>
                     {restaurant.openingHours || "11h00 - 22h00"}
                   </div>
-
                   {restaurant.specialties && restaurant.specialties.length > 0 && (
                     <div className="restaurant-specialties">
                       <strong>Spécialités:</strong> {restaurant.specialties.join(", ")}
                     </div>
                   )}
-
                   <div className="restaurant-actions">
                     <Link to={`/restaurants/${restaurant.restaurant_id}`} className="view-menu-button">
                       Voir le menu
@@ -268,7 +261,7 @@ const Restaurants: React.FC = () => {
                     </button>
                   </div>
                 </div>
-              </div>
+              </Link>
             ))
           ) : (
             <div className="no-results">
