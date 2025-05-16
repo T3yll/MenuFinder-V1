@@ -1,3 +1,5 @@
+@use 'variables' as vars;
+
 // Breakpoints
 @mixin xs {
     @media (min-width: 360px) {
@@ -87,7 +89,7 @@
     background-color: $bg-color;
     color: $text-color;
     border: none;
-    border-radius: $border-radius-sm;
+    border-radius: vars.$border-radius-sm;
     font-weight: 500;
     cursor: pointer;
     text-decoration: none;
