@@ -21,27 +21,21 @@ const Login: React.FC = () => {
     setIsLoading(true);
 
     try {
-      // Ici vous ajouteriez la logique de connexion avec une API
       console.log('Connexion avec:', { email, password, rememberMe });
-
-      // Simuler un délai de connexion
       login({ email, password })
         .then(async (response) => {
           console.log('Réponse de connexion:', response);
           // Enregistrer le token dans le stockage local ou gérer l'état de l'utilisateur
-          
-          
           localStorage.setItem('token', response.access_token);
           const user = await getUserProfile(response.access_token)
           console.log('Utilisateur connecté:', user);
           localStorage.setItem('user', JSON.stringify(user));
-          Navigate('/'); // Redirigez vers la page d'accueil ou le tableau de bord
+          Navigate('/');
         })
         .catch((error) => {
           console.error('Erreur de connexion:', error);
           setError('Erreur de connexion. Veuillez réessayer.');
         });
-      // Redirection après connexion réussie (à implémenter)
     } catch (err) {
       setError('Identifiants incorrects. Veuillez réessayer.');
     } finally {
