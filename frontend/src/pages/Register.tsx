@@ -5,6 +5,9 @@ import { log } from 'console';
 import { registerUser } from '../services/user.service';
 // import './Register.css';
 
+
+
+
 const Register: React.FC = () => {
   const [firstName, setFirstName] = useState('');
   const [lastName, setLastName] = useState('');
@@ -73,14 +76,15 @@ const Register: React.FC = () => {
     console.log('setIsLoading ok');
 
     try {
-      console.log('Register start:', { firstName, lastName, email, password, agreeTerms });
-
+      console.log('Register start:', { firstName, lastName, email, password, confirmPassword });
+console.log(process.env);
       await new Promise(resolve => setTimeout(resolve, 1500));
 
-      const user = await registerUser({ firstName, lastName, email, password, agreeTerms });
+      const user = await registerUser({ firstName, lastName, email, password, confirmPassword });
 
       console.log('Register success');
       console.log('user', user);
+      
 
 
     } catch (err) {

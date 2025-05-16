@@ -1,8 +1,8 @@
 import React, { useState } from 'react';
 import { Link } from 'react-router-dom';
-// import './Login.scss';
+import {login} from '../services/auth.service'; // Assurez-vous d'importer votre service d'authentification
+
 import '../styles/pages/Login.scss';
-// import './Login.css';
 
 const Login: React.FC = () => {
   const [email, setEmail] = useState('');
@@ -22,8 +22,17 @@ const Login: React.FC = () => {
       console.log('Connexion avec:', { email, password, rememberMe });
 
       // Simuler un délai de connexion
-      await new Promise(resolve => setTimeout(resolve, 1500));
-
+      login({ email, password })
+        .then((response) => {
+          console.log('Réponse de connexion:', response);
+          // Enregistrer le token dans le stockage local ou gérer l'état de l'utilisateur
+          localStorage.setItem('user', JSON.stringify(response.user));
+          localStorage.setItem('token', response.token);
+        })
+        .catch((error) => {
+          console.error('Erreur de connexion:', error);
+          setError('Erreur de connexion. Veuillez réessayer.');
+        });
       // Redirection après connexion réussie (à implémenter)
     } catch (err) {
       setError('Identifiants incorrects. Veuillez réessayer.');
