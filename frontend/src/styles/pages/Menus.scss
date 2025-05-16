@@ -1,6 +1,6 @@
 // Import des variables et mixins
-@use '../base/variables';
-@use '../base/mixins';
+@use '@/frontend/base/variables';
+@use '@/frontend/base/mixins';
 
 // Styles spécifiques à la page Menus
 .menus {
