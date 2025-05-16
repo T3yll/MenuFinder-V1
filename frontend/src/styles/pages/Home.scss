@@ -1,6 +1,6 @@
 /* Import des variables */
-@import '../base/variables';
-@import '../base/mixins';
+@use '../base/variables';
+@use '../base/mixins';
 
 /* Styles pour la section hero */
 .hero {

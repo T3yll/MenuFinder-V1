@@ -6,7 +6,7 @@ $text-color: #292F36;
 $text-color-light: #6B7280;
 $border-color: rgba(41, 47, 54, 0.2);
 
-@import '../base/variables';
+@use '../base/variables';
 
 
 /* Login page styles */
