@@ -1,8 +1,8 @@
 // Import des variables et mixins
-@use '../base/variables';
-@use '../base/mixins';
+@use '../base/variables' as vars;
+@use '../base/mixins' as mix;
 
-// Variables
+// Variables locales au fichier
 $primary-color: #245ba5;
 $secondary-color: #fda928;
 $dark-color: #292F36;
@@ -57,7 +57,7 @@ $shadow-default: 0 10px 25px rgba(0, 0, 0, 0.1);
   }
 
   &-form {
-    margin-top: $spacing-lg;
+    margin-top: vars.$spacing-lg;
   }
 }
 
@@ -71,7 +71,7 @@ $shadow-default: 0 10px 25px rgba(0, 0, 0, 0.1);
   transition: color $transition-default;
 
   &:hover {
-    color: $color-primary
+    color: vars.$color-primary
   }
 }
 
@@ -98,7 +98,7 @@ $shadow-default: 0 10px 25px rgba(0, 0, 0, 0.1);
 }
 
 .terms-link {
-  color: $color-primary;
+  color: vars.$color-primary;
   text-decoration: none;
   transition: color $transition-default;
 
@@ -136,7 +136,7 @@ $shadow-default: 0 10px 25px rgba(0, 0, 0, 0.1);
 }
 
 .login-link {
-  color: $color-primary;
+  color: vars.$color-primary;
   font-weight: 500;
   text-decoration: none;
   transition: color $transition-default;
@@ -200,7 +200,7 @@ $shadow-default: 0 10px 25px rgba(0, 0, 0, 0.1);
   justify-content: center;
 
   &:hover {
-    color: $color-primary
+    color: vars.$color-primary
   }
 
   &:focus {

@@ -1,4 +1,4 @@
-/* Variables */
+/* Variables locales au fichier Login */
 $primary-color: #245ba5;
 $secondary-color: #fda928;
 $error-color: #e02424;
@@ -6,8 +6,8 @@ $text-color: #292F36;
 $text-color-light: #6B7280;
 $border-color: rgba(41, 47, 54, 0.2);
 
-@use '../base/variables';
-
+/* Import des variables globales */
+@use '../base/variables' as vars;
 
 /* Login page styles */
 .login-page {
@@ -30,7 +30,7 @@ $border-color: rgba(41, 47, 54, 0.2);
 .login-card {
   background-color: white;
   border-radius: 0.5rem;
-  box-shadow: $box-shadow;
+  box-shadow: vars.$box-shadow;
   padding: 2rem;
   overflow: hidden;
 }
@@ -63,7 +63,7 @@ $border-color: rgba(41, 47, 54, 0.2);
   transition: color 0.3s ease;
 
   &:hover {
-    color: $color-primary
+    color: vars.$color-primary;
   }
 
   .back-arrow {
@@ -131,7 +131,7 @@ $border-color: rgba(41, 47, 54, 0.2);
         justify-content: center;
 
         &:hover {
-          color: $color-primary
+          color: vars.$color-primary;
         }
 
         &:focus {
@@ -209,7 +209,7 @@ $border-color: rgba(41, 47, 54, 0.2);
 
       .forgot-password {
         font-size: 0.875rem;
-        color: $color-primary;
+        color: vars.$color-primary;
         text-decoration: none;
         transition: color 0.3s ease;
 
@@ -258,7 +258,7 @@ $border-color: rgba(41, 47, 54, 0.2);
   color: rgba(41, 47, 54, 0.7);
 
   .register-link {
-    color: $color-primary;
+    color: vars.$color-primary;
     text-decoration: none;
     font-weight: 500;
     transition: color 0.3s ease;
