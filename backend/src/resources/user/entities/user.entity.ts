@@ -36,7 +36,7 @@ export class User {
   @Column('boolean')
   bAdmin: boolean;
 
-  @Column()
+  @Column({ nullable: true })
   image_file_id: number;
 
   @ManyToOne(() => File)

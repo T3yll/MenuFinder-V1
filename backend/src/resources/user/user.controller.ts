@@ -22,7 +22,7 @@ import { Public } from '@/common/decorators/security/public.decorator';
 @Controller('users')
 export class UserController {
   constructor(private readonly userService: UserService) {}
-
+  @Public()
   @ApiOperation({ summary: 'Retrieve all users' })
   @ApiResponse({ status: 200, description: 'Successfully retrieved all users' })
   @Get()

@@ -1,124 +1,19 @@
-import React, { useState, useEffect, useRef } from 'react';
 import { Link } from 'react-router-dom';
-// import './Restaurants.scss';
 import '../styles/pages/Restaurants.scss';
 import { useCurrency } from '../contexts/CurrencyContext';
 import SliderFilter from '../components/commom/SliderFilter';
-// import './Restaurants.css';
+import { RestaurantService } from '../services/RestaurantService';
+import { useEffect, useState } from 'react';
+import { Restaurant, Review } from '../types/Restaurant';
 
-// Types de données
-interface Restaurant {
-  id: number;
-  name: string;
-  category: string;
-  rating: number;
-  reviewCount: number;
-  imageUrl: string;
-  address: string;
-  priceRange: string;
-  openingHours: string;
-  specialties: string[];
+// Types supplémentaires pour l'interface UI
+interface RestaurantWithUI extends Restaurant {
+  rating?: number;
+  reviewCount?: number;
+  priceRange?: string;
+  openingHours?: string;
+  specialties?: string[];
 }
-
-// Données de démonstration
-const sampleRestaurants: Restaurant[] = [
-  {
-    id: 1,
-    name: "Chez Mario",
-    category: "italien",
-    rating: 4.8,
-    reviewCount: 132,
-    imageUrl: "https://images.unsplash.com/photo-1555396273-367ea4eb4db5?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=1374&q=80",
-    address: "15 Rue de la Paix, 75002 Paris",
-    priceRange: "€€",
-    openingHours: "12h00 - 23h00",
-    specialties: ["Pizza", "Pâtes", "Tiramisu"]
-  },
-  {
-    id: 2,
-    name: "Le Bistrot Français",
-    category: "français",
-    rating: 4.6,
-    reviewCount: 98,
-    imageUrl: "https://images.unsplash.com/photo-1414235077428-338989a2e8c0?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=1470&q=80",
-    address: "42 Rue du Faubourg Saint-Antoine, 75012 Paris",
-    priceRange: "€€€",
-    openingHours: "11h30 - 22h30",
-    specialties: ["Bœuf bourguignon", "Coq au vin", "Crème brûlée"]
-  },
-  {
-    id: 3,
-    name: "Sushi House",
-    category: "asiatique",
-    rating: 4.7,
-    reviewCount: 156,
-    imageUrl: "https://images.unsplash.com/photo-1579871494447-9811cf80d66c?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=1470&q=80",
-    address: "8 Rue de la Roquette, 75011 Paris",
-    priceRange: "€€",
-    openingHours: "11h00 - 22h00",
-    specialties: ["Sushi", "Sashimi", "Ramen"]
-  },
-  {
-    id: 4,
-    name: "Burger Palace",
-    category: "fastfood",
-    rating: 4.3,
-    reviewCount: 205,
-    imageUrl: "https://images.unsplash.com/photo-1594212699903-ec8a3eca50f5?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=1471&q=80",
-    address: "123 Avenue des Champs-Élysées, 75008 Paris",
-    priceRange: "€",
-    openingHours: "11h00 - 23h00",
-    specialties: ["Burgers", "Frites", "Milkshakes"]
-  },
-  {
-    id: 5,
-    name: "Le Jardin Vert",
-    category: "vegetarien",
-    rating: 4.5,
-    reviewCount: 87,
-    imageUrl: "https://images.unsplash.com/photo-1572449043416-55f4685c9bb7?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=1480&q=80",
-    address: "56 Rue Oberkampf, 75011 Paris",
-    priceRange: "€€",
-    openingHours: "12h00 - 21h30",
-    specialties: ["Buddha bowl", "Salade composée", "Desserts vegan"]
-  },
-  {
-    id: 6,
-    name: "La Méditerranée",
-    category: "méditerranéen",
-    rating: 4.4,
-    reviewCount: 112,
-    imageUrl: "https://images.unsplash.com/photo-1530554764233-e79e16c91d08?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=1374&q=80",
-    address: "27 Rue de Rivoli, 75004 Paris",
-    priceRange: "€€",
-    openingHours: "12h00 - 22h30",
-    specialties: ["Mezze", "Couscous", "Baklava"]
-  },
-  {
-    id: 7,
-    name: "Spicy Corner",
-    category: "indien",
-    rating: 4.6,
-    reviewCount: 92,
-    imageUrl: "https://images.unsplash.com/photo-1517248135467-4c7edcad34c4?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=1470&q=80",
-    address: "18 Rue du Faubourg Saint-Denis, 75010 Paris",
-    priceRange: "€€",
-    openingHours: "12h00 - 23h00",
-    specialties: ["Curry", "Naan", "Tandoori"]
-  },
-  {
-    id: 8,
-    name: "Tapas & Co",
-    category: "espagnol",
-    rating: 4.5,
-    reviewCount: 78,
-    imageUrl: "https://images.unsplash.com/photo-1555396273-367ea4eb4db5?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=1374&q=80",
-    address: "3 Rue de Buci, 75006 Paris",
-    priceRange: "€€",
-    openingHours: "18h00 - 00h00",
-    specialties: ["Tapas", "Paella", "Sangria"]
-  }
-];
 
 // Catégories disponibles
 const categories = [
@@ -144,34 +39,89 @@ const categories = [
   { id: "desserts", name: "Desserts", emoji: "🍰" }
 ];
 
+const API_URL = 'http://localhost:3000/api';
+
 const Restaurants: React.FC = () => {
   const [selectedCategory, setSelectedCategory] = useState<string>("all");
-  const [filteredRestaurants, setFilteredRestaurants] = useState<Restaurant[]>(sampleRestaurants);
-  // const [searchTerm, setSearchTerm] = useState("");
+  const [restaurants, setRestaurants] = useState<RestaurantWithUI[]>([]);
+  const [filteredRestaurants, setFilteredRestaurants] = useState<RestaurantWithUI[]>([]);
+  const [loading, setLoading] = useState<boolean>(true);
+  const [error, setError] = useState<string | null>(null);
+  
   const { formatPrice } = useCurrency();
 
+  // Fonction pour calculer la note moyenne à partir des reviews
+  const calculateAverageRating = (reviews?: Review[]): number => {
+    if (!reviews || reviews.length === 0) {
+      return 0;
+    }
+    
+    const sum = reviews.reduce((total, review) => total + review.rating, 0);
+    return sum / reviews.length;
+  };
+
+  // Fonction pour charger les restaurants depuis l'API
+  useEffect(() => {
+    const fetchRestaurants = async () => {
+      try {
+        setLoading(true);
+        setError(null);
+        
+        // Utiliser le service RestaurantService pour récupérer les restaurants
+        const data = await RestaurantService.findAll();
+        
+        if (data) {
+          // Enrichir les restaurants avec des données UI supplémentaires
+          const restaurantsWithUI: RestaurantWithUI[] = data.map((restaurant: Restaurant) => {
+            // Calcul de la note moyenne à partir des reviews si disponibles
+            const rating = restaurant.rewiews ? 
+              calculateAverageRating(restaurant.rewiews) : 
+              Math.random() * 2 + 3; // Note aléatoire entre 3 et 5 si pas de reviews
+            
+            return {
+              ...restaurant,
+              rating: rating,
+              reviewCount: restaurant.rewiews?.length || Math.floor(Math.random() * 100) + 20,
+              priceRange: ["€", "€€", "€€€"][Math.floor(Math.random() * 3)],
+              openingHours: "11h00 - 22h00", // Valeur par défaut
+              specialties: restaurant.menus?.length ? 
+                restaurant.menus.flatMap(menu => 
+                  menu.items?.map(item => item.name) || []
+                ).slice(0, 3) : 
+                ["Spécialité de la maison"]
+            };
+          });
+          
+          setRestaurants(restaurantsWithUI);
+        } else {
+          setError("Aucune donnée reçue de l'API");
+        }
+      } catch (err) {
+        console.error("Erreur lors de la récupération des restaurants:", err);
+        setError("Impossible de charger les restaurants. Veuillez réessayer plus tard.");
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchRestaurants();
+  }, []);
 
   // Effet pour filtrer les restaurants
   useEffect(() => {
-    let filtered = sampleRestaurants;
+    if (restaurants.length === 0) return;
+    
+    let filtered = [...restaurants];
 
     // Filtrer par catégorie
     if (selectedCategory !== "all") {
-      filtered = filtered.filter(restaurant => restaurant.category === selectedCategory);
+      filtered = filtered.filter(restaurant => 
+        restaurant.type.toLowerCase() === selectedCategory.toLowerCase()
+      );
     }
 
-    // Filtrer par recherche
-    // if (searchTerm) {
-    //   const term = searchTerm.toLowerCase();
-    //   filtered = filtered.filter(restaurant => 
-    //     restaurant.name.toLowerCase().includes(term) || 
-    //     restaurant.address.toLowerCase().includes(term) || 
-    //     restaurant.specialties.some(specialty => specialty.toLowerCase().includes(term))
-    //   );
-    // }
-
     setFilteredRestaurants(filtered);
-  }, [selectedCategory]); //[selectedCategory, searchTerm]
+  }, [selectedCategory, restaurants]);
 
   // Afficher les étoiles de notation
   const renderStars = (rating: number) => {
@@ -199,17 +149,69 @@ const Restaurants: React.FC = () => {
     return stars;
   };
 
+  // Obtenir l'URL de l'image
+  const getImageUrl = (restaurant: RestaurantWithUI) => {
+    if (restaurant.image && restaurant.image.path) {
+      // Si c'est une URL complète
+      if (restaurant.image.path.startsWith('http')) {
+        return restaurant.image.path;
+      }
+      // Sinon, construire l'URL correcte vers le fichier local
+      // Utiliser le chemin relatif sans ajouter l'URL de l'API
+      return `${restaurant.image.path}`;
+    }
+    // Image par défaut
+    return "https://images.unsplash.com/photo-1555396273-367ea4eb4db5?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=1374&q=80";
+  };
+
+  // Obtenir l'adresse formatée
+  const getFormattedAddress = (restaurant: RestaurantWithUI) => {
+    if (restaurant.adress) {
+      return `${restaurant.adress.street}, ${restaurant.adress.zip_code} ${restaurant.adress.city}`;
+    }
+    return "Adresse non disponible";
+  };
+
+  // État de chargement
+  if (loading) {
+    return (
+      <div className="loading-container">
+        <div className="loading-spinner"></div>
+        <p>Chargement des restaurants...</p>
+      </div>
+    );
+  }
+
+  // État d'erreur
+  if (error) {
+    return (
+      <div className="error-container">
+        <svg xmlns="http://www.w3.org/2000/svg" width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+          <circle cx="12" cy="12" r="10"></circle>
+          <line x1="12" y1="8" x2="12" y2="12"></line>
+          <line x1="12" y1="16" x2="12.01" y2="16"></line>
+        </svg>
+        <h3>Erreur</h3>
+        <p>{error}</p>
+        <button onClick={() => window.location.reload()} className="retry-button">
+          Réessayer
+        </button>
+      </div>
+    );
+  }
+
   return (
     <div className="restaurants-page">
       {/* Slider de catégories */}
-      {SliderFilter(categories, setSelectedCategory)}
+      <SliderFilter categories={categories} setSelectedCategory={setSelectedCategory} />
+      
       {/* Liste des restaurants */}
       <div className="restaurants-container">
         <div className="restaurants-grid">
           {filteredRestaurants.length > 0 ? (
             filteredRestaurants.map(restaurant => (
-              <div key={restaurant.id} className="restaurant-card">
-                <div className="restaurant-image" style={{ backgroundImage: `url(${restaurant.imageUrl})` }}>
+              <div key={restaurant.restaurant_id} className="restaurant-card">
+                <div className="restaurant-image" style={{ backgroundImage: `url(${getImageUrl(restaurant)})` }}>
                   <div className="restaurant-image-overlay"></div>
                   <div className="price-tag">{restaurant.priceRange}</div>
                 </div>
@@ -217,11 +219,13 @@ const Restaurants: React.FC = () => {
                 <div className="restaurant-content">
                   <h3 className="restaurant-name">{restaurant.name}</h3>
 
-                  <div className="restaurant-category">{categories.find(c => c.id === restaurant.category)?.name}</div>
+                  <div className="restaurant-category">
+                    {categories.find(c => c.id.toLowerCase() === restaurant.type.toLowerCase())?.name || restaurant.type}
+                  </div>
 
                   <div className="restaurant-rating">
-                    <div className="stars">{renderStars(restaurant.rating)}</div>
-                    <span className="reviews-count">({restaurant.reviewCount})</span>
+                    <div className="stars">{renderStars(restaurant.rating || 4)}</div>
+                    <span className="reviews-count">({restaurant.reviewCount || 0})</span>
                   </div>
 
                   <div className="restaurant-address">
@@ -229,7 +233,14 @@ const Restaurants: React.FC = () => {
                       <path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"></path>
                       <circle cx="12" cy="10" r="3"></circle>
                     </svg>
-                    {restaurant.address}
+                    {getFormattedAddress(restaurant)}
+                  </div>
+
+                  <div className="restaurant-owner">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                      <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path>
+                      <circle cx="12" cy="7" r="4"></circle>
+                    </svg>
                   </div>
 
                   <div className="restaurant-hours">
@@ -237,15 +248,17 @@ const Restaurants: React.FC = () => {
                       <circle cx="12" cy="12" r="10"></circle>
                       <polyline points="12 6 12 12 16 14"></polyline>
                     </svg>
-                    {restaurant.openingHours}
+                    {restaurant.openingHours || "11h00 - 22h00"}
                   </div>
 
-                  <div className="restaurant-specialties">
-                    <strong>Spécialités:</strong> {restaurant.specialties.join(", ")}
-                  </div>
+                  {restaurant.specialties && restaurant.specialties.length > 0 && (
+                    <div className="restaurant-specialties">
+                      <strong>Spécialités:</strong> {restaurant.specialties.join(", ")}
+                    </div>
+                  )}
 
                   <div className="restaurant-actions">
-                    <Link to={`/restaurants/${restaurant.id}`} className="view-menu-button">
+                    <Link to={`/restaurants/${restaurant.restaurant_id}`} className="view-menu-button">
                       Voir le menu
                     </Link>
                     <button className="save-button">

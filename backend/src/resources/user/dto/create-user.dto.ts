@@ -1,5 +1,4 @@
-import { IsNotEmpty, IsString } from 'class-validator';
-import { Optional } from '@nestjs/common';
+import { IsNotEmpty, IsString, IsEmail, IsBoolean, IsNumber, IsOptional } from 'class-validator';
 
 export class CreateUserDto {
   @IsString()
@@ -10,9 +9,23 @@ export class CreateUserDto {
   @IsNotEmpty()
   password: string;
 
-  @Optional()
-  currentTeamId: number;
+  @IsString()
+  @IsNotEmpty()
+  nom: string;
 
-  @Optional()
-  teams: number[];
+  @IsString()
+  @IsNotEmpty()
+  prenom: string;
+
+  @IsEmail()
+  @IsNotEmpty()
+  email: string;
+
+  @IsBoolean()
+  @IsOptional()
+  bAdmin: boolean = false;
+
+  @IsNumber()
+  @IsOptional()
+  image_file_id?: number;
 }

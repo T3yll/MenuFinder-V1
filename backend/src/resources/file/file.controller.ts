@@ -1,19 +1,51 @@
-import { Controller, Get, Post, Body, Param, Put, Delete, UseInterceptors, UploadedFile } from '@nestjs/common';
+import { Controller, Get, Post, Body, Param, Put, Delete, UseInterceptors, UploadedFile, HttpException, HttpStatus } from '@nestjs/common';
 import { FileInterceptor } from '@nestjs/platform-express';
 import { FileService } from './file.service';
 import { File } from './entities/file.entity';
+import { Public } from '@/common/decorators/security/public.decorator';
+
+// Interface pour le fichier uploadé
+interface MulterFile {
+  fieldname: string;
+  originalname: string;
+  encoding: string;
+  mimetype: string;
+  size: number;
+  destination: string;
+  filename: string;
+  path: string;
+  buffer: Buffer;
+}
 
 @Controller('files')
 export class FileController {
   constructor(private readonly fileService: FileService) {}
-
-  @Post()
-
+  @Public()
+  @Post('upload')
+  @UseInterceptors(FileInterceptor('file'))
+  async uploadFile(@UploadedFile() file: MulterFile): Promise<File> {
+    if (!file) {
+      throw new HttpException('Aucun fichier trouvé', HttpStatus.BAD_REQUEST);
+    }
+    
+    try {
+      const result = await this.fileService.create(file);
+      console.log('Fichier créé avec succès:', result);
+      return result;
+    } catch (error) {
+      console.error('Erreur lors de la création du fichier:', error);
+      throw new HttpException(
+        `Erreur lors de l'upload du fichier: ${error.message}`,
+        HttpStatus.INTERNAL_SERVER_ERROR
+      );
+    }
+  }
+  @Public()
   @Get()
   findAll(): Promise<File[]> {
     return this.fileService.findAll();
   }
-
+  @Public()   
   @Get(':id')
   findOne(@Param('id') id: string): Promise<File> {
     return this.fileService.findOne(+id);
