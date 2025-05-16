@@ -2,6 +2,9 @@ import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import { Adress } from './entities/adress.entity';
+import { GetCoordinates } from '@/common/utils/ApiBanService';
+import { CreateAdressDto } from './dto/create-adress.dto';
+import { Body } from '@nestjs/common/decorators/http/route-params.decorator';
 
 @Injectable()
 export class AdressService {
@@ -10,7 +13,13 @@ export class AdressService {
     private adressRepository: Repository<Adress>,
   ) {}
 
-  create(adresse: Adress): Promise<Adress> {
+  async create(@Body() dto: CreateAdressDto): Promise<Adress> {
+    let lat: number;
+    let lon: number;
+    let adresse:Adress = dto as Adress;
+    ({ lat, lon } = await GetCoordinates(dto));
+    adresse.latitude = lat;
+    adresse.longitude = lon;
     return this.adressRepository.save(adresse);
   }
 

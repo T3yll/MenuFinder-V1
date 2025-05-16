@@ -2,6 +2,7 @@ import { Controller, Get, Post, Body, Param, Put, Delete } from '@nestjs/common'
 import { Adress } from './entities/adress.entity';
 import { AdressService } from './adress.service';
 import { Public } from '@/common/decorators/security/public.decorator';
+import { CreateAdressDto } from './dto/create-adress.dto';
 
 @Controller('adresses')
 export class AdressController {
@@ -9,10 +10,9 @@ export class AdressController {
 
   @Public()
   @Post()
-  create(@Body() adresse: Adress): Promise<Adress> {
+  create(@Body() adresse: CreateAdressDto): Promise<Adress> {
     return this.adressService.create(adresse);
   }
-
   @Public()
   @Get()
   findAll(): Promise<Adress[]> {

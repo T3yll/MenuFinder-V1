@@ -1,7 +1,7 @@
 import { Link } from 'react-router-dom';
 import '../styles/pages/Restaurants.scss';
 import { useCurrency } from '../contexts/CurrencyContext';
-import SliderFilter from '../components/commom/SliderFilter';
+import SliderFilter from '../components/common/SliderFilter';
 import { RestaurantService } from '../services/RestaurantService';
 import { useEffect, useState } from 'react';
 import { Restaurant, Review } from '../types/Restaurant';

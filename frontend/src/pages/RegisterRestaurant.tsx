@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import '../styles/pages/RegisterRestaurant.scss';
 import { RegisterRestaurantService } from '../services/RestaurantService';
+import AutoCompChampAdresse, {TypeChampAdresse} from '../components/common/AddressAutocompleteInput';
 
 // Types pour le formulaire
 interface FormData {
@@ -419,12 +420,13 @@ const RegisterRestaurant: React.FC = () => {
                   
                   <div className="form-row">
                     <div className="form-group">
-                      <label htmlFor="state">Région/Département</label>
+                      <label htmlFor="state">Région/Département *</label>
                       <input
                         type="text"
                         id="state"
                         name="state"
                         value={formData.state}
+                        required
                         onChange={handleInputChange}
                         placeholder="Île-de-France"
                       />
@@ -432,14 +434,15 @@ const RegisterRestaurant: React.FC = () => {
                     
                     <div className="form-group">
                       <label htmlFor="country">Pays *</label>
-                      <input
-                        type="text"
-                        id="country"
-                        name="country"
+                      <AutoCompChampAdresse
+                        name={'country'}
+                        id={"country"}
+                        type={TypeChampAdresse.Pays}
                         value={formData.country}
                         onChange={handleInputChange}
-                        required
                         placeholder="France"
+                        required={true}
+                        className=""
                       />
                     </div>
                   </div>

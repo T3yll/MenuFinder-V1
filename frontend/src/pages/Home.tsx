@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
 import '../styles/pages/Home.scss';
-import SearchBar from '../components/commom/SearchBar';
+import SearchBar from '../components/common/SearchBar';
 // import '../styles/pages/Home.scss';
 
 interface Restaurant {

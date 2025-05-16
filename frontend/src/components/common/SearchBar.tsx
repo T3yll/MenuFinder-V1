@@ -1,5 +1,5 @@
 import { useState } from "react";
-import "../../styles/components/commom/searchBar.scss"
+import "../../styles/components/common/searchBar.scss"
 
 function SearchBar(searchTerm: string, setSearchTerm: (searchTerm: string) => void) {
     return (
