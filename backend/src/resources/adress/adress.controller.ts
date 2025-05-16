@@ -23,7 +23,7 @@ export class AdressController {
   findOne(@Param('id') id: string): Promise<Adress> {
     return this.adressService.findOne(+id);
   }
-
+  @Public()
   @Put(':id')
   update(@Param('id') id: string, @Body() adresse: Adress): Promise<Adress> {
     return this.adressService.update(+id, adresse);

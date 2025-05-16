@@ -42,6 +42,14 @@ async function bootstrap() {
   writeFileSync('./swagger.json', JSON.stringify(document));
   SwaggerModule.setup('api', app, document);
 
+
+  app.useGlobalPipes(
+    new ValidationPipe({
+      transform: true, // Transforme automatiquement les payloads en leur bonne forme
+      whitelist: true, // Supprime les propriétés qui n'ont pas de décorateurs
+      forbidNonWhitelisted: true, // Rejette les requêtes qui contiennent des propriétés non autorisées
+    }),
+  );
   await app.listen(port);
 }
 

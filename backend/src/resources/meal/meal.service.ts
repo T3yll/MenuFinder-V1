@@ -7,35 +7,46 @@ import { Meal } from './entities/meal.entity';
 export class MealService {
   constructor(
     @InjectRepository(Meal)
-    private platRepository: Repository<Meal>,
+    private mealRepository: Repository<Meal>,
   ) {}
 
-  create(plat: Meal): Promise<Meal> {
-    return this.platRepository.save(plat);
+  async create(meal: Meal): Promise<Meal> {
+    return this.mealRepository.save(meal);
   }
 
-  findAll(): Promise<Meal[]> {
-    return this.platRepository.find();
+  async findAll(): Promise<Meal[]> {
+    return this.mealRepository.find({
+      relations: ['menu', 'image', 'mealCategory']
+    });
   }
 
-  findOne(id: number): Promise<Meal> {
-    return this.platRepository.findOne({ where: { meal_id: id } });
+  async findOne(id: number): Promise<Meal> {
+    return this.mealRepository.findOne({
+      where: { item_id: id },
+      relations: ['menu', 'image', 'mealCategory']
+    });
   }
 
-  findByMenu(menuId: number): Promise<Meal[]> {
-    return this.platRepository.find({ where: { menu_id: menuId } });
+  async findByMenu(menuId: number): Promise<Meal[]> {
+    return this.mealRepository.find({
+      where: { menu_id: menuId },
+      relations: ['image', 'mealCategory']
+    });
   }
 
-  findByCategorie(categorieId: number): Promise<Meal[]> {
-    return this.platRepository.find({ where: { meal_category_id: categorieId } });
+  async findByCategorie(categoryId: number): Promise<Meal[]> {
+    return this.mealRepository.find({
+      where: { meal_category_id: categoryId },
+      relations: ['menu', 'image']
+    });
   }
 
-  async update(id: number, meal: Meal): Promise<Meal> {
-    await this.platRepository.update(id, meal);
+  async update(id: number, meal: Partial<Meal>): Promise<Meal> {
+    await this.mealRepository.update(id, meal);
     return this.findOne(id);
   }
 
   async remove(id: number): Promise<void> {
-    await this.platRepository.delete(id);
+    await this.mealRepository.delete(id);
   }
 }
