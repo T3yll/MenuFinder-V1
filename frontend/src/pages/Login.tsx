@@ -3,20 +3,22 @@ import { Link } from 'react-router-dom';
 import { login } from '../services/auth.service'; // Assurez-vous d'importer votre service d'authentification
 import { useNavigate } from 'react-router-dom';
 import { getUserProfile } from '../services/user.service'; // Assurez-vous d'importer votre service utilisateur
+import { useAppDispatch } from '../hooks/storeToast';
+import { showToast } from '../store/slice/toastSlice';
 
 import '../styles/pages/Login.scss';
-import { Button, Snackbar } from '@mui/material';
 // import './Login.css';
 
+
 const Login: React.FC = () => {
-  const Navigate = useNavigate();
+  const navigate = useNavigate();
+  const dispatch = useAppDispatch();
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [showPassword, setShowPassword] = useState(false);
   const [rememberMe, setRememberMe] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState('');
-  const [open, setOpen] = useState(false);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -29,23 +31,40 @@ const Login: React.FC = () => {
       // Simuler un délai de connexion
       await new Promise((resolve) => setTimeout(resolve, 1500));
 
-      // Redirection après connexion réussie (à implémenter)
+      // Redirection après connexion réussie
       login({ email, password })
         .then(async (response) => {
           console.log('Réponse de connexion:', response);
-          // Enregistrer le token dans le stockage local ou gérer l'état de l'utilisateur
           localStorage.setItem('token', response.access_token);
           const user = await getUserProfile(response.access_token)
           console.log('Utilisateur connecté:', user);
           localStorage.setItem('user', JSON.stringify(user));
-          Navigate('/');
+          
+          dispatch(showToast({
+            message: 'Connexion réussie!',
+            severity: 'success'
+          }));
+          
+          setTimeout(() => {
+            navigate('/');
+          }, 1000);
         })
         .catch((error) => {
           console.error('Erreur de connexion:', error);
           setError('Erreur de connexion. Veuillez réessayer.');
+          
+          dispatch(showToast({
+            message: 'Erreur de connexion. Veuillez réessayer.',
+            severity: 'error'
+          }));
         });
     } catch (err) {
       setError('Identifiants incorrects. Veuillez réessayer.');
+      
+      dispatch(showToast({
+        message: 'Identifiants incorrects. Veuillez réessayer.',
+        severity: 'error'
+      }));
     } finally {
       setIsLoading(false);
     }
@@ -55,25 +74,37 @@ const Login: React.FC = () => {
     setShowPassword(!showPassword);
   };
 
-  const handleClick = () => {
-    setOpen(true);
-  };
+  const testToasts = () => {
+    dispatch(showToast({
+      message: 'Message de succès!',
+      severity: 'success',
+      duration: 3000
+    }));
 
-  const handleClose = (
-    event: React.SyntheticEvent | Event,
-    reason?: string
-  ) => {
-    if (reason === 'clickaway') {
-      return;
-    }
-    setOpen(false);
-  };
+    setTimeout(() => {
+      dispatch(showToast({
+        message: 'Message d\'erreur!',
+        severity: 'error',
+        duration: 3000
+      }));
+    }, 1000);
 
-  const action = (
-    <Button color="inherit" size="small" onClick={handleClose}>
-      Retour Custom
-    </Button>
-  );
+    setTimeout(() => {
+      dispatch(showToast({
+        message: 'Message d\'information!',
+        severity: 'info',
+        duration: 3000
+      }));
+    }, 2000);
+
+    setTimeout(() => {
+      dispatch(showToast({
+        message: 'Message d\'avertissement!',
+        severity: 'warning',
+        duration: 3000
+      }));
+    }, 3000);
+  };
 
   return (
     <div className="login-page">
@@ -86,16 +117,6 @@ const Login: React.FC = () => {
             <h1 className="login-title">Connexion</h1>
             <p className="login-subtitle">Accédez à votre compte MenuFinder</p>
           </div>
-
-          <Button onClick={handleClick}>Open Snackbar</Button>
-          <Snackbar
-            anchorOrigin={{ vertical: 'bottom', horizontal: 'right' }}
-            open={open}
-            autoHideDuration={6000}
-            onClose={handleClose}
-            message="Test 2"
-            action={action}
-          />
 
           {error && <div className="error-message">{error}</div>}
 
