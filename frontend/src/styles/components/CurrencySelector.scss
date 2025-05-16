@@ -1,4 +1,4 @@
-@use "../base/_variables.scss";
+@use "../base/variables.scss" as var;
 
 .currency-selector {
     position: relative;
@@ -10,17 +10,17 @@
     justify-content: center;
     min-width: 40px;
     height: 40px;
-    padding: 0 $spacing-sm;
-    border-radius: $border-radius-md;
+    padding: 0 var.$spacing-sm;
+    border-radius: var.$border-radius-md;
     background-color: transparent;
-    color: $color-secondary;
+    color: var.$color-secondary;
     font-weight: 500;
-    border: 1px solid $color-secondary;
+    border: 1px solid var.$color-secondary;
     cursor: pointer;
     transition: all 0.3s ease;
 
     &:hover {
-        background-color: $color-secondary;
+        background-color: var.$color-secondary;
         color: white;
     }
 }
@@ -31,8 +31,8 @@
     right: 0;
     min-width: 200px;
     background-color: white;
-    border-radius: $border-radius-md;
-    box-shadow: $shadow-md;
+    border-radius: var.$border-radius-md;
+    box-shadow: var.$shadow-md;
     overflow: hidden;
     z-index: 100;
 }
@@ -41,7 +41,7 @@
     display: flex;
     align-items: center;
     width: 100%;
-    padding: $spacing-sm $spacing-md;
+    padding: var.$spacing-sm var.$spacing-md;
     background: none;
     border: none;
     text-align: left;
@@ -49,11 +49,11 @@
     transition: background-color 0.2s;
 
     &:hover {
-        background-color: rgba($color-primary, 0.05);
+        background-color: rgba(var.$color-primary, 0.05);
     }
 
     &.active {
-        background-color: rgba($color-primary, 0.1);
+        background-color: rgba(var.$color-primary, 0.1);
         font-weight: 500;
     }
 }
@@ -64,10 +64,10 @@
     justify-content: center;
     width: 24px;
     height: 24px;
-    margin-right: $spacing-sm;
+    margin-right: var.$spacing-sm;
     font-weight: bold;
 }
 
 .currency-name {
-    color: $color-dark;
+    color: var.$color-dark;
 }

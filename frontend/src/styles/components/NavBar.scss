@@ -1,11 +1,11 @@
-@use "../base/_variables.scss";
+@use "../base/variables.scss" as var;
 
 .navbar-container {
-  background-color: $color-light;
+  background-color: var.$color-light;
 }
 
 .navbar-brand {
-  color: $color-dark;
+  color: var.$color-secondary;
   display: flex;
   align-items: center;
 
@@ -25,19 +25,19 @@
 }
 
 .btn-primary {
-  background-color: $color-secondary;
+  background-color: var.$color-secondary;
 
   &:hover {
-    background-color: darken($color-secondary, 10%);
+    background-color: darken(var.$color-secondary, 10%);
   }
 }
 
 .btn-outline {
-  color: $color-secondary;
-  border-color: $color-secondary;
+  color: var.$color-secondary;
+  border-color: var.$color-secondary;
 
   &:hover {
-    background-color: $color-secondary;
+    background-color: var.$color-secondary;
     color: white;
   }
 }

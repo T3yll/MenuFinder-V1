@@ -1,6 +1,6 @@
 // Import des variables et mixins
-@import '../../base/variables';
-@import '../../base/mixins';
+@use '../../base/variables' as var;
+@use '../../base/mixins' as mix;
 
 /* Barre de recherche */
 .search-container {
@@ -15,7 +15,7 @@
         padding: 0 65px 0 20px;
         border-radius: 30px;
         border: none;
-        box-shadow: 0 5px 15px $shadow-light;
+        box-shadow: 0 5px 15px var.$shadow-light;
         font-size: 1rem;
         color: black;
     }
@@ -27,7 +27,7 @@
         width: 60px;
         height: 60px;
         border-radius: 50%;
-        background-color: $color-primary;
+        background-color: var.$color-primary;
         color: white;
         border: none;
         display: flex;
@@ -37,7 +37,7 @@
         transition: background-color 0.3s;
 
         &:hover {
-            background-color: darken($primary-color, 10%);
+            background-color: darken(var.$primary-color, 10%);
         }
     }
 }

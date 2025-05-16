@@ -1,13 +1,13 @@
 // Import des variables et mixins
-@import '../../base/variables';
-@import '../../base/mixins';
+@use '../../base/variables' as var;
+@use '../../base/mixins' as mix;
 
 .category-slider-container {
     position: sticky;
     top: 0;
     z-index: 10;
     background-color: white;
-    box-shadow: 0 2px 10px $shadow-light;
+    box-shadow: 0 2px 10px var.$shadow-light;
 
     .category-slider-wrapper {
         position: relative;
@@ -41,7 +41,7 @@
                 // margin-right: 10px;
                 background-color: #f0f2f5;
                 border: none;
-                border-radius: $card-border-radius;
+                border-radius: mix.$card-border-radius;
                 cursor: pointer;
                 transition: all 0.3s;
                 color: #4a4a4a;
@@ -52,7 +52,7 @@
                 }
 
                 &.active {
-                    background-color: $color-primary;
+                    background-color: var.$color-primary;
                     color: white;
                 }
             }
@@ -78,13 +78,13 @@
             align-items: center;
             justify-content: center;
             cursor: pointer;
-            box-shadow: 0 2px 5px $shadow-light;
+            box-shadow: 0 2px 5px var.$shadow-light;
             z-index: 1;
             transition: all 0.2s;
 
             &:hover {
-                box-shadow: 0 3px 8px $shadow-medium;
-                background-color: $background-color;
+                box-shadow: 0 3px 8px var.$shadow-medium;
+                background-color: var.$background-color;
             }
 
             &.slider-arrow-right {
