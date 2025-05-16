@@ -27,6 +27,15 @@ interface FormData {
   priceRange: string;
 }
 
+// Interface pour les données utilisateur stockées dans localStorage
+interface UserData {
+  id: number;
+  username: string;
+  nom: string;
+  prenom: string;
+  image_file_id: number | null;
+}
+
 const RESTAURANT_TYPES = [
   { id: 'burger', name: 'Burger', emoji: '🍔' },
   { id: 'sushi', name: 'Sushi', emoji: '🍣' },
@@ -68,7 +77,25 @@ const RegisterRestaurant: React.FC = () => {
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [isSubmitted, setIsSubmitted] = useState(false);
   const [error, setError] = useState<string | null>(null);
+  const [userData, setUserData] = useState<UserData | null>(null);
 
+  // Récupérer les données utilisateur depuis localStorage
+  useEffect(() => {
+    try {
+      // Récupération de l'utilisateur depuis le localStorage
+      const userDataString = localStorage.getItem('user');
+      if (userDataString) {
+        const parsedUserData = JSON.parse(userDataString);
+        setUserData(parsedUserData);
+      } else {
+        console.error('Aucune donnée utilisateur trouvée dans localStorage');
+        setError("Vous devez être connecté pour inscrire votre restaurant.");
+      }
+    } catch (err) {
+      console.error('Erreur lors de la récupération des données utilisateur:', err);
+      setError("Erreur lors de la récupération de vos informations. Veuillez vous reconnecter.");
+    }
+  }, []);
 
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>) => {
     const { name, value } = e.target;
@@ -130,6 +157,10 @@ const RegisterRestaurant: React.FC = () => {
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     
+    if (!userData) {
+      setError("Vous devez être connecté pour inscrire votre restaurant.");
+      return;
+    }
     
     if (!formData.image) {
       setError("Une image du restaurant est obligatoire");
@@ -149,7 +180,9 @@ const RegisterRestaurant: React.FC = () => {
         country: formData.country
       };
       
-      const userId = 6;
+      // Utiliser l'ID utilisateur stocké dans userData au lieu de la valeur codée en dur
+      const userId = userData.id;
+      
       // Enregistrer le restaurant en utilisant le service
       await RegisterRestaurantService.registerRestaurant(
         formData.name,
