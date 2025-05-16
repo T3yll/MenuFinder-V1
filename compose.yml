@@ -3,7 +3,16 @@ services:
     build:
       context: .
       dockerfile: ./backend/Dockerfile
-    working_dir: /var/www/tuile/backend
+    working_dir: /var/www/tuile/backend 
+    develop:
+      watch:
+        - action: sync
+          path: ./web
+          target: /src/web
+          ignore:
+            - node_modules/
+        - action: rebuild
+          path: package.json
     ports:
       - '${BACKEND_PORT:-4000}:4000'
     expose:
@@ -32,6 +41,15 @@ services:
 
   frontend:
     image: node:20
+    develop:
+     watch:
+        - action: sync
+          path: ./web
+          target: /src/web
+          ignore:
+            - node_modules/
+        - action: rebuild
+          path: package.json
     working_dir: /app
     ports:
       - '3000:3000'

@@ -1,0 +1,68 @@
+.currency-selector {
+  position: relative;
+}
+
+.currency-button {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  min-width: 40px;
+  height: 40px;
+  padding: 0 0.5rem;
+  border-radius: 0.375rem;
+  background-color: transparent;
+  color: #fda928;
+  font-weight: 500;
+  border: 1px solid #fda928;
+  cursor: pointer;
+  transition: all 0.3s ease;
+}
+.currency-button:hover {
+  background-color: #fda928;
+  color: white;
+}
+
+.currency-dropdown {
+  position: absolute;
+  top: calc(100% + 8px);
+  right: 0;
+  min-width: 200px;
+  background-color: white;
+  border-radius: 0.375rem;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+  overflow: hidden;
+  z-index: 100;
+}
+
+.currency-option {
+  display: flex;
+  align-items: center;
+  width: 100%;
+  padding: 0.5rem 1rem;
+  background: none;
+  border: none;
+  text-align: left;
+  cursor: pointer;
+  transition: background-color 0.2s;
+}
+.currency-option:hover {
+  background-color: rgba(36, 91, 165, 0.05);
+}
+.currency-option.active {
+  background-color: rgba(36, 91, 165, 0.1);
+  font-weight: 500;
+}
+
+.currency-symbol {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 24px;
+  height: 24px;
+  margin-right: 0.5rem;
+  font-weight: bold;
+}
+
+.currency-name {
+  color: #292F36;
+}/*# sourceMappingURL=CurrencySelector.css.map */

@@ -35,7 +35,7 @@ export class AuthController {
   @Post('login')
   async login(@Body() loginDto: LoginDto) {
     const user = await this.authService.validateUser(
-      loginDto.username,
+      loginDto.email,
       loginDto.password
     );
     return this.authService.login(user);
@@ -50,7 +50,7 @@ export class AuthController {
   @Get('me')
   async me(@Request() req) {
     const userId = req.user.userId; // Récupère l'ID utilisateur depuis le JWT
-    const user = await this.userService.findOne(userId); // Utilise l'instance du service User
+    const user = await this.userService.selectPublicInfo(userId); // Utilise l'instance du service User
     return user;
   }
 }

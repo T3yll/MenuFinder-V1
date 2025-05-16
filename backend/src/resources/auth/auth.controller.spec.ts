@@ -50,7 +50,7 @@ describe('AuthController', () => {
 
   describe('login', () => {
     it('should return an access token', async () => {
-      const loginDto: LoginDto = { username: 'testUser', password: 'password' };
+      const loginDto: LoginDto = { email: 'test.test@test.oui', password: 'password' };
       const token = { access_token: 'mockedAccessToken' };
       mockAuthService.login.mockResolvedValue(token);
 

@@ -1,13 +1,17 @@
 import React, { useState } from 'react';
-import { Link } from 'react-router-dom';
+import { Link, Navigate, useNavigate } from 'react-router-dom';
 import '../styles/pages/Register.scss';
 import { log } from 'console';
 import { registerUser } from '../services/user.service';
 // import './Register.css';
 
+
+
 const Register: React.FC = () => {
-  const [firstName, setFirstName] = useState('');
-  const [lastName, setLastName] = useState('');
+  const Navigate = useNavigate();
+  const [prenom, setFirstName] = useState('');
+  const [nom, setLastName] = useState('');
+  const [username, setUsername] = useState('');
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [confirmPassword, setConfirmPassword] = useState('');
@@ -18,12 +22,12 @@ const Register: React.FC = () => {
   const [error, setError] = useState('');
 
   const validateForm = () => {
-    if (!firstName.trim()) {
+    if (!prenom.trim()) {
       setError('Veuillez saisir votre prénom.');
       return false;
     }
 
-    if (!lastName.trim()) {
+    if (!nom.trim()) {
       setError('Veuillez saisir votre nom de famille.');
       return false;
     }
@@ -52,7 +56,6 @@ const Register: React.FC = () => {
       setError('Vous devez accepter les conditions d\'utilisation.');
       return false;
     }
-
     return true;
   };
 
@@ -73,21 +76,24 @@ const Register: React.FC = () => {
     console.log('setIsLoading ok');
 
     try {
-      console.log('Register start:', { firstName, lastName, email, password, agreeTerms });
-
-      await new Promise(resolve => setTimeout(resolve, 1500));
-
-      const user = await registerUser({ firstName, lastName, email, password, agreeTerms });
+      console.log('Register start:', { prenom, nom,username, email, password, confirmPassword });
+console.log(process.env);
+setUsername(`${prenom}-${nom}-${Math.floor(Math.random() * 1000)}`);
+      console.log('username', username);
+    
+      const user = await registerUser({ prenom, nom,username, email, password, confirmPassword });
 
       console.log('Register success');
       console.log('user', user);
+      Navigate("/login");
+      
 
 
     } catch (err) {
       console.error('Erreur lors de l\'inscription:', err);
       setError('Une erreur est survenue lors de l\'inscription. Veuillez réessayer.');
     } finally {
-      setIsLoading(false);
+      setIsLoading(false);     
     }
   };
 
@@ -125,7 +131,7 @@ const Register: React.FC = () => {
                   type="text"
                   id="name"
                   className="form-input"
-                  value={firstName}
+                  value={prenom}
                   onChange={(e) => setFirstName(e.target.value)}
                   required
                   placeholder="Votre prénom"
@@ -140,7 +146,7 @@ const Register: React.FC = () => {
                   type="text"
                   id="name"
                   className="form-input"
-                  value={lastName}
+                  value={nom}
                   onChange={(e) => setLastName(e.target.value)}
                   required
                   placeholder="Votre nom de famille"
