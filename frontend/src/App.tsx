@@ -10,6 +10,7 @@ import NavBar from "./components/NavBar";
 import Map from './pages/Map';
 import { CurrencyProvider } from './contexts/CurrencyContext';
 import Profile from './pages/Profile';
+import RegisterRestaurant from './pages/RegisterRestaurant';
 
 function App() {
   return (
@@ -24,6 +25,7 @@ function App() {
             <Route path="/menus" element={<><NavBar /><Menus /></>} />
             <Route path="/profile" element={<><NavBar /><Profile /></>} />
             <Route path="/map" element={<><NavBar /><Map/></>} />
+            <Route path="/register-restaurant" element={<><NavBar /><RegisterRestaurant/></>} />
           </Routes>
         </div>
       </Router>
