@@ -3,8 +3,9 @@ import { User } from "../types/User";
 
 
 export interface UserRegister {
-    firstName: string;
-    lastName: string;
+    prenom: string;
+    nom: string;
+    username: string;
     email: string;
     password: string;
     confirmPassword: string;
@@ -13,9 +14,9 @@ export interface UserRegister {
 export const registerUser = async (user: UserRegister) => {
     console.log('registerUser');
 
-    const response: AxiosResponse<User> = await axios.post(`${process.env.VITE_API_URL}/register`, user);
+    const response: AxiosResponse<User> = await axios.post(`${process.env.VITE_API_URL}/users`, user);
 
-    if (response.status !== 200) {
+    if (response.status !== 201) {
         throw new Error('Failed to register user');
     }
 
@@ -23,10 +24,10 @@ export const registerUser = async (user: UserRegister) => {
     return response.data;
 };
 
-export async function getUserProfile() {
-    const res = await fetch(`${process.env.API_URI_BACKEND}/users/me`, {
+export async function getUserProfile(token: string = localStorage.getItem('token') || ''): Promise<User> {
+    const res = await fetch(`${process.env.VITE_API_URL}/auth/me`, {
         headers: {
-            Authorization: `Bearer ${localStorage.getItem('token')}`
+            Authorization: `Bearer ${token}`
         }
     });
 

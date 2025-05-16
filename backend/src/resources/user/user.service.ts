@@ -50,7 +50,28 @@ export class UserService {
   async findOne(id: number): Promise<User> {
     const user = await this.usersRepository.findOne({
       where: { id },
-      relations: ['teams'],
+    });
+
+    if (!user) {
+      throw new NotFoundException(`User with ID ${id} not found`);
+    }
+
+    return user;
+  }
+
+  async selectPublicInfo(id: number): Promise<User> {
+    const user = await this.usersRepository.findOne({
+      where: { id },
+      select: {
+        id: true,
+        username: true,
+        nom: true,
+        prenom: true,
+        image_file_id:true,
+        bAdmin: false,
+        email: false,
+        password: false,
+      }
     });
 
     if (!user) {

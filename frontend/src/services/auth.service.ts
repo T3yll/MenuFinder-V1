@@ -18,12 +18,7 @@ export interface RegisterCredentials {
 
 
 export interface AuthResponse {
-    token: string;
-    user: {
-        id: string;
-        email: string;
-        // add other user fields as needed
-    };
+    access_token: string;
 }
 
 export const login = async (credentials: LoginCredentials): Promise<AuthResponse> => {

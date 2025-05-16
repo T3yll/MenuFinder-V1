@@ -1,10 +1,13 @@
 import React, { useState } from 'react';
-import { Link } from 'react-router-dom';
+import { Link, Navigate } from 'react-router-dom';
 import {login} from '../services/auth.service'; // Assurez-vous d'importer votre service d'authentification
+import { useNavigate } from 'react-router-dom';
+import { getUserProfile } from '../services/user.service'; // Assurez-vous d'importer votre service utilisateur
 
 import '../styles/pages/Login.scss';
 
 const Login: React.FC = () => {
+  const Navigate = useNavigate();
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [showPassword, setShowPassword] = useState(false);
@@ -23,11 +26,16 @@ const Login: React.FC = () => {
 
       // Simuler un délai de connexion
       login({ email, password })
-        .then((response) => {
+        .then(async (response) => {
           console.log('Réponse de connexion:', response);
           // Enregistrer le token dans le stockage local ou gérer l'état de l'utilisateur
-          localStorage.setItem('user', JSON.stringify(response.user));
-          localStorage.setItem('token', response.token);
+          
+          
+          localStorage.setItem('token', response.access_token);
+          const user = await getUserProfile(response.access_token)
+          console.log('Utilisateur connecté:', user);
+          localStorage.setItem('user', JSON.stringify(user));
+          Navigate('/'); // Redirigez vers la page d'accueil ou le tableau de bord
         })
         .catch((error) => {
           console.error('Erreur de connexion:', error);
