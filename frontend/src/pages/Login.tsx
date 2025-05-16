@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import { Link } from 'react-router-dom';
 // import './Login.scss';
 import '../styles/pages/Login.scss';
+import { Button, Snackbar } from '@mui/material';
 // import './Login.css';
 
 const Login: React.FC = () => {
@@ -11,6 +12,7 @@ const Login: React.FC = () => {
   const [rememberMe, setRememberMe] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState('');
+  const [open, setOpen] = useState(false);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -22,7 +24,7 @@ const Login: React.FC = () => {
       console.log('Connexion avec:', { email, password, rememberMe });
 
       // Simuler un délai de connexion
-      await new Promise(resolve => setTimeout(resolve, 1500));
+      await new Promise((resolve) => setTimeout(resolve, 1500));
 
       // Redirection après connexion réussie (à implémenter)
     } catch (err) {
@@ -36,6 +38,26 @@ const Login: React.FC = () => {
     setShowPassword(!showPassword);
   };
 
+  const handleClick = () => {
+    setOpen(true);
+  };
+
+  const handleClose = (
+    event: React.SyntheticEvent | Event,
+    reason?: string
+  ) => {
+    if (reason === 'clickaway') {
+      return;
+    }
+    setOpen(false);
+  };
+
+  const action = (
+    <Button color="inherit" size="small" onClick={handleClose}>
+      Retour Custom
+    </Button>
+  );
+
   return (
     <div className="login-page">
       <div className="login-container">
@@ -48,15 +70,23 @@ const Login: React.FC = () => {
             <p className="login-subtitle">Accédez à votre compte MenuFinder</p>
           </div>
 
-          {error && (
-            <div className="error-message">
-              {error}
-            </div>
-          )}
+          <Button onClick={handleClick}>Open Snackbar</Button>
+          <Snackbar
+            anchorOrigin={{ vertical: 'bottom', horizontal: 'right' }}
+            open={open}
+            autoHideDuration={6000}
+            onClose={handleClose}
+            message="Test 2"
+            action={action}
+          />
+
+          {error && <div className="error-message">{error}</div>}
 
           <form onSubmit={handleSubmit} className="login-form">
             <div className="form-group">
-              <label htmlFor="email" className="form-label">Email</label>
+              <label htmlFor="email" className="form-label">
+                Email
+              </label>
               <div className="input-container">
                 <input
                   type="email"
@@ -71,10 +101,12 @@ const Login: React.FC = () => {
             </div>
 
             <div className="form-group">
-              <label htmlFor="password" className="form-label">Mot de passe</label>
+              <label htmlFor="password" className="form-label">
+                Mot de passe
+              </label>
               <div className="input-container">
                 <input
-                  type={showPassword ? "text" : "password"}
+                  type={showPassword ? 'text' : 'password'}
                   id="password"
                   className="form-input password-input"
                   value={password}
@@ -86,7 +118,11 @@ const Login: React.FC = () => {
                   type="button"
                   className="password-toggle-btn"
                   onClick={togglePasswordVisibility}
-                  aria-label={showPassword ? "Masquer le mot de passe" : "Afficher le mot de passe"}
+                  aria-label={
+                    showPassword
+                      ? 'Masquer le mot de passe'
+                      : 'Afficher le mot de passe'
+                  }
                 >
                   {showPassword ? '👁️' : '👁️‍🗨️'}
                 </button>
@@ -121,7 +157,12 @@ const Login: React.FC = () => {
           </form>
 
           <div className="login-footer">
-            <p>Vous n'avez pas de compte? <Link to="/register" className="register-link">Créer un compte</Link></p>
+            <p>
+              Vous n'avez pas de compte?{' '}
+              <Link to="/register" className="register-link">
+                Créer un compte
+              </Link>
+            </p>
           </div>
         </div>
       </div>
