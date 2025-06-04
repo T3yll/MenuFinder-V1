@@ -1,7 +1,16 @@
 import { Response } from '@/resources/response/entities/response.entity';
 import { Restaurant } from '@/resources/restaurant/entities/restaurant.entity';
 import { User } from '@/resources/user/entities/user.entity';
-import { Entity, PrimaryGeneratedColumn, Column, ManyToOne, OneToMany, JoinColumn } from 'typeorm';
+import {
+    Entity,
+    PrimaryGeneratedColumn,
+    Column,
+    ManyToOne,
+    OneToMany,
+    JoinColumn,
+    CreateDateColumn,
+    UpdateDateColumn
+} from 'typeorm';
 
 @Entity('Review')
 export class Review {
@@ -17,10 +26,10 @@ export class Review {
   @Column('text')
   text: string;
 
-  @Column('date')
+  @CreateDateColumn()
   added_at: Date;
 
-  @Column('date')
+  @UpdateDateColumn()
   updated_at: Date;
 
   @ManyToOne(() => Restaurant, restaurant => restaurant.rewiews)
