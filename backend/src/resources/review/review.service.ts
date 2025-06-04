@@ -22,6 +22,11 @@ export class ReviewService {
     return this.reviewRepository.findOne({ where: { review_id: id } });
   }
 
+  async count(): Promise<Number> {
+    const count = await this.reviewRepository.count();
+    return count;
+  }
+
   findByRestaurant(restaurantId: number): Promise<Review[]> {
     return this.reviewRepository.find({ where: { restaurant_id: restaurantId } });
   }

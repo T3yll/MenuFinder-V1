@@ -14,6 +14,8 @@ import ToastRedux from './components/commom/toast/ToastRedux';
 import Profile from './pages/Profile';
 import RegisterRestaurant from './pages/RegisterRestaurant';
 import RestaurantDetail from './pages/RestaurantDetail';
+import Dashboard from './pages/Dashboard';
+import AdminMiddleware from './Middleware/adminMiddleware';
 
 function App() {
   return (
@@ -31,6 +33,7 @@ function App() {
               <Route path="/map" element={<><NavBar /><Map/></>} />
               <Route path="/register-restaurant" element={<><NavBar /><RegisterRestaurant/></>} />
               <Route path="/restaurants/:id" element={<RestaurantDetail />} />
+              <Route path="/admin" element={ <AdminMiddleware><div><NavBar /><Dashboard /></div></AdminMiddleware> } />
             </Routes>
             <ToastRedux />
           </div>
