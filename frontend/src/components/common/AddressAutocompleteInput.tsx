@@ -2,14 +2,18 @@ import React, { useState, useEffect } from "react";
 
 type Props = {
   value: string;
-  onChange: (value: string) => void;
+  id?: string;
+  type?: "Pays" | "Ville" | "CodePostal" | "Adresse";
+  onChange: (value: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>) => void;
   placeholder?: string;
   name?: string;
+  required?: boolean;
 };
 
-const AddressAutocompleteInput: React.FC<Props> = ({ value, onChange, placeholder, name }) => {
+const AddressAutocompleteInput: React.FC<Props> = ({ value,id,type, onChange, placeholder, name,required }) => {
   const [suggestions, setSuggestions] = useState<any[]>([]);
   const [isFocused, setIsFocused] = useState(false);
+  
 
   useEffect(() => {
     const fetchSuggestions = async () => {
@@ -17,15 +21,35 @@ const AddressAutocompleteInput: React.FC<Props> = ({ value, onChange, placeholde
         setSuggestions([]);
         return;
       }
-
-      const response = await fetch(`https://api-adresse.data.gouv.fr/search/?q=${encodeURIComponent(value)}&limit=5`);
+      let url;
+      switch (type){
+        case "Pays":
+          url = `https://api-adresse.data.gouv.fr/search/?q=${encodeURIComponent(value)}&type=pays&limit=5`;
+          break;
+        case "Ville":
+          url = `https://api-adresse.data.gouv.fr/search/?q=${encodeURIComponent(value)}&type=locality&limit=5`;
+          break;
+        case "CodePostal":
+          url = `https://api-adresse.data.gouv.fr/search/?q=${encodeURIComponent(value)}&type=postcode&limit=5`;
+          break;
+        case "Adresse":
+        default:
+          url = `https://api-adresse.data.gouv.fr/search/?q=${encodeURIComponent(value)}&limit=5`;
+      }
+      const response = await fetch(`${url}`);
       const data = await response.json();
+      console.log("Suggestions fetched:", data.features); // Debugging line
       setSuggestions(data.features || []);
     };
 
     const timeout = setTimeout(fetchSuggestions, 300); // debounce
     return () => clearTimeout(timeout);
   }, [value]);
+
+  const onChangeIntern = (e: React.ChangeEvent<HTMLInputElement>) => {
+    onChange(e);
+    setSuggestions([]); // Clear suggestions when input changes
+  };
 
   const handleSelect = (suggestion: any) => {
     onChange(suggestion.properties.label);
@@ -35,17 +59,20 @@ const AddressAutocompleteInput: React.FC<Props> = ({ value, onChange, placeholde
   return (
     <div style={{ position: "relative" }}>
       <input
-        type="text"
+        type="Text"
+        list="suggestions"
+        required={required}
+        id={id}
         value={value}
         name={name}
-        onChange={(e) => onChange(e.target.value)}
+        onChange={(e) => onChangeIntern(e)}
         onFocus={() => setIsFocused(true)}
         onBlur={() => setTimeout(() => setIsFocused(false), 100)} // délai pour cliquer une suggestion
         placeholder={placeholder || "Adresse"}
         style={{ width: "100%", padding: "8px" }}
       />
       {isFocused && suggestions.length > 0 && (
-        <ul className="AutoSuggestAdress" style={{
+        <datalist id="suggestions" className="AutoSuggestAdress" style={{
           position: "absolute",
           top: "100%",
           left: 0,
@@ -60,16 +87,16 @@ const AddressAutocompleteInput: React.FC<Props> = ({ value, onChange, placeholde
           overflowY: "auto"
         }}>
           {suggestions.map((s, idx) => (
-            <li
+            <option
               key={idx}
               onClick={() => handleSelect(s)}
               style={{ padding: "8px", cursor: "pointer" }}
               onMouseDown={(e) => e.preventDefault()} // évite perte de focus
             >
               {s.properties.label}
-            </li>
+            </option>
           ))}
-        </ul>
+        </datalist>
       )}
     </div>
   );
