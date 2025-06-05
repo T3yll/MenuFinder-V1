@@ -27,6 +27,15 @@ interface FormData {
   priceRange: string;
 }
 
+// Interface pour les données utilisateur stockées dans localStorage
+interface UserData {
+  id: number;
+  username: string;
+  nom: string;
+  prenom: string;
+  image_file_id: number | null;
+}
+
 const RESTAURANT_TYPES = [
   { id: 'burger', name: 'Burger', emoji: '🍔' },
   { id: 'sushi', name: 'Sushi', emoji: '🍣' },
@@ -68,7 +77,25 @@ const RegisterRestaurant: React.FC = () => {
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [isSubmitted, setIsSubmitted] = useState(false);
   const [error, setError] = useState<string | null>(null);
+  const [userData, setUserData] = useState<UserData | null>(null);
 
+  // Récupérer les données utilisateur depuis localStorage
+  useEffect(() => {
+    try {
+      // Récupération de l'utilisateur depuis le localStorage
+      const userDataString = localStorage.getItem('user');
+      if (userDataString) {
+        const parsedUserData = JSON.parse(userDataString);
+        setUserData(parsedUserData);
+      } else {
+        console.error('Aucune donnée utilisateur trouvée dans localStorage');
+        setError("Vous devez être connecté pour inscrire votre restaurant.");
+      }
+    } catch (err) {
+      console.error('Erreur lors de la récupération des données utilisateur:', err);
+      setError("Erreur lors de la récupération de vos informations. Veuillez vous reconnecter.");
+    }
+  }, []);
 
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>) => {
     const { name, value } = e.target;
@@ -127,46 +154,79 @@ const RegisterRestaurant: React.FC = () => {
     }
   };
 
-  const handleSubmit = async (e: React.FormEvent) => {
-    e.preventDefault();
+  // Dans ton composant RegisterRestaurant, remplace la fonction handleSubmit par :
+
+const handleSubmit = async (e: React.FormEvent) => {
+  e.preventDefault();
+  
+  if (!userData) {
+    setError("Vous devez être connecté pour inscrire votre restaurant.");
+    return;
+  }
+  
+  if (!formData.image) {
+    setError("Une image du restaurant est obligatoire");
+    return;
+  }
+  
+  setIsSubmitting(true);
+  setError(null);
+  
+  try {
+    // Extraire le numéro du début de la rue ou utiliser 1 par défaut
+    const streetParts = formData.street.trim().split(' ');
+    const streetNumber = parseInt(streetParts[0]) || 1;
+    const streetName = streetParts.length > 1 ? streetParts.slice(1).join(' ') : formData.street;
     
+    // Préparer les données d'adresse selon la structure attendue par ton service
+    const adressInfo = {
+      number: streetNumber,
+      street: streetName,
+      city: formData.city,
+      postal_code: parseInt(formData.zipCode) || 0,
+      country: formData.country
+    };
     
-    if (!formData.image) {
-      setError("Une image du restaurant est obligatoire");
-      return;
+    console.log('Données à envoyer:', {
+      restaurantName: formData.name,
+      restaurantType: formData.type,
+      adressInfo,
+      ownerId: userData.id,
+      image: formData.image
+    });
+    
+    // Utiliser ton service existant RegisterRestaurantService
+    await RegisterRestaurantService.registerRestaurant(
+      formData.name,        // restaurantName
+      formData.type,        // restaurantType  
+      formData.image,       // image (Blob)
+      adressInfo,          // adressInfo
+      userData.id          // ownerId
+    );
+    
+    setIsSubmitted(true);
+  } catch (error: any) {
+    console.error('Erreur lors de l\'enregistrement du restaurant:', error);
+    
+    // Gestion d'erreur améliorée
+    let errorMessage = "Une erreur s'est produite lors de l'enregistrement.";
+    
+    if (error.response?.data?.message) {
+      // Si c'est un message d'erreur de l'API
+      if (Array.isArray(error.response.data.message)) {
+        errorMessage = error.response.data.message.join(', ');
+      } else {
+        errorMessage = error.response.data.message;
+      }
+    } else if (error.message) {
+      errorMessage = error.message;
     }
     
-    setIsSubmitting(true);
-    setError(null);
-    
-    try {
-      // Préparer les données d'adresse
-      const adressInfo = {
-        number: parseInt(formData.street.split(" ")[0]) || 0, // Extraction du numéro depuis la rue
-        street: formData.street,
-        city: formData.city,
-        postal_code: parseInt(formData.zipCode) || 0,
-        country: formData.country
-      };
-      
-      const userId = 6;
-      // Enregistrer le restaurant en utilisant le service
-      await RegisterRestaurantService.registerRestaurant(
-        formData.name,
-        formData.type,
-        formData.image,
-        adressInfo,
-        userId
-      );
-      
-      setIsSubmitted(true);
-    } catch (error) {
-      console.error('Erreur lors de l\'enregistrement du restaurant:', error);
-      setError("Une erreur s'est produite lors de l'enregistrement. Veuillez réessayer.");
-    } finally {
-      setIsSubmitting(false);
-    }
-  };
+    setError(errorMessage);
+  } finally {
+    setIsSubmitting(false);
+  }
+};
 
   if (isSubmitted) {
     return (

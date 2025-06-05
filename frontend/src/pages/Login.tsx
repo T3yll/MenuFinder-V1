@@ -1,10 +1,13 @@
 import React, { useState } from 'react';
-import { Link } from 'react-router-dom';
-// import './Login.scss';
+import { Link, Navigate } from 'react-router-dom';
+import {login} from '../services/auth.service'; // Assurez-vous d'importer votre service d'authentification
+import { useNavigate } from 'react-router-dom';
+import { getUserProfile } from '../services/user.service'; // Assurez-vous d'importer votre service utilisateur
+
 import '../styles/pages/Login.scss';
-// import './Login.css';
 
 const Login: React.FC = () => {
+  const Navigate = useNavigate();
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [showPassword, setShowPassword] = useState(false);
@@ -18,13 +21,21 @@ const Login: React.FC = () => {
     setIsLoading(true);
 
     try {
-      // Ici vous ajouteriez la logique de connexion avec une API
       console.log('Connexion avec:', { email, password, rememberMe });
-
-      // Simuler un délai de connexion
-      await new Promise(resolve => setTimeout(resolve, 1500));
-
-      // Redirection après connexion réussie (à implémenter)
+      login({ email, password })
+        .then(async (response) => {
+          console.log('Réponse de connexion:', response);
+          // Enregistrer le token dans le stockage local ou gérer l'état de l'utilisateur
+          localStorage.setItem('token', response.access_token);
+          const user = await getUserProfile(response.access_token)
+          console.log('Utilisateur connecté:', user);
+          localStorage.setItem('user', JSON.stringify(user));
+          Navigate('/');
+        })
+        .catch((error) => {
+          console.error('Erreur de connexion:', error);
+          setError('Erreur de connexion. Veuillez réessayer.');
+        });
     } catch (err) {
       setError('Identifiants incorrects. Veuillez réessayer.');
     } finally {

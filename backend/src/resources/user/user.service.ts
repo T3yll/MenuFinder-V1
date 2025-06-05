@@ -50,7 +50,6 @@ export class UserService {
   async findOne(id: number): Promise<User> {
     const user = await this.usersRepository.findOne({
       where: { id },
-      relations: ['teams'],
     });
 
     if (!user) {
@@ -60,10 +59,32 @@ export class UserService {
     return user;
   }
 
-  async findByUsername(username: string): Promise<User> {
-    const user = await this.usersRepository.findOneBy({ username });
+  async selectPublicInfo(id: number): Promise<User> {
+    const user = await this.usersRepository.findOne({
+      where: { id },
+      select: {
+        id: true,
+        username: true,
+        nom: true,
+        prenom: true,
+        image_file_id:true,
+        bAdmin: false,
+        email: false,
+        password: false,
+      }
+    });
+
     if (!user) {
-      throw new NotFoundException(`User with username ${username} not found`);
+      throw new NotFoundException(`User with ID ${id} not found`);
+    }
+
+    return user;
+  }
+
+  async findByEmail(email: string): Promise<User> {
+    const user = await this.usersRepository.findOneBy({ email });
+    if (!user) {
+      throw new NotFoundException(`User with email ${email} not found`);
     }
     return user;
   }

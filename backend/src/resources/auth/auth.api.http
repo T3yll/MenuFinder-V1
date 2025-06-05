@@ -6,7 +6,7 @@ POST {{url}}/login
 Content-Type: application/json
 
 {
-  "username": "{{USERNAME}}",
+  "email": "{{EMAIL}}",
   "password": "{{PASSWORD}}"
 }
 
