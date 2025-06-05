@@ -3,7 +3,7 @@ import { CreateRestaurantDto } from '../contexts/create-restaurant.dto';
 import { Adress, FileEntity, Restaurant } from '../types/Restaurant';
 import { CreateAdressDto } from '../contexts/create-adress.dto';
 // Base URL de l'API
-const API_URL = 'http://localhost:3000/api'; // Ajustez selon votre configuration
+const API_URL = 'http://localhost:4000'; // Ajustez selon votre configuration
 
 // Intercepteur pour afficher les détails des erreurs
 axios.interceptors.response.use(

@@ -2,18 +2,67 @@ import { useEffect, useState } from 'react';
 import { useParams, Link } from 'react-router-dom';
 import { useCurrency } from '../contexts/CurrencyContext';
 import { RestaurantService } from '../services/RestaurantService';
-import { Restaurant, Review, MenuItem } from '../types/Restaurant';
+import { Restaurant, MenuItem } from '../types/Restaurant';
+import Review from '../components/Review';
+import ReviewForm from '../components/ReviewForm';
 import '../styles/pages/RestaurantDetail.scss';
+
+interface ReviewData {
+  review_id: number;
+  restaurant_id: number;
+  user_id: number;
+  text: string;
+  added_at: string;
+  updated_at: string;
+  user?: {
+    id: number;
+    username: string;
+    nom: string;
+    prenom: string;
+    email: string;
+  };
+  rating?: number;
+}
 
 const RestaurantDetail: React.FC = () => {
   const { id } = useParams<{ id: string }>();
   const [restaurant, setRestaurant] = useState<Restaurant | null>(null);
+  const [reviews, setReviews] = useState<ReviewData[]>([]);
   const [loading, setLoading] = useState<boolean>(true);
   const [error, setError] = useState<string | null>(null);
   const [activeTab, setActiveTab] = useState<'info' | 'menu' | 'reviews'>('info');
   const [selectedMenu, setSelectedMenu] = useState<number | null>(null);
   
   const { formatPrice } = useCurrency();
+
+  const API_URL = 'http://localhost:4000';
+
+  // Fonction pour récupérer les avis
+  const fetchReviews = async (restaurantId: number) => {
+    try {
+      const response = await fetch(`${API_URL}/reviews/restaurant/${restaurantId}`);
+      console.log("[RestaurantDetail] response", response);
+      
+      if (response.ok) {
+        const reviewsData = await response.json();
+        console.log("[RestaurantDetail Data] response", reviewsData);
+        setReviews(reviewsData);
+      } else {
+        console.error('Erreur lors de la récupération des avis');
+        setReviews([]);
+      }
+    } catch (error) {
+      console.error('Erreur lors de la récupération des avis:', error);
+      setReviews([]);
+    }
+  };
+
+  // Fonction pour rafraîchir les avis après ajout d'un nouvel avis
+  const handleReviewSubmitted = () => {
+    if (id) {
+      fetchReviews(parseInt(id));
+    }
+  };
 
   useEffect(() => {
     const fetchRestaurantDetails = async () => {
@@ -34,6 +83,8 @@ const RestaurantDetail: React.FC = () => {
           if (data.menus && data.menus.length > 0) {
             setSelectedMenu(data.menus[0].menu_id);
           }
+          // Récupérer les avis
+          await fetchReviews(restaurantId);
         } else {
           setError("Aucune donnée reçue de l'API");
         }
@@ -48,14 +99,26 @@ const RestaurantDetail: React.FC = () => {
     fetchRestaurantDetails();
   }, [id]);
 
-  // Calcul de la note moyenne
-  const calculateAverageRating = (reviews?: Review[]): number => {
+  // Calcul de la note moyenne basée sur les ratings des avis
+  const calculateAverageRating = (): number => {
     if (!reviews || reviews.length === 0) {
       return 0;
     }
     
-    const sum = reviews.reduce((total, review) => total + review.rating, 0);
-    return sum / reviews.length;
+    // Filtrer les avis qui ont un rating (pas null)
+    const reviewsWithRating = reviews.filter(review => 
+      review.rating !== null && 
+      review.rating !== undefined && 
+      typeof review.rating === 'number'
+    );
+    
+    if (reviewsWithRating.length === 0) {
+      return 0;
+    }
+    
+    // Calculer la moyenne (rating est garanti d'être un number maintenant)
+    const sum = reviewsWithRating.reduce((total, review) => total + (review.rating as number), 0);
+    return sum / reviewsWithRating.length;
   };
 
   // Afficher les étoiles de notation
@@ -83,7 +146,6 @@ const RestaurantDetail: React.FC = () => {
 
     return stars;
   };
-  const API_URL = 'http://localhost:3000/api';
 
   // Obtenir l'URL de l'image
   const getImageUrl = (restaurant: Restaurant) => {
@@ -194,8 +256,8 @@ const RestaurantDetail: React.FC = () => {
     );
   }
 
-  const rating = restaurant.rewiews ? calculateAverageRating(restaurant.rewiews) : 0;
-  const reviewCount = restaurant.rewiews?.length || 0;
+  const rating = calculateAverageRating();
+  const reviewCount = reviews.length;
   const selectedMenuData = restaurant.menus?.find(menu => menu.menu_id === selectedMenu);
   const menuItemsByCategory = selectedMenuData ? groupItemsByCategory(selectedMenuData.items) : {};
 
@@ -418,13 +480,26 @@ const RestaurantDetail: React.FC = () => {
                 <div className="average-rating">
                   <div className="rating-number">{rating.toFixed(1)}</div>
                   <div className="stars-summary">{renderStars(rating)}</div>
-                  <div className="review-count">{reviewCount} avis</div>
+                  <div className="review-count">
+                    {reviews.filter(review => review.rating !== null && review.rating !== undefined).length} notes sur {reviewCount} avis
+                  </div>
                 </div>
 
                 <div className="rating-breakdown">
                   {[5, 4, 3, 2, 1].map(star => {
-                    const count = restaurant.rewiews?.filter(review => Math.floor(review.rating) === star).length || 0;
-                    const percentage = reviewCount > 0 ? (count / reviewCount) * 100 : 0;
+                    // Compter les avis avec cette note exacte
+                    const count = reviews.filter(review => 
+                      review.rating !== null && 
+                      review.rating !== undefined && 
+                      Math.floor(review.rating) === star
+                    ).length;
+                    
+                    // Calculer le pourcentage basé sur le nombre total d'avis avec rating
+                    const totalWithRating = reviews.filter(review => 
+                      review.rating !== null && 
+                      review.rating !== undefined
+                    ).length;
+                    const percentage = totalWithRating > 0 ? (count / totalWithRating) * 100 : 0;
                     
                     return (
                       <div key={star} className="rating-bar">
@@ -439,38 +514,15 @@ const RestaurantDetail: React.FC = () => {
                 </div>
               </div>
 
-              <div className="write-review-button-container">
-                <button className="write-review-button">
-                  <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-                    <path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"></path>
-                    <path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"></path>
-                  </svg>
-                  Écrire un avis
-                </button>
-              </div>
+              <ReviewForm 
+                restaurantId={parseInt(id!)} 
+                onReviewSubmitted={handleReviewSubmitted}
+              />
 
               <div className="reviews-list">
-                {restaurant.rewiews && restaurant.rewiews.length > 0 ? (
-                  restaurant.rewiews.map(review => (
-                    <div key={review.review_id} className="review-card">
-                      <div className="review-header">
-                        <div className="reviewer-info">
-                          <div className="reviewer-avatar">
-                            {review.user?.username.charAt(0).toUpperCase() || 'U'}
-                          </div>
-                          <div className="reviewer-details">
-                            <div className="reviewer-name">{review.user?.username || 'Utilisateur anonyme'}</div>
-                            <div className="review-date">{formatReviewDate(review.created_at)}</div>
-                          </div>
-                        </div>
-                        <div className="review-rating">
-                          {renderStars(review.rating)}
-                        </div>
-                      </div>
-                      <div className="review-content">
-                        <p>{review.comment}</p>
-                      </div>
-                    </div>
+                {reviews.length > 0 ? (
+                  reviews.map(review => (
+                    <Review key={review.review_id} review={review} />
                   ))
                 ) : (
                   <div className="empty-reviews">

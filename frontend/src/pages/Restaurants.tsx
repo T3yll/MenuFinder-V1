@@ -39,7 +39,7 @@ const categories = [
   { id: "desserts", name: "Desserts", emoji: "🍰" }
 ];
 
-const API_URL = 'http://localhost:3000/api';
+const API_URL = 'http://localhost:4000';
 
 const Restaurants: React.FC = () => {
   const [selectedCategory, setSelectedCategory] = useState<string>("all");
