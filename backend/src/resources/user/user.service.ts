@@ -59,6 +59,23 @@ export class UserService {
     return user;
   }
 
+  async isAdmin(id: number): Promise<User> {
+    const user = await this.usersRepository.findOne({
+      where: { id},
+      select: {
+        id: true,
+        bAdmin: true 
+      }
+    });
+    return user;
+  }
+
+  async count(): Promise<number> {
+
+    const count = this.usersRepository.count();
+    return count;
+  }
+
   async selectPublicInfo(id: number): Promise<User> {
     const user = await this.usersRepository.findOne({
       where: { id },

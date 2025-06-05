@@ -1,6 +1,7 @@
 import { Controller, Get, Post, Body, Param, Put, Delete } from '@nestjs/common';
 import { RestaurantService } from './restaurant.service';
 import { MenuService } from '../menu/menu.service';
+import { ApiBody, ApiOperation, ApiResponse, ApiTags } from '@nestjs/swagger';
 import { Restaurant } from './entities/restaurant.entity';
 import { Menu } from '../menu/entities/menu.entity';
 import { Public } from '@/common/decorators/security/public.decorator';
@@ -24,6 +25,17 @@ export class RestaurantController {
   findAll(): Promise<Restaurant[]> {
     return this.restaurantService.findAll();
   }
+
+   @Get('count')
+    @ApiOperation({ summary: 'Get the total number of restaurants' })
+    @ApiResponse({
+      status: 200,
+      description: 'The total number of restaurants',
+      type: Number,
+    })
+    async count(): Promise<object> {
+      return {code:200,count : await this.restaurantService.count()};
+    }
 
   @Public()
   @Get(':id')

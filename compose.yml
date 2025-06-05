@@ -1,6 +1,6 @@
 services:
   backend:
-    build: 
+    build:
       context: .
       dockerfile: ./backend/Dockerfile
     working_dir: /var/www/tuile/backend 
@@ -14,9 +14,9 @@ services:
         - action: rebuild
           path: package.json
     ports:
-      - "${BACKEND_PORT:-4000}:4000"
+      - '${BACKEND_PORT:-4000}:4000'
     expose:
-      - "4000"
+      - '4000'
     environment:
       NODE_ENV: development
       DB_HOST: ${DB_HOST:-postgres}
@@ -52,7 +52,7 @@ services:
           path: package.json
     working_dir: /app
     ports:
-      - "3000:3000"
+      - '3000:3000'
     environment:
       - NODE_ENV=development
     networks:
@@ -75,7 +75,7 @@ services:
       POSTGRES_PASSWORD: ${DB_PASSWORD:-postgres}
       POSTGRES_DB: ${DB_NAME:-postgres}
     ports:
-      - "${DB_PORT:-5432}:5432"
+      - '${DB_PORT:-5432}:5432'
     networks:
       - app-network
     volumes:
