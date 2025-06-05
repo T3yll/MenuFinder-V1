@@ -4,4 +4,6 @@ export interface User {
     email: string;
     password: string;
     agreeTerms: boolean;
+    image_file_id?: string;
+    image_path?: string;
 }

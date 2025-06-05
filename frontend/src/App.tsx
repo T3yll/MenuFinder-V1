@@ -14,6 +14,12 @@ import ToastRedux from './components/commom/toast/ToastRedux';
 import Profile from './pages/Profile';
 import RegisterRestaurant from './pages/RegisterRestaurant';
 import RestaurantDetail from './pages/RestaurantDetail';
+import EditRestaurant from './pages/EditRestaurant';
+import RestaurantMenus from './pages/RestaurantMenus';
+import MenuItems from './pages/MenuItems';
+import Dashboard from './pages/Dashboard';
+import DashboardRestaurant from './pages/DashboardRestaurant';
+import AdminMiddleware from './Middleware/AdminMiddleware';
 
 function App() {
   return (
@@ -28,11 +34,16 @@ function App() {
               <Route path="/restaurants" element={<><NavBar /><Restaurants /></>} />
               <Route path="/menus" element={<><NavBar /><Menus /></>} />
               <Route path="/profile" element={<><NavBar /><Profile /></>} />
-              {/* <Route path="/updateProfile" element={<><NavBar /><UpdateProfile /></>} /> */}
+              {/* <Route path="/updateProfile" element={<><NavBar /><UpdateProfile/></>} /> */}
               <Route path="/map" element={<><NavBar /><Map/></>} />
               <Route path="/register-restaurant" element={<><NavBar /><RegisterRestaurant/></>} />
               <Route path="/restaurants/:id" element={<RestaurantDetail />} />
-            </Routes>
+              <Route path="/admin" element={ <AdminMiddleware><div><NavBar /><Dashboard /></div></AdminMiddleware> } />
+              <Route path="/dashboard" element={<><NavBar /><DashboardRestaurant /></>} />
+            <Route path="/edit-restaurant/:id" element={<EditRestaurant />} />
+            <Route path="/restaurant-menus/:id" element={<RestaurantMenus />} />
+            <Route path="/menu-items/:id" element={<MenuItems />} />
+          </Routes>
             <ToastRedux />
           </div>
         </Router>

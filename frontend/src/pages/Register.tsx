@@ -1,7 +1,6 @@
 import React, { useState } from 'react';
-import { Link, Navigate, useNavigate } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 import '../styles/pages/Register.scss';
-import { log } from 'console';
 import { registerUser } from '../services/user.service';
 // import './Register.css';
 
@@ -65,30 +64,27 @@ const Register: React.FC = () => {
     setError('');
 
     if (!validateForm()) {
-      console.log('validateForm');
+      console.log('validateForm failed');
       return;
     }
 
     console.log('validateForm ok');
-
     setIsLoading(true);
 
-    console.log('setIsLoading ok');
-
     try {
-      console.log('Register start:', { prenom, nom,username, email, password, confirmPassword });
-console.log(process.env);
-var tmpUsername = `${prenom}-${nom}-${Math.floor(Math.random() * 1000)}`;
-setUsername(tmpUsername);
-      console.log('username', tmpUsername);
-    
-      const user = await registerUser({ prenom, nom,username:tmpUsername, email, password, confirmPassword });
+const userData = {
+        prenom,
+        nom,
+        email,
+        password
+        // Remove username and confirmPassword - they shouldn't be sent to backend
+      };
+      
+      const user = await registerUser(userData);
 
       console.log('Register success');
       console.log('user', user);
       Navigate("/login");
-      
-
 
     } catch (err) {
       console.error('Erreur lors de l\'inscription:', err);
@@ -200,7 +196,7 @@ setUsername(tmpUsername);
               <div className="input-container">
                 <input
                   type={showConfirmPassword ? "text" : "password"}
-                  id="confirmPassword"
+                  id="password"
                   className="form-input password-input"
                   value={confirmPassword}
                   onChange={(e) => setConfirmPassword(e.target.value)}

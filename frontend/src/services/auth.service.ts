@@ -1,6 +1,9 @@
 import axios from 'axios';
+import exp from 'constants';
+
 
 const API_URL = process.env.VITE_API_URL + '/auth/';
+
 
 export interface LoginCredentials {
     email: string;
@@ -29,4 +32,24 @@ export const login = async (credentials: LoginCredentials): Promise<AuthResponse
 export const register = async (credentials: RegisterCredentials): Promise<AuthResponse> => {
     const response = await axios.post<AuthResponse>(`${API_URL}register`, credentials); 
     return response.data;
+}
+
+export const isAdmin = async (): Promise<boolean> => {
+    const response = await axios.get(`${API_URL}isAdmin`, {
+        headers: {
+            'Authorization': `Bearer ${localStorage.getItem('token')}`
+        }
+    }
+    );
+    console.log('isAdmin response', response);
+    if (response.data.bAdmin !== true) {
+       return false;
+    }
+    return true;
+}
+
+export const logout = async (): Promise<void> => {
+    localStorage.removeItem('token');
+    localStorage.removeItem('user');
+    
 }

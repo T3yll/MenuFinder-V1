@@ -56,6 +56,11 @@ export class ReviewService {
     });
   }
 
+  async count(): Promise<Number> {
+    const count = await this.reviewRepository.count();
+    return count;
+  }
+
   findByRestaurant(restaurantId: number): Promise<Review[]> {
     return this.reviewRepository.find({ 
       where: { restaurant_id: restaurantId },

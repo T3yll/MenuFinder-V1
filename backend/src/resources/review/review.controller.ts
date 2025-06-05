@@ -2,6 +2,7 @@ import { Controller, Get, Post, Body, Param, Put, Delete, BadRequestException } 
 import { Review } from './entities/review.entity';
 import { ReviewService } from './review.service';
 import { Public } from '@/common/decorators/security/public.decorator';
+import { ApiOperation, ApiResponse } from '@nestjs/swagger';
 
 @Controller('reviews')
 export class ReviewController {
@@ -22,6 +23,17 @@ export class ReviewController {
   @Get()
   findAll(): Promise<Review[]> {
     return this.reviewService.findAll();
+  }
+
+  @Get('count')
+  @ApiOperation({ summary: 'Get the total number of reviews' })
+  @ApiResponse({
+    status: 200,
+    description: 'The total number of reviews',
+    type: Number,
+  })
+  async count(): Promise<object> {
+    return {code:200,count : await this.reviewService.count()};
   }
 
   @Get(':id')

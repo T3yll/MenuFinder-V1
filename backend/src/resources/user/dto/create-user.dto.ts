@@ -2,9 +2,6 @@ import { IsNotEmpty, IsString, IsEmail, IsBoolean, IsNumber, IsOptional } from '
 import { Unique } from 'typeorm';
 
 export class CreateUserDto {
-  @IsString()
-  @IsNotEmpty()
-  username: string;
 
   @IsString()
   @IsNotEmpty()
@@ -22,11 +19,15 @@ export class CreateUserDto {
   @IsNotEmpty()
   email: string;
 
+  @IsString()
+  @IsOptional()
+  username?: string; // Make username optional - we'll generate it if not provided
+
   @IsBoolean()
   @IsOptional()
   bAdmin: boolean = false;
 
-  @IsNumber()
+  @IsString()
   @IsOptional()
-  image_file_id?: number;
+  image_file_id?: string;
 }

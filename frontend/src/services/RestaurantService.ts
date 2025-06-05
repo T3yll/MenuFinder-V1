@@ -1,9 +1,10 @@
 import axios from 'axios';
 import { CreateRestaurantDto } from '../contexts/create-restaurant.dto';
-import { Adress, FileEntity, Restaurant } from '../types/Restaurant';
+import { Adress, Restaurant } from '../types/Restaurant';
 import { CreateAdressDto } from '../contexts/create-adress.dto';
+import { upload } from './file.service';
 // Base URL de l'API
-const API_URL = 'http://localhost:4000'; // Ajustez selon votre configuration
+const API_URL = process.env.VITE_API_URL;
 
 // Intercepteur pour afficher les détails des erreurs
 axios.interceptors.response.use(
@@ -95,34 +96,6 @@ export const AdressService = {
   }
 };
 
-// Service pour les fichiers
-export const FileService = {
-  // Uploader un fichier
-  async upload(file: Blob): Promise<FileEntity> {
-    try {
-      const formData = new FormData();
-      formData.append('file', file);
-      
-      // Afficher le contenu du FormData pour le debug
-      console.log('FormData envoyé:', file instanceof File ? {
-        name: (file as File).name,
-        type: (file as File).type,
-        size: (file as File).size
-      } : 'Not a File object');
-      
-      const response = await axios.post(`${API_URL}/files/upload`, formData, {
-        headers: {
-          'Content-Type': 'multipart/form-data'
-        }
-      });
-      
-      return response.data;
-    } catch (error) {
-      console.error('Erreur lors de l\'upload du fichier:', error);
-      throw error;
-    }
-  }
-};
 
 // Service combiné pour la création d'un restaurant avec son adresse et son image
 export const RegisterRestaurantService = {
@@ -155,7 +128,7 @@ export const RegisterRestaurantService = {
       
       // 2. Uploader l'image
       console.log('2. Upload de l\'image...');
-      const uploadedFile = await FileService.upload(image);
+      const uploadedFile = await upload(image);
       console.log('Image uploadée:', uploadedFile);
       
       // 3. Créer le restaurant
