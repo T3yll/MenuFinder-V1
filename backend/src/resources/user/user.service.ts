@@ -8,12 +8,15 @@ import { User } from '@/resources/user/entities/user.entity';
 import * as bcrypt from 'bcryptjs';
 import { UpdateUserDto } from './dto/update-user.dto';
 import { CreateUserDto } from './dto/create-user.dto';
+import { FileService } from '../file/file.service';
+
+
 
 @Injectable()
 export class UserService {
   constructor(
     @InjectRepository(User)
-    private usersRepository: Repository<User>,
+    private usersRepository: Repository<User> 
   ) {}
 
   async findAll(page: number = 1, offset: number = 10, search?: string) {

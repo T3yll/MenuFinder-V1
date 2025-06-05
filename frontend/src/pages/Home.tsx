@@ -279,7 +279,7 @@ const Home: React.FC = () => {
                     <Link
                         to="/register-restaurant"
                         className="inline-block px-6 py-3 bg-[#fda928] text-white font-medium rounded-md hover:bg-[#fda928]/90 transition-colors"
-                    >
+                    > 
                         Ajouter mon restaurant
                     </Link>
                 </div>

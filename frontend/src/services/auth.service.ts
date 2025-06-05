@@ -1,6 +1,7 @@
 import axios from 'axios';
 import exp from 'constants';
 
+
 const API_URL = process.env.VITE_API_URL + '/auth/';
 
 
@@ -45,4 +46,10 @@ export const isAdmin = async (): Promise<boolean> => {
        return false;
     }
     return true;
+}
+
+export const logout = async (): Promise<void> => {
+    localStorage.removeItem('token');
+    localStorage.removeItem('user');
+    
 }

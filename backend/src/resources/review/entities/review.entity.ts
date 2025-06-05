@@ -1,6 +1,7 @@
 import { Response } from '@/resources/response/entities/response.entity';
 import { Restaurant } from '@/resources/restaurant/entities/restaurant.entity';
 import { User } from '@/resources/user/entities/user.entity';
+import { Max, Min } from 'class-validator';
 import { Entity, PrimaryGeneratedColumn, Column, ManyToOne, OneToMany, JoinColumn } from 'typeorm';
 
 @Entity('Review')
@@ -10,6 +11,11 @@ export class Review {
 
   @Column()
   restaurant_id: number;
+
+  @Column()
+  @Min(1)
+  @Max(5)
+  rating: number;
 
   @Column()
   user_id: number;

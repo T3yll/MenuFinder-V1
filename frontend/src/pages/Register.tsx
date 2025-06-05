@@ -73,10 +73,7 @@ const Register: React.FC = () => {
     setIsLoading(true);
 
     try {
-      console.log('Register start:', { prenom, nom, email, password });
-      
-      // Only send the fields that CreateUserDto expects
-      const userData = {
+const userData = {
         prenom,
         nom,
         email,

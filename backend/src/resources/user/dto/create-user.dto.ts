@@ -1,4 +1,5 @@
 import { IsNotEmpty, IsString, IsEmail, IsBoolean, IsNumber, IsOptional } from 'class-validator';
+import { Unique } from 'typeorm';
 
 export class CreateUserDto {
 
@@ -26,7 +27,7 @@ export class CreateUserDto {
   @IsOptional()
   bAdmin: boolean = false;
 
-  @IsNumber()
+  @IsString()
   @IsOptional()
-  image_file_id?: number;
+  image_file_id?: string;
 }
