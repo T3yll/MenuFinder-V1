@@ -1,9 +1,9 @@
 import {
-  Injectable,
-  NotFoundException,
+    Injectable,
+    NotFoundException,
 } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
-import { In, Repository } from 'typeorm';
+import { Repository } from 'typeorm';
 import { User } from '@/resources/user/entities/user.entity';
 import * as bcrypt from 'bcryptjs';
 import { UpdateUserDto } from './dto/update-user.dto';
@@ -20,7 +20,17 @@ export class UserService {
   // Création de la requête de base
   const query = this.usersRepository
     .createQueryBuilder('user')
-    .leftJoinAndSelect('user.image', 'image'); // Jointure avec la table image
+    .leftJoinAndSelect('user.image', 'image')
+    .select([
+      'user.id',
+      'user.username', 
+      'user.nom',
+      'user.prenom',
+      'user.email',
+      'user.bAdmin',
+      'user.image_file_id',
+      'image'
+    ]); // Exclut explicitement le password
 
   // Ajout du filtre de recherche si fourni
   if (search) {
@@ -120,9 +130,10 @@ async create(createUserDto: CreateUserDto): Promise<User> {
   });
 
   // Sauvegarder l'utilisateur
-  await this.usersRepository.save(newUser);
+  const savedUser = await this.usersRepository.save(newUser);
 
-  return newUser;
+  // Retourner l'utilisateur sans le password
+  return this.selectPublicInfo(savedUser.id);
 }
 
   async update(id: number, updateUserDto: UpdateUserDto): Promise<User> {

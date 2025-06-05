@@ -45,7 +45,7 @@ export class Restaurant {
   @OneToMany(() => Menu, menu => menu.restaurant)
   menus: Menu[];
 
-  @OneToMany(() => RestaurantTag, restaurantTag => RestaurantTag)
+  @OneToMany(() => RestaurantTag, restaurantTag => restaurantTag.restaurant)
   tagRestaurants: RestaurantTag[];
 
   @OneToMany(() => Bookmark, bookmark => bookmark.restaurant)

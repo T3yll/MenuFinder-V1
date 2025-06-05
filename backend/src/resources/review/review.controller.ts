@@ -1,6 +1,7 @@
 import { Controller, Get, Post, Body, Param, Put, Delete } from '@nestjs/common';
 import { Review } from './entities/review.entity';
 import { ReviewService } from './review.service';
+import { Public } from '@/common/decorators/security/public.decorator';
 
 @Controller('reviews')
 export class ReviewController {
@@ -21,6 +22,7 @@ export class ReviewController {
     return this.reviewService.findOne(+id);
   }
 
+  @Public()
   @Get('restaurant/:id')
   findByRestaurant(@Param('id') id: string): Promise<Review[]> {
     return this.reviewService.findByRestaurant(+id);

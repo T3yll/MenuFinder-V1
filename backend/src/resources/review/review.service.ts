@@ -15,15 +15,74 @@ export class ReviewService {
   }
 
   findAll(): Promise<Review[]> {
-    return this.reviewRepository.find();
+    return this.reviewRepository.find({
+      relations: ['user', 'restaurant', 'responses'],
+      select: {
+        user: {
+          id: true,
+          username: true,
+          nom: true,
+          prenom: true,
+          email: true,
+          bAdmin: true,
+          image_file_id: true
+        }
+      }
+    });
   }
 
   findOne(id: number): Promise<Review> {
-    return this.reviewRepository.findOne({ where: { review_id: id } });
+    return this.reviewRepository.findOne({ 
+      where: { review_id: id },
+      relations: ['user', 'restaurant', 'responses'],
+      select: {
+        user: {
+          id: true,
+          username: true,
+          nom: true,
+          prenom: true,
+          email: true,
+          bAdmin: true,
+          image_file_id: true
+        }
+      }
+    });
   }
 
   findByRestaurant(restaurantId: number): Promise<Review[]> {
-    return this.reviewRepository.find({ where: { restaurant_id: restaurantId } });
+    return this.reviewRepository.find({ 
+      where: { restaurant_id: restaurantId },
+      relations: ['user', 'restaurant', 'responses', 'responses.user'],
+      select: {
+        user: {
+          id: true,
+          username: true,
+          nom: true,
+          prenom: true,
+          email: true,
+          bAdmin: true,
+          image_file_id: true
+        },
+        responses: {
+          response_id: true,
+          review_id: true,
+          user_id: true,
+          text: true,
+          added_at: true,
+          updated_at: true,
+          user: {
+            id: true,
+            username: true,
+            nom: true,
+            prenom: true,
+            email: true,
+            bAdmin: true,
+            image_file_id: true
+          }
+        }
+      },
+      order: { added_at: 'DESC' }
+    });
   }
 
   async update(id: number, avis: Review): Promise<Review> {

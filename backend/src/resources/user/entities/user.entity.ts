@@ -3,14 +3,14 @@ import { File } from '@/resources/file/entities/file.entity';
 import { Response } from '@/resources/response/entities/response.entity';
 import { Restaurant } from '@/resources/restaurant/entities/restaurant.entity';
 import { Review } from '@/resources/review/entities/review.entity';
+import { Exclude } from 'class-transformer';
 import {
-  Entity,
-  Column,
-  PrimaryGeneratedColumn,
-  ManyToOne,
-  JoinColumn,
-  OneToMany,
-  OneToOne,
+    Entity,
+    Column,
+    PrimaryGeneratedColumn,
+    ManyToOne,
+    JoinColumn,
+    OneToMany
 } from 'typeorm';
 
 @Entity()
@@ -21,6 +21,7 @@ export class User {
   @Column({ length: 255 })
   username: string;
 
+  @Exclude()
   @Column({ length: 255 })
   password: string;
 
@@ -52,7 +53,7 @@ export class User {
   @OneToMany(() => Response, response => response.user)
   responses: Response[];
 
-  @OneToOne(() => Bookmark, bookmark => bookmark.user)
+  @OneToMany(() => Bookmark, bookmark => bookmark.user)
   bookmarks: Bookmark[];
 
   getUsername(): string {
@@ -64,9 +65,9 @@ export class User {
   }
 
   toJSON() {
-    const { ...userData } = this;
+    const { password, ...userData } = this;
     return {
-      ...userData, // Inclure tous les champs de User
+      ...userData, // Inclure tous les champs de User sauf le password
     };
   }
 }

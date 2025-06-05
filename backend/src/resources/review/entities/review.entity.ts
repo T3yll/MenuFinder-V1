@@ -2,14 +2,14 @@ import { Response } from '@/resources/response/entities/response.entity';
 import { Restaurant } from '@/resources/restaurant/entities/restaurant.entity';
 import { User } from '@/resources/user/entities/user.entity';
 import {
-    Entity,
-    PrimaryGeneratedColumn,
-    Column,
-    ManyToOne,
-    OneToMany,
-    JoinColumn,
-    CreateDateColumn,
-    UpdateDateColumn
+  Entity,
+  PrimaryGeneratedColumn,
+  Column,
+  ManyToOne,
+  OneToMany,
+  JoinColumn,
+  CreateDateColumn,
+  UpdateDateColumn
 } from 'typeorm';
 
 @Entity('Review')
@@ -40,6 +40,6 @@ export class Review {
   @JoinColumn({ name: 'user_id' })
   user: User;
 
-  @OneToMany(() => Response, response => response)
+  @OneToMany(() => Response, response => response.review)
   responses: Response[];
 }
