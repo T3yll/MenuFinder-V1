@@ -2,12 +2,14 @@ import { useEffect, useState } from 'react';
 import { useParams, Link } from 'react-router-dom';
 import { useCurrency } from '../contexts/CurrencyContext';
 import { RestaurantService } from '../services/RestaurantService';
+import { MenuService, MealService } from '../services/MenuService';
 import { Restaurant, Review, MenuItem } from '../types/Restaurant';
 import '../styles/pages/RestaurantDetail.scss';
 
 const RestaurantDetail: React.FC = () => {
   const { id } = useParams<{ id: string }>();
   const [restaurant, setRestaurant] = useState<Restaurant | null>(null);
+  const [menus, setMenus] = useState<any[]>([]);
   const [loading, setLoading] = useState<boolean>(true);
   const [error, setError] = useState<string | null>(null);
   const [activeTab, setActiveTab] = useState<'info' | 'menu' | 'reviews'>('info');
@@ -26,17 +28,55 @@ const RestaurantDetail: React.FC = () => {
         }
         
         const restaurantId = parseInt(id);
-        const data = await RestaurantService.findOne(restaurantId);
         
-        if (data) {
-          setRestaurant(data);
-          // Si le restaurant a des menus, sélectionner le premier par défaut
-          if (data.menus && data.menus.length > 0) {
-            setSelectedMenu(data.menus[0].menu_id);
-          }
-        } else {
+        // 1. Récupérer les détails du restaurant
+        const restaurantData = await RestaurantService.findOne(restaurantId);
+        
+        if (!restaurantData) {
           setError("Aucune donnée reçue de l'API");
+          return;
         }
+        
+        setRestaurant(restaurantData);
+        
+        // 2. Récupérer les menus du restaurant
+        try {
+          const menusData = await MenuService.findByRestaurant(restaurantId);
+          console.log('Menus récupérés:', menusData);
+          
+          // 3. Pour chaque menu, récupérer ses plats
+          const menusWithMeals = await Promise.all(
+            menusData.map(async (menu) => {
+              try {
+                const meals = await MealService.findByMenu(menu.menu_id);
+                console.log(`Plats du menu ${menu.menu_id}:`, meals);
+                return {
+                  ...menu,
+                  items: meals
+                };
+              } catch (error) {
+                console.error(`Erreur lors de la récupération des plats du menu ${menu.menu_id}:`, error);
+                return {
+                  ...menu,
+                  items: []
+                };
+              }
+            })
+          );
+          
+          setMenus(menusWithMeals);
+          console.log('Menus avec plats:', menusWithMeals);
+          
+          // Sélectionner le premier menu par défaut s'il y en a
+          if (menusWithMeals.length > 0) {
+            setSelectedMenu(menusWithMeals[0].menu_id);
+          }
+          
+        } catch (menuError) {
+          console.error("Erreur lors de la récupération des menus:", menuError);
+          setMenus([]);
+        }
+        
       } catch (err) {
         console.error("Erreur lors de la récupération des détails du restaurant:", err);
         setError("Impossible de charger les détails du restaurant. Veuillez réessayer plus tard.");
@@ -83,6 +123,7 @@ const RestaurantDetail: React.FC = () => {
 
     return stars;
   };
+  
   const API_URL = 'http://localhost:3000/api';
 
   // Obtenir l'URL de l'image
@@ -100,14 +141,14 @@ const RestaurantDetail: React.FC = () => {
     };
 
   // Obtenir l'image d'un plat
-  const getMenuItemImageUrl = (item: MenuItem) => {
+  const getMenuItemImageUrl = (item: any) => {
     if (item.image && item.image.path) {
       // Si c'est une URL complète
       if (item.image.path.startsWith('http')) {
         return item.image.path;
       }
       // Sinon, construire l'URL correcte vers le fichier local
-      return `${item.image.path}`;
+      return `${API_URL}/${item.image.path.replace(/^\//, '')}`;
     }
     // Image par défaut pour les plats
     return "https://images.unsplash.com/photo-1546069901-ba9599a7e63c?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=1480&q=80";
@@ -132,13 +173,13 @@ const RestaurantDetail: React.FC = () => {
   };
 
   // Grouper les plats par catégorie
-  const groupItemsByCategory = (items?: MenuItem[]) => {
+  const groupItemsByCategory = (items?: any[]) => {
     if (!items || items.length === 0) {
       return {};
     }
 
-    return items.reduce((groups: {[key: string]: MenuItem[]}, item) => {
-      const category = item.category || 'Autre';
+    return items.reduce((groups: {[key: string]: any[]}, item) => {
+      const category = item.meal_category?.name || item.category || 'Autre';
       if (!groups[category]) {
         groups[category] = [];
       }
@@ -196,7 +237,7 @@ const RestaurantDetail: React.FC = () => {
 
   const rating = restaurant.rewiews ? calculateAverageRating(restaurant.rewiews) : 0;
   const reviewCount = restaurant.rewiews?.length || 0;
-  const selectedMenuData = restaurant.menus?.find(menu => menu.menu_id === selectedMenu);
+  const selectedMenuData = menus.find(menu => menu.menu_id === selectedMenu);
   const menuItemsByCategory = selectedMenuData ? groupItemsByCategory(selectedMenuData.items) : {};
 
   return (
@@ -243,7 +284,7 @@ const RestaurantDetail: React.FC = () => {
             className={`tab-button ${activeTab === 'menu' ? 'active' : ''}`}
             onClick={() => setActiveTab('menu')}
           >
-            Menu
+            Menu ({menus.length})
           </button>
           <button 
             className={`tab-button ${activeTab === 'reviews' ? 'active' : ''}`}
@@ -344,16 +385,17 @@ const RestaurantDetail: React.FC = () => {
           {/* Onglet Menu */}
           {activeTab === 'menu' && (
             <div className="menu-tab">
-              {restaurant.menus && restaurant.menus.length > 0 ? (
+              {menus && menus.length > 0 ? (
                 <>
                   <div className="menu-selector">
-                    {restaurant.menus.map(menu => (
+                    {menus.map(menu => (
                       <button
                         key={menu.menu_id}
                         className={`menu-button ${selectedMenu === menu.menu_id ? 'active' : ''}`}
                         onClick={() => setSelectedMenu(menu.menu_id)}
                       >
                         {menu.name}
+                        <span className="menu-items-count">({menu.items?.length || 0} plats)</span>
                       </button>
                     ))}
                   </div>
@@ -371,14 +413,14 @@ const RestaurantDetail: React.FC = () => {
                             <h4 className="category-name">{category}</h4>
                             <div className="menu-items">
                               {items.map(item => (
-                                <div key={item.item_id} className="menu-item">
+                                <div key={item.meal_id || item.item_id} className="menu-item">
                                   {item.image && (
                                     <div className="menu-item-image" style={{ backgroundImage: `url(${getMenuItemImageUrl(item)})` }}></div>
                                   )}
                                   <div className="menu-item-content">
                                     <div className="menu-item-header">
                                       <h5 className="menu-item-name">{item.name}</h5>
-                                      <span className="menu-item-price">{formatPrice(item.price)}</span>
+                                      <span className="menu-item-price">{formatPrice(parseFloat(item.price) || 0)}</span>
                                     </div>
                                     <p className="menu-item-description">{item.description}</p>
                                   </div>
