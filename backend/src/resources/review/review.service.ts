@@ -1,4 +1,4 @@
-import { Injectable } from '@nestjs/common';
+import { Injectable, BadRequestException } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import { Review } from './entities/review.entity';
@@ -10,7 +10,14 @@ export class ReviewService {
     private reviewRepository: Repository<Review>,
   ) {}
 
-  create(avis: Review): Promise<Review> {
+  async create(avis: Review): Promise<Review> {
+    // Vérifier si un avis existe déjà pour ce user/restaurant
+    const existing = await this.reviewRepository.findOne({
+      where: { user_id: avis.user_id, restaurant_id: avis.restaurant_id }
+    });
+    if (existing) {
+      throw new BadRequestException('Un avis existe déjà sur ce restauranteeeee');
+    }
     return this.reviewRepository.save(avis);
   }
 

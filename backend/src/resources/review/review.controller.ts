@@ -1,4 +1,4 @@
-import { Controller, Get, Post, Body, Param, Put, Delete } from '@nestjs/common';
+import { Controller, Get, Post, Body, Param, Put, Delete, BadRequestException } from '@nestjs/common';
 import { Review } from './entities/review.entity';
 import { ReviewService } from './review.service';
 import { Public } from '@/common/decorators/security/public.decorator';
@@ -8,8 +8,15 @@ export class ReviewController {
   constructor(private readonly reviewService: ReviewService) {}
 
   @Post()
-  create(@Body() review: Review): Promise<Review> {
-    return this.reviewService.create(review);
+  async create(@Body() review: Review): Promise<Review> {
+    try {
+      return await this.reviewService.create(review);
+    } catch (error) {
+      if (error.message === 'Un avis existe déjà sur ce restaurant') {
+        throw new BadRequestException('Un avis existe déjà sur ce restaurant');
+      }
+      throw new BadRequestException(error.message || 'Erreur lors de la création de l\'avis');
+    }
   }
 
   @Get()
