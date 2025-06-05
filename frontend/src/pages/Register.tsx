@@ -78,10 +78,11 @@ const Register: React.FC = () => {
     try {
       console.log('Register start:', { prenom, nom,username, email, password, confirmPassword });
 console.log(process.env);
-setUsername(`${prenom}-${nom}-${Math.floor(Math.random() * 1000)}`);
-      console.log('username', username);
+var tmpUsername = `${prenom}-${nom}-${Math.floor(Math.random() * 1000)}`;
+setUsername(tmpUsername);
+      console.log('username', tmpUsername);
     
-      const user = await registerUser({ prenom, nom,username, email, password, confirmPassword });
+      const user = await registerUser({ prenom, nom,username:tmpUsername, email, password, confirmPassword });
 
       console.log('Register success');
       console.log('user', user);

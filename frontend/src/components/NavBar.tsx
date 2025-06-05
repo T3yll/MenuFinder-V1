@@ -13,7 +13,7 @@ const NavBar = () => {
         <nav className="navbar-container flex items-center justify-between px-6 py-3 shadow">
             <div className="flex items-center space-x-6">
                 <Link to="/" className="navbar-brand">
-                    <img src={"../assets/images/logo.png"} alt="MenuFinder" className="navbar-logo" />
+                    <img src="/public/logo.png" alt="MenuFinder" className="navbar-logo" />
                 </Link>
                 <div className="flex space-x-4">
                     <Link to="/" className="text-gray-700 hover:text-gray-900">

@@ -5,12 +5,12 @@ import { Restaurant } from '@/resources/restaurant/entities/restaurant.entity';
 import { Review } from '@/resources/review/entities/review.entity';
 import { Exclude } from 'class-transformer';
 import {
-    Entity,
-    Column,
-    PrimaryGeneratedColumn,
-    ManyToOne,
-    JoinColumn,
-    OneToMany
+  Entity,
+  Column,
+  PrimaryGeneratedColumn,
+  ManyToOne,
+  JoinColumn,
+  OneToMany, Unique
 } from 'typeorm';
 
 @Entity()
@@ -32,6 +32,7 @@ export class User {
   prenom: string;
 
   @Column('text')
+  @Unique(['email'])
   email: string;
 
   @Column('boolean')

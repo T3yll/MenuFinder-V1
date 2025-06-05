@@ -34,7 +34,7 @@ const MapComponent: React.FC<MapComponentProps> = ({ latitude, longitude, restau
   const [zoom, setZoom] = React.useState<number>(13);
 
   const handleClick = (restaurant: Restaurant) => {
-    window.open(`/restaurant/${restaurant.id}`, "_blank");
+    window.open(`/restaurant/${restaurant.restaurant_id}`, "_blank");
       }
 
   return (
@@ -48,7 +48,7 @@ const MapComponent: React.FC<MapComponentProps> = ({ latitude, longitude, restau
 
       {restaurants.map((restaurant) => (
         <Marker
-          key={restaurant.id}
+          key={restaurant.restaurant_id}
           icon={
             new L.Icon({
               iconUrl: restaurant.imageUrl,

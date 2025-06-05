@@ -28,6 +28,7 @@ function App() {
               <Route path="/restaurants" element={<><NavBar /><Restaurants /></>} />
               <Route path="/menus" element={<><NavBar /><Menus /></>} />
               <Route path="/profile" element={<><NavBar /><Profile /></>} />
+              {/* <Route path="/updateProfile" element={<><NavBar /><UpdateProfile /></>} /> */}
               <Route path="/map" element={<><NavBar /><Map/></>} />
               <Route path="/register-restaurant" element={<><NavBar /><RegisterRestaurant/></>} />
               <Route path="/restaurants/:id" element={<RestaurantDetail />} />
