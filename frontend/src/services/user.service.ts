@@ -3,12 +3,13 @@ import { User } from "../types/User";
 
 
 export interface UserRegister {
-    prenom: string;
-    nom: string;
-    username: string;
-    email: string;
-    password: string;
-    confirmPassword: string;
+  prenom: string;
+  nom: string;
+  email: string;
+  password: string;
+  username?: string; // Optional - backend will generate if not provided
+  bAdmin?: boolean; // Optional
+  image_file_id?: number; // Optional
 }
 
 export const registerUser = async (user: UserRegister) => {

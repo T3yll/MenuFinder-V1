@@ -89,41 +89,62 @@ export class UserService {
     return user;
   }
 
-async create(createUserDto: CreateUserDto): Promise<User> {
-  const saltRounds = 10;
+  async create(createUserDto: CreateUserDto): Promise<User> {
+    const saltRounds = 10;
 
-  const hashedPassword = await bcrypt.hash(
-    createUserDto.password,
-    saltRounds
-  );
+    const hashedPassword = await bcrypt.hash(
+      createUserDto.password,
+      saltRounds
+    );
 
-  // Extraire tous les champs du DTO
-  const { 
-    username, 
-    password, 
-    nom, 
-    prenom, 
-    email, 
-    bAdmin,
-    image_file_id
-  } = createUserDto;
+    // Generate username if not provided
+    let username = createUserDto.username;
+    if (!username) {
+      username = `${createUserDto.prenom}-${createUserDto.nom}-${Math.floor(Math.random() * 1000)}`;
+    }
 
-  // Créer l'utilisateur avec tous les champs obligatoires
-  const newUser = this.usersRepository.create({
-    username,
-    password: hashedPassword,
-    nom,
-    prenom,
-    email,
-    bAdmin: bAdmin || false,
-    image_file_id
-  });
+    // Ensure username is unique
+    let uniqueUsername = username;
+    let counter = 1;
+    while (await this.usernameExists(uniqueUsername)) {
+      uniqueUsername = `${username}-${counter}`;
+      counter++;
+    }
 
-  // Sauvegarder l'utilisateur
-  await this.usersRepository.save(newUser);
+    // Extraire tous les champs du DTO
+    const { 
+      password, 
+      nom, 
+      prenom, 
+      email, 
+      bAdmin,
+      image_file_id
+    } = createUserDto;
 
-  return newUser;
-}
+    // Créer l'utilisateur avec tous les champs obligatoires
+    const newUser = this.usersRepository.create({
+      username: uniqueUsername, // Use the generated unique username
+      password: hashedPassword,
+      nom,
+      prenom,
+      email,
+      bAdmin: bAdmin || false,
+      image_file_id
+    });
+
+    // Sauvegarder l'utilisateur
+    await this.usersRepository.save(newUser);
+
+    return newUser;
+  }
+
+  // Helper method to check if username exists
+  private async usernameExists(username: string): Promise<boolean> {
+    const existingUser = await this.usersRepository.findOne({
+      where: { username }
+    });
+    return !!existingUser;
+  }
 
   async update(id: number, updateUserDto: UpdateUserDto): Promise<User> {
     const user = await this.findOne(id);

@@ -1,6 +1,7 @@
 import { Entity, PrimaryGeneratedColumn, Column, ManyToOne, JoinColumn, OneToMany } from 'typeorm';
 import { Restaurant } from '../../restaurant/entities/restaurant.entity';
 import { Meal } from '../../meal/entities/meal.entity';
+import { Optional } from '@nestjs/common';
 
 @Entity('Menu')
 export class Menu {

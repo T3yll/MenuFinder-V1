@@ -1,0 +1,289 @@
+// Styles pour MapComponent avec popup moderne
+
+// Styles pour l'image du restaurant dans le popup
+.restaurant-image-section {
+  position: relative;
+  height: 140px;
+  overflow: hidden;
+  
+  img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    transition: transform 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+    
+    &:hover {
+      transform: scale(1.05);
+    }
+  }
+  
+  // Overlay gradient pour le texte
+  &::after {
+    content: '';
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    height: 60px;
+    background: linear-gradient(transparent, rgba(0,0,0,0.7));
+    pointer-events: none;
+  }
+}
+
+// Animation pour le chargement de l'image
+@keyframes imageLoad {
+  0% {
+    opacity: 0;
+    transform: scale(1.1);
+  }
+  100% {
+    opacity: 1;
+    transform: scale(1);
+  }
+}
+
+.restaurant-image-section img {
+  animation: imageLoad 0.6s ease-out;
+}
+
+// Skeleton loader pour l'image pendant le chargement
+.image-skeleton {
+  width: 100%;
+  height: 140px;
+  background: linear-gradient(
+    90deg,
+    rgba(255, 255, 255, 0.1) 0%,
+    rgba(255, 255, 255, 0.2) 50%,
+    rgba(255, 255, 255, 0.1) 100%
+  );
+  background-size: 200% 100%;
+  animation: shimmerSkeleton 1.5s infinite;
+}
+
+@keyframes shimmerSkeleton {
+  0% {
+    background-position: -200% 0;
+  }
+  100% {
+    background-position: 200% 0;
+  }
+}
+
+// Override des styles Leaflet pour les popups modernes
+.modern-restaurant-popup {
+  .leaflet-popup-content-wrapper {
+    background: transparent !important;
+    box-shadow: none !important;
+    border-radius: 0 !important;
+    padding: 0 !important;
+    margin: 0 !important;
+  }
+
+  .leaflet-popup-content {
+    margin: 0 !important;
+    padding: 0 !important;
+    width: auto !important;
+    min-height: auto !important;
+  }
+
+  .leaflet-popup-tip {
+    display: none !important;
+  }
+
+  .leaflet-popup-close-button {
+    display: none !important;
+  }
+}
+
+// Styles pour les markers personnalisés
+.custom-restaurant-marker {
+  filter: drop-shadow(0 4px 8px rgba(0, 0, 0, 0.2));
+  transition: all 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+  cursor: pointer;
+
+  &:hover {
+    transform: scale(1.15);
+    filter: drop-shadow(0 6px 12px rgba(0, 0, 0, 0.3));
+  }
+
+  svg {
+    transition: inherit;
+  }
+}
+
+// Animation pour les markers au chargement
+@keyframes markerAppear {
+  0% {
+    transform: scale(0) translateY(20px);
+    opacity: 0;
+  }
+  50% {
+    transform: scale(1.2) translateY(-5px);
+  }
+  100% {
+    transform: scale(1) translateY(0);
+    opacity: 1;
+  }
+}
+
+.leaflet-marker-icon.custom-restaurant-marker {
+  animation: markerAppear 0.6s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+  animation-fill-mode: both;
+}
+
+// Délai d'animation pour chaque marker (effet de cascade)
+.leaflet-marker-icon.custom-restaurant-marker:nth-child(1) { animation-delay: 0.1s; }
+.leaflet-marker-icon.custom-restaurant-marker:nth-child(2) { animation-delay: 0.2s; }
+.leaflet-marker-icon.custom-restaurant-marker:nth-child(3) { animation-delay: 0.3s; }
+.leaflet-marker-icon.custom-restaurant-marker:nth-child(4) { animation-delay: 0.4s; }
+.leaflet-marker-icon.custom-restaurant-marker:nth-child(5) { animation-delay: 0.5s; }
+
+// Styles pour améliorer l'apparence générale de la carte
+.leaflet-container {
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%) !important;
+  
+  .leaflet-tile-pane {
+    filter: saturate(1.1) contrast(1.05);
+  }
+}
+
+// Personnalisation des contrôles de zoom
+.leaflet-control-zoom {
+  border: none !important;
+  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.15) !important;
+  border-radius: 16px !important;
+  overflow: hidden;
+  backdrop-filter: blur(20px);
+  background: rgba(255, 255, 255, 0.9) !important;
+
+  .leaflet-control-zoom-in,
+  .leaflet-control-zoom-out {
+    background: transparent !important;
+    border: none !important;
+    font-size: 18px !important;
+    font-weight: bold !important;
+    color: #374151 !important;
+    width: 40px !important;
+    height: 40px !important;
+    display: flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+    transition: all 0.3s ease !important;
+
+    &:hover {
+      background: rgba(99, 102, 241, 0.1) !important;
+      color: #6366f1 !important;
+      transform: scale(1.1);
+    }
+
+    &:first-child {
+      border-bottom: 1px solid rgba(0, 0, 0, 0.08) !important;
+      border-radius: 16px 16px 0 0 !important;
+    }
+
+    &:last-child {
+      border-radius: 0 0 16px 16px !important;
+    }
+  }
+}
+
+// Style pour l'attribution
+.leaflet-control-attribution {
+  background: rgba(255, 255, 255, 0.85) !important;
+  backdrop-filter: blur(10px) !important;
+  border-radius: 12px !important;
+  border: 1px solid rgba(255, 255, 255, 0.3) !important;
+  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.1) !important;
+  padding: 4px 8px !important;
+  font-size: 11px !important;
+  
+  a {
+    color: #374151 !important;
+    text-decoration: none !important;
+    font-weight: 500 !important;
+
+    &:hover {
+      color: #6366f1 !important;
+    }
+  }
+}
+
+// Loading state pour la carte
+.map-loading {
+  position: relative;
+  
+  &::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: linear-gradient(
+      45deg,
+      rgba(255,255,255,0.1),
+      rgba(255,255,255,0.3),
+      rgba(255,255,255,0.1)
+    );
+    background-size: 200% 200%;
+    animation: shimmerLoad 2s infinite;
+    z-index: 1000;
+    pointer-events: none;
+  }
+}
+
+@keyframes shimmerLoad {
+  0% {
+    background-position: -200% -200%;
+  }
+  100% {
+    background-position: 200% 200%;
+  }
+}
+
+// Responsive design
+@media (max-width: 768px) {
+  .modern-restaurant-popup {
+    .leaflet-popup-content-wrapper {
+      max-width: 300px !important;
+    }
+  }
+
+  .custom-restaurant-marker {
+    svg {
+      width: 32px !important;
+      height: 32px !important;
+    }
+  }
+
+  .leaflet-control-zoom {
+    .leaflet-control-zoom-in,
+    .leaflet-control-zoom-out {
+      width: 36px !important;
+      height: 36px !important;
+      font-size: 16px !important;
+    }
+  }
+}
+
+// Effet de focus pour l'accessibilité
+.leaflet-marker-icon:focus {
+  outline: 2px solid #6366f1;
+  outline-offset: 2px;
+  border-radius: 50%;
+}
+
+// Animation de pulsation pour les markers favoris (si vous implémentez cette fonctionnalité)
+.favorite-marker {
+  animation: favoritePulse 1.5s ease-in-out infinite;
+}
+
+@keyframes favoritePulse {
+  0%, 100% {
+    transform: scale(1);
+  }
+  50% {
+    transform: scale(1.1);
+    filter: drop-shadow(0 0 15px rgba(255, 107, 53, 0.6));
+  }
+}

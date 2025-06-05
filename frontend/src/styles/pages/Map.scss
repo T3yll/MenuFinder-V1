@@ -1,79 +1,221 @@
-// Styles pour le banner de géolocalisation
+// Map.scss - Styles complémentaires pour votre carte
+
 .map-container {
   position: relative;
   height: 100vh;
   width: 100%;
+  overflow: hidden;
 
+  // Style pour le banner de permission de géolocalisation
   .location-permission-banner {
     position: absolute;
     top: 20px;
     left: 50%;
     transform: translateX(-50%);
     z-index: 1000;
-    background: rgba(255, 255, 255, 0.95);
-    backdrop-filter: blur(10px);
-    border-radius: 12px;
-    padding: 1rem 1.5rem;
-    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
-    border: 1px solid rgba(255, 107, 53, 0.2);
-    animation: slideDown 0.3s ease-out;
+    background: linear-gradient(135deg, rgba(59, 130, 246, 0.95), rgba(29, 78, 216, 0.95));
+    backdrop-filter: blur(20px);
+    border: 1px solid rgba(255, 255, 255, 0.2);
+    border-radius: 16px;
+    padding: 16px 24px;
+    box-shadow: 0 8px 32px rgba(0, 0, 0, 0.2);
+    animation: slideDown 0.5s ease-out;
 
     .banner-content {
       display: flex;
       align-items: center;
-      gap: 1rem;
-      font-size: 0.9rem;
-      color: #333;
-
+      gap: 16px;
+      color: white;
+      font-weight: 600;
+      
       .enable-location-btn {
-        background: linear-gradient(135deg, #ff6b35 0%, #f54c32 100%);
+        background: rgba(255, 255, 255, 0.2);
+        border: 1px solid rgba(255, 255, 255, 0.3);
         color: white;
-        border: none;
-        padding: 0.5rem 1rem;
-        border-radius: 8px;
-        font-size: 0.8rem;
+        padding: 8px 16px;
+        border-radius: 12px;
         font-weight: 600;
         cursor: pointer;
         transition: all 0.3s ease;
-        white-space: nowrap;
+        backdrop-filter: blur(10px);
 
         &:hover {
-          transform: translateY(-1px);
-          box-shadow: 0 4px 12px rgba(255, 107, 53, 0.3);
+          background: rgba(255, 255, 255, 0.3);
+          transform: translateY(-2px);
+          box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
         }
       }
     }
+  }
 
-    @keyframes slideDown {
-      from {
-        opacity: 0;
-        transform: translateX(-50%) translateY(-20px);
+  // Personnalisation des contrôles Leaflet
+  .leaflet-control-zoom {
+    border: none !important;
+    box-shadow: 0 8px 32px rgba(0, 0, 0, 0.15) !important;
+    border-radius: 12px !important;
+    overflow: hidden;
+    backdrop-filter: blur(20px);
+    background: rgba(255, 255, 255, 0.9) !important;
+
+    .leaflet-control-zoom-in,
+    .leaflet-control-zoom-out {
+      background: transparent !important;
+      border: none !important;
+      font-size: 20px !important;
+      font-weight: bold !important;
+      color: #374151 !important;
+      width: 40px !important;
+      height: 40px !important;
+      display: flex !important;
+      align-items: center !important;
+      justify-content: center !important;
+      transition: all 0.3s ease !important;
+
+      &:hover {
+        background: rgba(59, 130, 246, 0.1) !important;
+        color: #3b82f6 !important;
+        transform: scale(1.1);
       }
-      to {
-        opacity: 1;
-        transform: translateX(-50%) translateY(0);
+
+      &:first-child {
+        border-bottom: 1px solid rgba(0, 0, 0, 0.1) !important;
       }
     }
   }
-}
 
-// Responsive
-@media (max-width: 768px) {
-  .map-container {
+  // Style pour l'attribution Leaflet
+  .leaflet-control-attribution {
+    background: rgba(255, 255, 255, 0.8) !important;
+    backdrop-filter: blur(10px) !important;
+    border-radius: 8px !important;
+    border: 1px solid rgba(255, 255, 255, 0.3) !important;
+    box-shadow: 0 4px 16px rgba(0, 0, 0, 0.1) !important;
+    
+    a {
+      color: #374151 !important;
+      text-decoration: none !important;
+      font-weight: 500 !important;
+
+      &:hover {
+        color: #3b82f6 !important;
+      }
+    }
+  }
+
+  // Animation pour l'apparition du banner
+  @keyframes slideDown {
+    from {
+      opacity: 0;
+      transform: translateX(-50%) translateY(-20px);
+    }
+    to {
+      opacity: 1;
+      transform: translateX(-50%) translateY(0);
+    }
+  }
+
+  // Responsive design
+  @media (max-width: 768px) {
     .location-permission-banner {
-      left: 10px;
-      right: 10px;
+      left: 16px;
+      right: 16px;
       transform: none;
       
       .banner-content {
         flex-direction: column;
-        gap: 0.75rem;
+        gap: 12px;
         text-align: center;
-
+        
         .enable-location-btn {
           width: 100%;
         }
       }
     }
   }
+}
+
+// Styles globaux pour améliorer l'apparence de Leaflet
+.leaflet-popup-content-wrapper {
+  background: transparent !important;
+  box-shadow: none !important;
+  border-radius: 0 !important;
+  padding: 0 !important;
+}
+
+.leaflet-popup-content {
+  margin: 0 !important;
+  padding: 0 !important;
+}
+
+.leaflet-popup-tip {
+  display: none !important;
+}
+
+// Style pour les markers personnalisés
+.custom-restaurant-marker {
+  filter: drop-shadow(0 4px 8px rgba(0, 0, 0, 0.3));
+  transition: all 0.3s ease;
+
+  &:hover {
+    transform: scale(1.1);
+    filter: drop-shadow(0 6px 12px rgba(0, 0, 0, 0.4));
+  }
+}
+
+.custom-user-marker {
+  animation: pulse 2s infinite;
+}
+
+@keyframes pulse {
+  0% {
+    transform: scale(1);
+    opacity: 1;
+  }
+  50% {
+    transform: scale(1.1);
+    opacity: 0.8;
+  }
+  100% {
+    transform: scale(1);
+    opacity: 1;
+  }
+}
+
+// Loading overlay pour la carte
+.map-loading-overlay {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: linear-gradient(135deg, #f8fafc 0%, #e2e8f0 100%);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 1000;
+  
+  .loading-content {
+    text-align: center;
+    
+    .loading-spinner {
+      width: 60px;
+      height: 60px;
+      border: 4px solid #e2e8f0;
+      border-top: 4px solid #3b82f6;
+      border-radius: 50%;
+      animation: spin 1s linear infinite;
+      margin: 0 auto 16px;
+    }
+    
+    .loading-text {
+      color: #64748b;
+      font-weight: 600;
+      font-size: 16px;
+    }
+  }
+}
+
+@keyframes spin {
+  0% { transform: rotate(0deg); }
+  100% { transform: rotate(360deg); }
 }

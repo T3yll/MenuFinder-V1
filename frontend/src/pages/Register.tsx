@@ -65,29 +65,30 @@ const Register: React.FC = () => {
     setError('');
 
     if (!validateForm()) {
-      console.log('validateForm');
+      console.log('validateForm failed');
       return;
     }
 
     console.log('validateForm ok');
-
     setIsLoading(true);
 
-    console.log('setIsLoading ok');
-
     try {
-      console.log('Register start:', { prenom, nom,username, email, password, confirmPassword });
-console.log(process.env);
-setUsername(`${prenom}-${nom}-${Math.floor(Math.random() * 1000)}`);
-      console.log('username', username);
-    
-      const user = await registerUser({ prenom, nom,username, email, password, confirmPassword });
+      console.log('Register start:', { prenom, nom, email, password });
+      
+      // Only send the fields that CreateUserDto expects
+      const userData = {
+        prenom,
+        nom,
+        email,
+        password
+        // Remove username and confirmPassword - they shouldn't be sent to backend
+      };
+      
+      const user = await registerUser(userData);
 
       console.log('Register success');
       console.log('user', user);
       Navigate("/login");
-      
-
 
     } catch (err) {
       console.error('Erreur lors de l\'inscription:', err);
@@ -199,7 +200,7 @@ setUsername(`${prenom}-${nom}-${Math.floor(Math.random() * 1000)}`);
               <div className="input-container">
                 <input
                   type={showConfirmPassword ? "text" : "password"}
-                  id="confirmPassword"
+                  id="password"
                   className="form-input password-input"
                   value={confirmPassword}
                   onChange={(e) => setConfirmPassword(e.target.value)}
