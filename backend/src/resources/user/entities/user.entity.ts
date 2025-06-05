@@ -39,7 +39,7 @@ export class User {
   bAdmin: boolean;
 
   @Column({ nullable: true })
-  image_file_id: number;
+  image_file_id: string;
 
   @ManyToOne(() => File)
   @JoinColumn({ name: 'image_file_id' })

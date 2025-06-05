@@ -83,7 +83,8 @@ export class UserController {
     @Body() updateUserDto: UpdateUserDto
   ): Promise<User> {
     try {
-      return await this.userService.update(+id, updateUserDto);
+      await this.userService.update(+id, updateUserDto);
+      return await this.userService.selectPublicInfo(+id);
     } catch (error) {
       throw error;
     }

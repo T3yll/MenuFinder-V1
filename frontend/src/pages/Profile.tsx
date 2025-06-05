@@ -1,10 +1,12 @@
 import React, { useEffect, useState } from 'react';
 import '../styles/pages/profile.scss';
 import { getUserProfile } from '../services/user.service';
+import { Button } from 'antd';
 
 const Profile: React.FC = () => {
-    const [user, setUser] = useState<{ username: string; contributions: number; followers: number; following: number }>({
+    const [user, setUser] = useState<{ username: string; image_path:string; contributions: number; followers: number; following: number }>({
         username: '',
+        image_path: 'public/default.png',
         contributions: 0,
         followers: 0,
         following: 0,
@@ -25,13 +27,13 @@ const Profile: React.FC = () => {
 
     return (
         <div className="profile-page">
-            <div className="profile-banner">
-                <button className="edit-cover-btn">Ajouter une photo de couverture</button>
+            <div className="profile-banner" style={{ backgroundImage: `url(public/banner.png)` ,WebkitFilter:'blur(3px)', backgroundSize: 'cover' }}>
+                <div className="banner-overlay"></div> 
             </div>
 
             <div className="profile-header">
                 <div className="avatar">
-                    <img src="/assets/images/avatar.png" alt="Avatar utilisateur" />
+                    <img src={user.image_path} alt="Avatar utilisateur" />
                 </div>
                 <div className="profile-info">
                     <h2>{user.username || 'Nom d’utilisateur'}</h2>
@@ -41,7 +43,7 @@ const Profile: React.FC = () => {
                         <span>Abonnements <strong>{user.following}</strong></span>
                     </div>
                 </div>
-                <button className="edit-profile-btn">Modifier le profil</button>
+                <Button href='/updateProfile' className="edit-profile-btn">Modifier le profil</Button>
             </div>
 
             <div className="profile-content">

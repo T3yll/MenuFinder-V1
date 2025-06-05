@@ -4,6 +4,7 @@ $color-secondary: #fda928;
 $color-accent: #fda928;
 $color-dark: #292F36;
 $color-light: #F7FFF7;
+$color-warning: #ff1c1c;
 
 @tailwind base;
 @tailwind components;
@@ -66,6 +67,20 @@ code {
 
   &:hover {
     background-color: rgba($color-primary, 0.9);
+  }
+}
+
+.btn-warning {
+  background-color: $color-warning;
+  color: white;
+  border: none;
+  padding: 0.5rem 1rem;
+  border-radius: 0.25rem;
+  cursor: pointer;
+  transition: background-color 0.3s ease;
+
+  &:hover {
+    background-color: rgba($color-warning, 0.9);
   }
 }
 
