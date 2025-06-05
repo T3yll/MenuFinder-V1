@@ -37,7 +37,7 @@ const RestaurantDetail: React.FC = () => {
   
   const { formatPrice } = useCurrency();
 
-  const API_URL = 'http://localhost:4000';
+  const API_URL = process.env.VITE_API_URL;
 
   // Fonction pour récupérer les avis
   const fetchReviews = async (restaurantId: number) => {
@@ -187,7 +187,7 @@ const RestaurantDetail: React.FC = () => {
     return stars;
   };
   
-  const API_URL = 'http://localhost:3000/api';
+  const API_VITE = 'http://localhost:3000/api';
 
   // Obtenir l'URL de l'image
   const getImageUrl = (restaurant: Restaurant) => {
@@ -197,7 +197,7 @@ const RestaurantDetail: React.FC = () => {
         return restaurant.image.path;
         }
         // Sinon, construire l'URL correcte vers le fichier local
-        return `${API_URL}/${restaurant.image.path.replace(/^\//, '')}`;
+        return `${API_VITE}/${restaurant.image.path.replace(/^\//, '')}`;
     }
     // Image par défaut
     return "https://images.unsplash.com/photo-1555396273-367ea4eb4db5?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=1374&q=80";
@@ -211,7 +211,7 @@ const RestaurantDetail: React.FC = () => {
         return item.image.path;
       }
       // Sinon, construire l'URL correcte vers le fichier local
-      return `${API_URL}/${item.image.path.replace(/^\//, '')}`;
+      return `${API_VITE}/${item.image.path.replace(/^\//, '')}`;
     }
     // Image par défaut pour les plats
     return "https://images.unsplash.com/photo-1546069901-ba9599a7e63c?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=1480&q=80";
