@@ -1,9 +1,6 @@
 import { IsNotEmpty, IsString, IsEmail, IsBoolean, IsNumber, IsOptional } from 'class-validator';
 
 export class CreateUserDto {
-  @IsString()
-  @IsNotEmpty()
-  username: string;
 
   @IsString()
   @IsNotEmpty()
@@ -20,6 +17,10 @@ export class CreateUserDto {
   @IsEmail()
   @IsNotEmpty()
   email: string;
+
+  @IsString()
+  @IsOptional()
+  username?: string; // Make username optional - we'll generate it if not provided
 
   @IsBoolean()
   @IsOptional()

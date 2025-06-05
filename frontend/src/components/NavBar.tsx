@@ -30,7 +30,7 @@ const NavBar = () => {
             <div className="flex items-center space-x-4">
                 <CurrencySelector />
                 {!isLoggedIn ? (
-                    <>
+                    <>  
                         <Link
                             to="/login"
                             className="btn-primary text-white py-2 px-4 rounded transition-colors"
@@ -48,11 +48,17 @@ const NavBar = () => {
                     :
                     <>
                         <Link
+                            to="/dashboard"
+                            className="btn-primary text-white py-2 px-4 rounded transition-colors"
+                        >
+                            Dashboard
+                        </Link>
+                        <Link
                             to="/profile"
                             className="btn-primary text-white py-2 px-4 rounded transition-colors"
                         >
                             Profil
-                        </Link>           
+                        </Link>                
                     </>
                 }
             </div>

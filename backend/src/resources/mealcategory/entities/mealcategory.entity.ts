@@ -1,13 +1,16 @@
-import { Meal } from '@/resources/meal/entities/meal.entity';
 import { Entity, PrimaryGeneratedColumn, Column, OneToMany } from 'typeorm';
+import { Meal } from '../../meal/entities/meal.entity';
 
-@Entity('meal_category')
+@Entity('MealCategory')
 export class MealCategory {
   @PrimaryGeneratedColumn({ unsigned: true })
   meal_category_id: number;
 
-  @Column()
-  name: number; // Notez que dans le SQL, c'est un BIGINT, mais c'est probablement une erreur et devrait être un TEXT
+  @Column('text')
+  name: string;
+
+  @Column('text', { nullable: true })
+  description: string;
 
   @OneToMany(() => Meal, meal => meal.mealCategory)
   meals: Meal[];
