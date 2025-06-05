@@ -26,7 +26,7 @@ const getImageUrl = (restaurant: Restaurant) => {
     return null;
 };
 
-const Dashboard: React.FC = () => {
+const DashboardRestaurant: React.FC = () => {
     const [user, setUser] = useState<User | null>(null);
     const [restaurants, setRestaurants] = useState<Restaurant[]>([]);
     const [loading, setLoading] = useState<boolean>(true);
@@ -126,17 +126,7 @@ const Dashboard: React.FC = () => {
                     <h1>Tableau de bord</h1>
                 </div>
                 <div className="user-info">
-                    <div className="user-avatar">
-                        {user?.image_file_id ? (
-                            <img src={`http://localhost:3000/api/files/${user.image_file_id}`} alt={user.username} />
-                        ) : (
-                            <div className="avatar-placeholder">
-                                {user?.prenom?.charAt(0) || ''}{user?.nom?.charAt(0) || ''}
-                            </div>
-                        )}
-                    </div>
                     <div className="user-details">
-                        <h2>{user?.prenom} {user?.nom}</h2>
                         <p>@{user?.username}</p>
                     </div>
                 </div>
@@ -258,4 +248,4 @@ const Dashboard: React.FC = () => {
     );
 };
 
-export default Dashboard;
+export default DashboardRestaurant;

@@ -1,0 +1,79 @@
+// Styles pour le banner de géolocalisation
+.map-container {
+  position: relative;
+  height: 100vh;
+  width: 100%;
+
+  .location-permission-banner {
+    position: absolute;
+    top: 20px;
+    left: 50%;
+    transform: translateX(-50%);
+    z-index: 1000;
+    background: rgba(255, 255, 255, 0.95);
+    backdrop-filter: blur(10px);
+    border-radius: 12px;
+    padding: 1rem 1.5rem;
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+    border: 1px solid rgba(255, 107, 53, 0.2);
+    animation: slideDown 0.3s ease-out;
+
+    .banner-content {
+      display: flex;
+      align-items: center;
+      gap: 1rem;
+      font-size: 0.9rem;
+      color: #333;
+
+      .enable-location-btn {
+        background: linear-gradient(135deg, #ff6b35 0%, #f54c32 100%);
+        color: white;
+        border: none;
+        padding: 0.5rem 1rem;
+        border-radius: 8px;
+        font-size: 0.8rem;
+        font-weight: 600;
+        cursor: pointer;
+        transition: all 0.3s ease;
+        white-space: nowrap;
+
+        &:hover {
+          transform: translateY(-1px);
+          box-shadow: 0 4px 12px rgba(255, 107, 53, 0.3);
+        }
+      }
+    }
+
+    @keyframes slideDown {
+      from {
+        opacity: 0;
+        transform: translateX(-50%) translateY(-20px);
+      }
+      to {
+        opacity: 1;
+        transform: translateX(-50%) translateY(0);
+      }
+    }
+  }
+}
+
+// Responsive
+@media (max-width: 768px) {
+  .map-container {
+    .location-permission-banner {
+      left: 10px;
+      right: 10px;
+      transform: none;
+      
+      .banner-content {
+        flex-direction: column;
+        gap: 0.75rem;
+        text-align: center;
+
+        .enable-location-btn {
+          width: 100%;
+        }
+      }
+    }
+  }
+}

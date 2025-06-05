@@ -13,9 +13,9 @@ import Profile from './pages/Profile';
 import RegisterRestaurant from './pages/RegisterRestaurant';
 import RestaurantDetail from './pages/RestaurantDetail';
 import EditRestaurant from './pages/EditRestaurant';
-import Dashboard from './pages/Dashboard';
 import RestaurantMenus from './pages/RestaurantMenus';
 import MenuItems from './pages/MenuItems';
+import DashboardRestaurant from './pages/Dashboard';
 
 function App() {
   return (
@@ -32,7 +32,7 @@ function App() {
             <Route path="/map" element={<><NavBar /><Map/></>} />
             <Route path="/register-restaurant" element={<><NavBar /><RegisterRestaurant/></>} />
             <Route path="/restaurants/:id" element={<RestaurantDetail />} />
-            <Route path="/dashboard" element={<><NavBar /><Dashboard /></>} />
+            <Route path="/dashboard" element={<><NavBar /><DashboardRestaurant /></>} />
             <Route path="/edit-restaurant/:id" element={<EditRestaurant />} />
             <Route path="/restaurant-menus/:id" element={<RestaurantMenus />} />
             <Route path="/menu-items/:id" element={<MenuItems />} />
