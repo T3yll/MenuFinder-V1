@@ -11,6 +11,7 @@ import {
   JoinColumn,
   OneToMany,
   OneToOne,
+  Unique,
 } from 'typeorm';
 
 @Entity()
@@ -31,6 +32,7 @@ export class User {
   prenom: string;
 
   @Column('text')
+  @Unique(['email'])
   email: string;
 
   @Column('boolean')
