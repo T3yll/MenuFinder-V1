@@ -2,7 +2,8 @@ import React, { useState, useEffect, useRef } from 'react';
 import { useNavigate, useParams, Link } from 'react-router-dom';
 import { Restaurant } from '../types/Restaurant';
 import '../styles/pages/EditRestaurant.scss';
-import { RestaurantService, FileService } from '../services/RestaurantService';
+import { RestaurantService} from '../services/RestaurantService';
+import { upload } from '../services/file.service';
 
 // Fonction utilitaire pour obtenir l'URL de l'image
 const getImageUrl = (restaurant: Restaurant) => {
@@ -113,7 +114,7 @@ const EditRestaurant: React.FC = () => {
             
             if (newImageFile) {
                 try {
-                    const uploadedFile = await FileService.upload(newImageFile);
+                    const uploadedFile = await upload(newImageFile);
                     updatedImageFileId = uploadedFile.file_id;
                     console.log("Nouvelle image téléchargée, ID:", updatedImageFileId);
                 } catch (err) {

@@ -3,7 +3,7 @@ import { useParams, Link, useNavigate } from 'react-router-dom';
 import { Menu } from '../types/Restaurant';
 import { MenuService, MealService, CreateMealDto } from '../services/MenuService';
 import '../styles/pages/MenuItems.scss';
-import { FileService } from '../services/RestaurantService';
+import {upload} from '../services/file.service';
 
 // Catégories pour les plats
 const MEAL_CATEGORIES = [
@@ -148,7 +148,7 @@ const MenuItems: React.FC = () => {
             
             if (newImageFile) {
                 try {
-                    const uploadedFile = await FileService.upload(newImageFile);
+                    const uploadedFile = await upload(newImageFile);
                     imageFileId = uploadedFile.file_id;
                 } catch (err) {
                     setError("Erreur lors de l'upload de l'image");
@@ -223,7 +223,7 @@ const MenuItems: React.FC = () => {
             
             if (editImageFile) {
                 try {
-                    const uploadedFile = await FileService.upload(editImageFile);
+                    const uploadedFile = await upload(editImageFile);
                     updatedImageFileId = uploadedFile.file_id;
                 } catch (err) {
                     setError("Erreur lors de l'upload de l'image");
