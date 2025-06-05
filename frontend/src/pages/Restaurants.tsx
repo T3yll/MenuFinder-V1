@@ -47,6 +47,7 @@ const Restaurants: React.FC = () => {
   const [filteredRestaurants, setFilteredRestaurants] = useState<RestaurantWithUI[]>([]);
   const [loading, setLoading] = useState<boolean>(true);
   const [error, setError] = useState<string | null>(null);
+  const [restaurantReviews, setRestaurantReviews] = useState<Record<number, { count: number, avg: number }>>({});
   
   const { formatPrice } = useCurrency();
 
@@ -55,9 +56,10 @@ const Restaurants: React.FC = () => {
     if (!reviews || reviews.length === 0) {
       return 0;
     }
-    
-    const sum = reviews.reduce((total, review) => total + review.rating, 0);
-    return sum / reviews.length;
+    const reviewsWithRating = reviews.filter(r => r.rating !== null && r.rating !== undefined && typeof r.rating === 'number');
+    if (reviewsWithRating.length === 0) return 0;
+    const sum = reviewsWithRating.reduce((total, review) => total + (review.rating as number), 0);
+    return sum / reviewsWithRating.length;
   };
 
   // Fonction pour charger les restaurants depuis l'API
@@ -69,29 +71,18 @@ const Restaurants: React.FC = () => {
         
         // Utiliser le service RestaurantService pour récupérer les restaurants
         const data = await RestaurantService.findAll();
-        
         if (data) {
           // Enrichir les restaurants avec des données UI supplémentaires
-          const restaurantsWithUI: RestaurantWithUI[] = data.map((restaurant: Restaurant) => {
-            // Calcul de la note moyenne à partir des reviews si disponibles
-            const rating = restaurant.rewiews ? 
-              calculateAverageRating(restaurant.rewiews) : 
-              Math.random() * 2 + 3; // Note aléatoire entre 3 et 5 si pas de reviews
-            
-            return {
-              ...restaurant,
-              rating: rating,
-              reviewCount: restaurant.rewiews?.length || Math.floor(Math.random() * 100) + 20,
-              priceRange: ["€", "€€", "€€€"][Math.floor(Math.random() * 3)],
-              openingHours: "11h00 - 22h00", // Valeur par défaut
-              specialties: restaurant.menus?.length ? 
-                restaurant.menus.flatMap(menu => 
-                  menu.items?.map(item => item.name) || []
-                ).slice(0, 3) : 
-                ["Spécialité de la maison"]
-            };
-          });
-          
+          const restaurantsWithUI: RestaurantWithUI[] = data.map((restaurant: Restaurant) => ({
+            ...restaurant,
+            priceRange: ["€", "€€", "€€€"][Math.floor(Math.random() * 3)],
+            openingHours: "11h00 - 22h00", // Valeur par défaut
+            specialties: restaurant.menus?.length ? 
+              restaurant.menus.flatMap(menu => 
+                menu.items?.map(item => item.name) || []
+              ).slice(0, 3) : 
+              ["Spécialité de la maison"]
+          }));
           setRestaurants(restaurantsWithUI);
         } else {
           setError("Aucune donnée reçue de l'API");
@@ -103,23 +94,39 @@ const Restaurants: React.FC = () => {
         setLoading(false);
       }
     };
-
     fetchRestaurants();
   }, []);
+
+  // Charger les reviews pour chaque restaurant
+  useEffect(() => {
+    if (restaurants.length === 0) return;
+    restaurants.forEach((restaurant) => {
+      fetch(`${API_URL}/reviews/restaurant/${restaurant.restaurant_id}`)
+        .then(res => res.json())
+        .then((reviews: Review[]) => {
+          const count = reviews.length;
+          const reviewsWithRating = reviews.filter(r => r.rating !== null && r.rating !== undefined && typeof r.rating === 'number');
+          const avg = reviewsWithRating.length > 0
+            ? reviewsWithRating.reduce((sum, r) => sum + (r.rating as number), 0) / reviewsWithRating.length
+            : 0;
+          setRestaurantReviews(prev => ({
+            ...prev,
+            [restaurant.restaurant_id]: { count, avg }
+          }));
+        });
+    });
+  }, [restaurants]);
 
   // Effet pour filtrer les restaurants
   useEffect(() => {
     if (restaurants.length === 0) return;
-    
     let filtered = [...restaurants];
-
     // Filtrer par catégorie
     if (selectedCategory !== "all") {
       filtered = filtered.filter(restaurant => 
         restaurant.type.toLowerCase() === selectedCategory.toLowerCase()
       );
     }
-
     setFilteredRestaurants(filtered);
   }, [selectedCategory, restaurants]);
 
@@ -127,25 +134,20 @@ const Restaurants: React.FC = () => {
   const renderStars = (rating: number) => {
     const fullStars = Math.floor(rating);
     const hasHalfStar = rating % 1 >= 0.5;
-
     let stars = [];
-
     // Étoiles pleines
     for (let i = 0; i < fullStars; i++) {
       stars.push(<span key={`full-${i}`} className="star full">★</span>);
     }
-
     // Demi-étoile si nécessaire
     if (hasHalfStar) {
       stars.push(<span key="half" className="star half">★</span>);
     }
-
     // Étoiles vides
     const emptyStarsCount = 5 - stars.length;
     for (let i = 0; i < emptyStarsCount; i++) {
       stars.push(<span key={`empty-${i}`} className="star empty">☆</span>);
     }
-
     return stars;
   };
 
@@ -204,7 +206,6 @@ const Restaurants: React.FC = () => {
     <div className="restaurants-page">
       {/* Slider de catégories */}
       <SliderFilter categories={categories} setSelectedCategory={setSelectedCategory} />
-      
       {/* Liste des restaurants */}
       <div className="restaurants-container">
         <div className="restaurants-grid">
@@ -215,15 +216,14 @@ const Restaurants: React.FC = () => {
                   <div className="restaurant-image-overlay"></div>
                   <div className="price-tag">{restaurant.priceRange}</div>
                 </div>
-
                 <div className="restaurant-content">
                   <h3 className="restaurant-name">{restaurant.name}</h3>
                   <div className="restaurant-category">
                     {categories.find(c => c.id.toLowerCase() === restaurant.type.toLowerCase())?.name || restaurant.type}
                   </div>
                   <div className="restaurant-rating">
-                    <div className="stars">{renderStars(restaurant.rating || 4)}</div>
-                    <span className="reviews-count">({restaurant.reviewCount || 0})</span>
+                    <div className="stars">{renderStars(restaurantReviews[restaurant.restaurant_id]?.avg || 0)}</div>
+                    <span className="reviews-count">({restaurantReviews[restaurant.restaurant_id]?.count || 0})</span>
                   </div>
                   <div className="restaurant-address">
                     <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
@@ -251,9 +251,11 @@ const Restaurants: React.FC = () => {
                     </div>
                   )}
                   <div className="restaurant-actions">
-                    <Link to={`/restaurants/${restaurant.restaurant_id}`} className="view-menu-button">
+                    {/* <span className="view-menu-button" onClick={() => {
+                      window.location.href = `/restaurants/${restaurant.restaurant_id}`;
+                    }}>
                       Voir le menu
-                    </Link>
+                    </span> */}
                     <button className="save-button">
                       <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
                         <path d="M19 21l-7-5-7 5V5a2 2 0 0 1 2-2h10a2 2 0 0 1 2 2z"></path>

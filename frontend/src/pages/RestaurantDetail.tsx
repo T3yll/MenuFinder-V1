@@ -481,7 +481,7 @@ const RestaurantDetail: React.FC = () => {
                   <div className="rating-number">{rating.toFixed(1)}</div>
                   <div className="stars-summary">{renderStars(rating)}</div>
                   <div className="review-count">
-                    {reviews.filter(review => review.rating !== null && review.rating !== undefined).length} notes sur {reviewCount} avis
+                    {reviews.filter(review => review.rating !== null && review.rating !== undefined).length} notes
                   </div>
                 </div>
 

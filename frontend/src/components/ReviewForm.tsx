@@ -1,16 +1,38 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import '../styles/components/ReviewForm.scss';
+import { useAppDispatch } from '../hooks/storeToast';
+import { showToast } from '../store/slice/toastSlice';
 
 interface ReviewFormProps {
   restaurantId: number;
   onReviewSubmitted: () => void;
+  existingUserReview?: boolean;
 }
 
-const ReviewForm: React.FC<ReviewFormProps> = ({ restaurantId, onReviewSubmitted }) => {
+const ReviewForm: React.FC<ReviewFormProps> = ({ restaurantId, onReviewSubmitted, existingUserReview }) => {
   const [rating, setRating] = useState<number>(0);
   const [hoverRating, setHoverRating] = useState<number>(0);
   const [text, setText] = useState<string>('');
   const [isSubmitting, setIsSubmitting] = useState<boolean>(false);
+  const [userHasReview, setUserHasReview] = useState<boolean>(false);
+  const dispatch = useAppDispatch();
+
+  useEffect(() => {
+    if (existingUserReview !== undefined) {
+      setUserHasReview(existingUserReview);
+      return;
+    }
+    const userStr = localStorage.getItem('user');
+    if (!userStr) return;
+    const user = JSON.parse(userStr);
+    fetch(`/api/reviews/restaurant/${restaurantId}`)
+      .then(res => res.json())
+      .then((reviews) => {
+        if (Array.isArray(reviews)) {
+          setUserHasReview(reviews.some((r) => r.user_id === user.id));
+        }
+      });
+  }, [restaurantId, existingUserReview]);
 
   const handleRatingClick = (selectedRating: number) => {
     setRating(selectedRating);
@@ -20,12 +42,24 @@ const ReviewForm: React.FC<ReviewFormProps> = ({ restaurantId, onReviewSubmitted
     e.preventDefault();
     
     if (rating === 0) {
-      alert('Veuillez donner une note');
+      dispatch(showToast({
+        message: 'Veuillez donner une note',
+        severity: 'warning',
+        duration: 3000,
+        vertical: 'bottom',
+        horizontal: 'right',
+      }));
       return;
     }
     
     if (text.trim() === '') {
-      alert('Veuillez écrire un commentaire');
+      dispatch(showToast({
+        message: 'Veuillez écrire un commentaire',
+        severity: 'warning',
+        duration: 3000,
+        vertical: 'bottom',
+        horizontal: 'right',
+      }));
       return;
     }
 
@@ -35,7 +69,13 @@ const ReviewForm: React.FC<ReviewFormProps> = ({ restaurantId, onReviewSubmitted
       // Récupérer l'utilisateur connecté
       const userStr = localStorage.getItem('user');
       if (!userStr) {
-        alert('Vous devez être connecté pour laisser un avis');
+        dispatch(showToast({
+          message: 'Vous devez être connecté pour laisser un avis',
+          severity: 'error',
+          duration: 3000,
+          vertical: 'bottom',
+          horizontal: 'right',
+        }));
         return;
       }
       
@@ -65,13 +105,32 @@ const ReviewForm: React.FC<ReviewFormProps> = ({ restaurantId, onReviewSubmitted
         // Callback pour rafraîchir les avis
         onReviewSubmitted();
         
-        alert('Avis ajouté avec succès !');
+        dispatch(showToast({
+          message: 'Avis ajouté avec succès !',
+          severity: 'success',
+          duration: 3000,
+          vertical: 'bottom',
+          horizontal: 'right'
+        }));
       } else {
-        throw new Error('Erreur lors de l\'ajout de l\'avis');
+        const errorData = await response.json();
+        dispatch(showToast({
+          message: errorData.message || "Erreur lors de l'ajout de l'avis.",
+          severity: 'error',
+          duration: 3000,
+          vertical: 'bottom',
+          horizontal: 'right',
+        }));
       }
     } catch (error) {
       console.error('Erreur:', error);
-      alert('Erreur lors de l\'ajout de l\'avis. Veuillez réessayer.');
+      dispatch(showToast({
+        message: "Erreur lors de l'ajout de l'avis. Veuillez réessayer.",
+        severity: 'error',
+        duration: 3000,
+        vertical: 'bottom',
+        horizontal: 'right',
+      }));
     } finally {
       setIsSubmitting(false);
     }
@@ -123,13 +182,15 @@ const ReviewForm: React.FC<ReviewFormProps> = ({ restaurantId, onReviewSubmitted
           </div>
         </div>
 
-        <button 
-          type="submit" 
-          className="submit-button"
-          disabled={isSubmitting || rating === 0 || text.trim() === ''}
-        >
-          {isSubmitting ? 'Publication...' : 'Publier mon avis'}
-        </button>
+        <fieldset disabled={isSubmitting || userHasReview} style={{ border: 0, padding: 0, margin: 0 }}>
+          <button 
+            type="submit" 
+            className="submit-button"
+            disabled={isSubmitting || userHasReview || rating === 0 || text.trim() === ''}
+          >
+            {userHasReview ? 'Vous avez déjà posté un avis' : isSubmitting ? 'Publication...' : 'Publier mon avis'}
+          </button>
+        </fieldset>
       </form>
     </div>
   );
