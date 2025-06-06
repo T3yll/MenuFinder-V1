@@ -5,6 +5,7 @@ import SliderFilter from '../components/commom/SliderFilter';
 import { RestaurantService } from '../services/RestaurantService';
 import { useEffect, useState } from 'react';
 import { Restaurant, Review } from '../types/Restaurant';
+import Bookmark from '../components/Bookmark';
 
 // Types supplémentaires pour l'interface UI
 interface RestaurantWithUI extends Restaurant {
@@ -256,11 +257,7 @@ const Restaurants: React.FC = () => {
                     }}>
                       Voir le menu
                     </span> */}
-                    <button className="save-button">
-                      <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-                        <path d="M19 21l-7-5-7 5V5a2 2 0 0 1 2-2h10a2 2 0 0 1 2 2z"></path>
-                      </svg>
-                    </button>
+                    <Bookmark disabled restaurantId={restaurant.restaurant_id}/>
                   </div>
                 </div>
               </Link>
