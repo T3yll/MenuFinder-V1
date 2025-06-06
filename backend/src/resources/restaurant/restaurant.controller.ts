@@ -6,6 +6,8 @@ import { Restaurant } from './entities/restaurant.entity';
 import { Menu } from '../menu/entities/menu.entity';
 import { Public } from '@/common/decorators/security/public.decorator';
 import { CreateRestaurantDto } from './dto/create-restaurant.dto';
+import { UpdateAdressDto } from '../adress/dto/update-adress.dto';
+import { UpdateRestaurantDto } from './dto/update-restaurant.dto';
 
 @Controller('restaurants')
 export class RestaurantController {
@@ -51,7 +53,7 @@ export class RestaurantController {
 
   @Public()
   @Put(':id')
-  update(@Param('id') id: string, @Body() restaurant: Restaurant): Promise<Restaurant> {
+  update(@Param('id') id: string, @Body() restaurant: UpdateRestaurantDto): Promise<Restaurant> {
     return this.restaurantService.update(+id, restaurant);
   }
 

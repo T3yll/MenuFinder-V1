@@ -5,6 +5,7 @@ import SliderFilter from '../components/commom/SliderFilter';
 import { RestaurantService } from '../services/RestaurantService';
 import { useEffect, useState } from 'react';
 import { Restaurant, Review } from '../types/Restaurant';
+import Bookmark from '../components/Bookmark';
 
 // Types supplémentaires pour l'interface UI
 interface RestaurantWithUI extends Restaurant {
@@ -15,7 +16,7 @@ interface RestaurantWithUI extends Restaurant {
   specialties?: string[];
 }
 
-// Catégories disponibles
+// Catégories disponibles avec design moderne
 const categories = [
   { id: "all", name: "Tous", emoji: "🍽️" },
   { id: "français", name: "Français", emoji: "🥐" },
@@ -48,6 +49,8 @@ const Restaurants: React.FC = () => {
   const [loading, setLoading] = useState<boolean>(true);
   const [error, setError] = useState<string | null>(null);
   const [restaurantReviews, setRestaurantReviews] = useState<Record<number, { count: number, avg: number }>>({});
+  const [viewMode, setViewMode] = useState<'grid' | 'list'>('grid');
+  const [savedRestaurants, setSavedRestaurants] = useState<Set<number>>(new Set());
   
   const { formatPrice } = useCurrency();
 
@@ -69,14 +72,12 @@ const Restaurants: React.FC = () => {
         setLoading(true);
         setError(null);
         
-        // Utiliser le service RestaurantService pour récupérer les restaurants
         const data = await RestaurantService.findAll();
         if (data) {
-          // Enrichir les restaurants avec des données UI supplémentaires
           const restaurantsWithUI: RestaurantWithUI[] = data.map((restaurant: Restaurant) => ({
             ...restaurant,
             priceRange: ["€", "€€", "€€€"][Math.floor(Math.random() * 3)],
-            openingHours: "11h00 - 22h00", // Valeur par défaut
+            openingHours: "11h00 - 22h00",
             specialties: restaurant.menus?.length ? 
               restaurant.menus.flatMap(menu => 
                 menu.items?.map(item => item.name) || []
@@ -121,7 +122,6 @@ const Restaurants: React.FC = () => {
   useEffect(() => {
     if (restaurants.length === 0) return;
     let filtered = [...restaurants];
-    // Filtrer par catégorie
     if (selectedCategory !== "all") {
       filtered = filtered.filter(restaurant => 
         restaurant.type.toLowerCase() === selectedCategory.toLowerCase()
@@ -135,15 +135,13 @@ const Restaurants: React.FC = () => {
     const fullStars = Math.floor(rating);
     const hasHalfStar = rating % 1 >= 0.5;
     let stars = [];
-    // Étoiles pleines
+    
     for (let i = 0; i < fullStars; i++) {
-      stars.push(<span key={`full-${i}`} className="star full">★</span>);
+      stars.push(<span key={`full-${i}`} className="star filled">★</span>);
     }
-    // Demi-étoile si nécessaire
     if (hasHalfStar) {
       stars.push(<span key="half" className="star half">★</span>);
     }
-    // Étoiles vides
     const emptyStarsCount = 5 - stars.length;
     for (let i = 0; i < emptyStarsCount; i++) {
       stars.push(<span key={`empty-${i}`} className="star empty">☆</span>);
@@ -154,15 +152,11 @@ const Restaurants: React.FC = () => {
   // Obtenir l'URL de l'image
   const getImageUrl = (restaurant: RestaurantWithUI) => {
     if (restaurant.image && restaurant.image.path) {
-      // Si c'est une URL complète
       if (restaurant.image.path.startsWith('http')) {
         return restaurant.image.path;
       }
-      // Sinon, construire l'URL correcte vers le fichier local
-      // Utiliser le chemin relatif sans ajouter l'URL de l'API
       return `${restaurant.image.path}`;
     }
-    // Image par défaut
     return "https://images.unsplash.com/photo-1555396273-367ea4eb4db5?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=1374&q=80";
   };
 
@@ -174,111 +168,222 @@ const Restaurants: React.FC = () => {
     return "Adresse non disponible";
   };
 
-  // État de chargement
+  // Toggle save restaurant
+  // État de chargement moderne
   if (loading) {
     return (
-      <div className="loading-container">
-        <div className="loading-spinner"></div>
-        <p>Chargement des restaurants...</p>
+      <div className="restaurants-modern">
+        <div className="loading-page">
+          <div className="loading-animation">
+            <div className="loading-circle"></div>
+            <div className="loading-circle"></div>
+            <div className="loading-circle"></div>
+          </div>
+          <h2>Chargement des restaurants...</h2>
+          <p>Nous préparons les meilleurs établissements pour vous</p>
+        </div>
       </div>
     );
   }
 
-  // État d'erreur
+  // État d'erreur moderne
   if (error) {
     return (
-      <div className="error-container">
-        <svg xmlns="http://www.w3.org/2000/svg" width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-          <circle cx="12" cy="12" r="10"></circle>
-          <line x1="12" y1="8" x2="12" y2="12"></line>
-          <line x1="12" y1="16" x2="12.01" y2="16"></line>
-        </svg>
-        <h3>Erreur</h3>
-        <p>{error}</p>
-        <button onClick={() => window.location.reload()} className="retry-button">
-          Réessayer
-        </button>
+      <div className="restaurants-modern">
+        <div className="error-page">
+          <div className="error-icon">
+            <svg width="80" height="80" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-2.5L13.732 4c-.77-.833-1.964-.833-2.732 0L4.268 15.5c-.77.833.192 2.5 1.732 2.5z" />
+            </svg>
+          </div>
+          <h2>Oups ! Un problème est survenu</h2>
+          <p>{error}</p>
+          <button onClick={() => window.location.reload()} className="retry-btn">
+            <svg width="20" height="20" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15" />
+            </svg>
+            Réessayer
+          </button>
+        </div>
       </div>
     );
   }
 
   return (
-    <div className="restaurants-page">
-      {/* Slider de catégories */}
-      <SliderFilter categories={categories} setSelectedCategory={setSelectedCategory} />
+    <div className="restaurants-modern">
+      {/* Header moderne */}
+      <section className="restaurants-header">
+        <div className="container">
+          <div className="header-content">
+            <div className="header-text">
+              <h1>Découvrez nos restaurants</h1>
+              <p>Plus de {restaurants.length} établissements vous attendent</p>
+            </div>
+            <div className="header-actions">
+              <div className="view-toggle">
+                <button 
+                  className={`toggle-btn ${viewMode === 'grid' ? 'active' : ''}`}
+                  onClick={() => setViewMode('grid')}
+                  aria-label="Vue grille"
+                >
+                  <svg width="20" height="20" fill="currentColor" viewBox="0 0 24 24">
+                    <path d="M3 3h7v7H3V3zm11 0h7v7h-7V3zM3 14h7v7H3v-7zm11 0h7v7h-7v-7z"/>
+                  </svg>
+                </button>
+                <button 
+                  className={`toggle-btn ${viewMode === 'list' ? 'active' : ''}`}
+                  onClick={() => setViewMode('list')}
+                  aria-label="Vue liste"
+                >
+                  <svg width="20" height="20" fill="currentColor" viewBox="0 0 24 24">
+                    <path d="M3 13h2v-2H3v2zm0 4h2v-2H3v2zm0-8h2V7H3v2zm4 4h14v-2H7v2zm0 4h14v-2H7v2zM7 7v2h14V7H7z"/>
+                  </svg>
+                </button>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      {/* Filtres modernes */}
+      <section className="filters-section">
+        <div className="container">
+          <div className="filters-container">
+            <h3>Catégories</h3>
+            <div className="categories-scroll">
+              {categories.map((category) => (
+                <button
+                  key={category.id}
+                  onClick={() => setSelectedCategory(category.id)}
+                  className={`category-chip ${selectedCategory === category.id ? 'active' : ''}`}
+                >
+                  <span className="category-emoji">{category.emoji}</span>
+                  <span className="category-name">{category.name}</span>
+                </button>
+              ))}
+            </div>
+          </div>
+        </div>
+      </section>
+
       {/* Liste des restaurants */}
-      <div className="restaurants-container">
-        <div className="restaurants-grid">
+      <section className="restaurants-section">
+        <div className="container">
           {filteredRestaurants.length > 0 ? (
-            filteredRestaurants.map(restaurant => (
-              <Link to={`/restaurants/${restaurant.restaurant_id}`} key={restaurant.restaurant_id} className="restaurant-card">
-                <div className="restaurant-image" style={{ backgroundImage: `url(${getImageUrl(restaurant)})` }}>
-                  <div className="restaurant-image-overlay"></div>
-                  <div className="price-tag">{restaurant.priceRange}</div>
-                </div>
-                <div className="restaurant-content">
-                  <h3 className="restaurant-name">{restaurant.name}</h3>
-                  <div className="restaurant-category">
-                    {categories.find(c => c.id.toLowerCase() === restaurant.type.toLowerCase())?.name || restaurant.type}
-                  </div>
-                  <div className="restaurant-rating">
-                    <div className="stars">{renderStars(restaurantReviews[restaurant.restaurant_id]?.avg || 0)}</div>
-                    <span className="reviews-count">({restaurantReviews[restaurant.restaurant_id]?.count || 0})</span>
-                  </div>
-                  <div className="restaurant-address">
-                    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-                      <path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"></path>
-                      <circle cx="12" cy="10" r="3"></circle>
-                    </svg>
-                    {getFormattedAddress(restaurant)}
-                  </div>
-                  <div className="restaurant-owner">
-                    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-                      <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path>
-                      <circle cx="12" cy="7" r="4"></circle>
-                    </svg>
-                  </div>
-                  <div className="restaurant-hours">
-                    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-                      <circle cx="12" cy="12" r="10"></circle>
-                      <polyline points="12 6 12 12 16 14"></polyline>
-                    </svg>
-                    {restaurant.openingHours || "11h00 - 22h00"}
-                  </div>
-                  {restaurant.specialties && restaurant.specialties.length > 0 && (
-                    <div className="restaurant-specialties">
-                      <strong>Spécialités:</strong> {restaurant.specialties.join(", ")}
-                    </div>
-                  )}
-                  <div className="restaurant-actions">
-                    {/* <span className="view-menu-button" onClick={() => {
-                      window.location.href = `/restaurants/${restaurant.restaurant_id}`;
-                    }}>
-                      Voir le menu
-                    </span> */}
-                    <button className="save-button">
-                      <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-                        <path d="M19 21l-7-5-7 5V5a2 2 0 0 1 2-2h10a2 2 0 0 1 2 2z"></path>
+            <>
+              <div className="results-info">
+                <span>{filteredRestaurants.length} restaurant{filteredRestaurants.length > 1 ? 's' : ''} trouvé{filteredRestaurants.length > 1 ? 's' : ''}</span>
+                {selectedCategory !== "all" && (
+                  <span className="active-filter">
+                    {categories.find(c => c.id === selectedCategory)?.name}
+                    <button onClick={() => setSelectedCategory("all")} className="clear-filter">
+                      <svg width="16" height="16" fill="currentColor" viewBox="0 0 24 24">
+                        <path d="M19 6.41L17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12z"/>
                       </svg>
                     </button>
-                  </div>
-                </div>
-              </Link>
-            ))
+                  </span>
+                )}
+              </div>
+
+              <div className={`restaurants-grid ${viewMode}`}>
+                {filteredRestaurants.map(restaurant => (
+                  <Link 
+                    to={`/restaurants/${restaurant.restaurant_id}`} 
+                    key={restaurant.restaurant_id} 
+                    className="restaurant-card-modern"  
+                  >
+                    <div className="card-image">
+                      <img src={getImageUrl(restaurant)} alt={restaurant.name} />
+                      <div className="image-overlay">
+                        <div className="price-badge">{restaurant.priceRange}</div>
+                        <div   onClick={(e) => {
+                          e.stopPropagation();
+                          e.preventDefault();
+  }} className='save-btn'>
+                           <Bookmark restaurantId={restaurant.restaurant_id}/>
+                        </div>
+
+                      </div>
+                      {restaurant.type && (
+                        <div className="cuisine-tag">
+                          <span>{categories.find(c => c.id.toLowerCase() === restaurant.type.toLowerCase())?.emoji}</span>
+                          <span>{categories.find(c => c.id.toLowerCase() === restaurant.type.toLowerCase())?.name || restaurant.type}</span>
+                        </div>
+                      )}
+                    </div>
+
+                    <div className="card-content">
+                      <div className="restaurant-header">
+                        <h3 className="restaurant-name">{restaurant.name}</h3>
+                        <div className="restaurant-rating">
+                          <div className="stars">
+                            {renderStars(restaurantReviews[restaurant.restaurant_id]?.avg || 0)}
+                          </div>
+                          <span className="rating-text">
+                            {(restaurantReviews[restaurant.restaurant_id]?.avg || 0).toFixed(1)}
+                          </span>
+                          <span className="reviews-count">
+                            ({restaurantReviews[restaurant.restaurant_id]?.count || 0})
+                          </span>
+                        </div>
+                      </div>
+
+                      <div className="restaurant-info">
+                        <div className="info-item">
+                          <svg width="14" height="14" fill="currentColor" viewBox="0 0 24 24">
+                            <path d="M12 2C8.13 2 5 5.13 5 9c0 5.25 7 13 7 13s7-7.75 7-13c0-3.87-3.13-7-7-7zm0 9.5c-1.38 0-2.5-1.12-2.5-2.5s1.12-2.5 2.5-2.5 2.5 1.12 2.5 2.5-1.12 2.5-2.5 2.5z"/>
+                          </svg>
+                          <span>{getFormattedAddress(restaurant)}</span>
+                        </div>
+
+                        <div className="info-item">
+                          <svg width="14" height="14" fill="currentColor" viewBox="0 0 24 24">
+                            <path d="M12 2C6.5 2 2 6.5 2 12s4.5 10 10 10 10-4.5 10-10S17.5 2 12 2zm4.2 14.2L11 13V7h1.5v5.2l4.5 2.7-.8 1.3z"/>
+                          </svg>
+                          <span>{restaurant.openingHours || "11h00 - 22h00"}</span>
+                          <span className="delivery-time">• 🚚 25-35 min</span>
+                        </div>
+
+                        {restaurant.specialties && restaurant.specialties.length > 0 && (
+                          <div className="info-item specialties">
+                            <svg width="14" height="14" fill="currentColor" viewBox="0 0 24 24">
+                              <path d="M8.1 13.34l2.83-2.83L3.91 3.5a4.008 4.008 0 000 5.66l4.19 4.18zm6.78-1.81c1.53.71 3.68.21 5.27-1.38 1.91-1.91 2.28-4.65.81-6.12-1.46-1.46-4.20-1.10-6.12.81-1.59 1.59-2.09 3.74-1.38 5.27L3.7 19.87l1.41 1.41L12 14.41l6.88 6.88 1.41-1.41L13.41 13l1.47-1.47z"/>
+                            </svg>
+                            <span>{restaurant.specialties.slice(0, 2).join(", ")}</span>
+                          </div>
+                        )}
+                      </div>
+
+                      <div className="card-footer">
+                        <div className="delivery-fee">Livraison gratuite</div>
+                        <div className="card-action">
+                          <span className="view-menu">Voir le menu</span>
+                          <svg width="14" height="14" fill="currentColor" viewBox="0 0 24 24">
+                            <path d="M12 4l-1.41 1.41L16.17 11H4v2h12.17l-5.58 5.59L12 20l8-8z"/>
+                          </svg>
+                        </div>
+                      </div>
+                    </div>
+                  </Link>
+                ))}
+              </div>
+            </>
           ) : (
-            <div className="no-results">
-              <svg xmlns="http://www.w3.org/2000/svg" width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-                <circle cx="12" cy="12" r="10"></circle>
-                <line x1="8" y1="15" x2="16" y2="15"></line>
-                <line x1="9" y1="9" x2="9.01" y2="9"></line>
-                <line x1="15" y1="9" x2="15.01" y2="9"></line>
-              </svg>
+            <div className="no-results-modern">
+              <div className="no-results-icon">
+                <svg width="80" height="80" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
+                </svg>
+              </div>
               <h3>Aucun restaurant trouvé</h3>
-              <p>Essayez de modifier vos critères de recherche ou de sélectionner une autre catégorie.</p>
+              <p>Essayez de modifier vos critères de recherche ou explorez d'autres catégories.</p>
+              <button onClick={() => setSelectedCategory("all")} className="reset-filters">
+                Voir tous les restaurants
+              </button>
             </div>
           )}
         </div>
-      </div>
+      </section>
     </div>
   );
 };

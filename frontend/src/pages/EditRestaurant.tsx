@@ -15,7 +15,7 @@ const getImageUrl = (restaurant: Restaurant) => {
             return restaurant.image.path;
         }
         // Sinon, construire l'URL correcte vers le fichier local
-        return `${restaurant.image.path}`;
+        return `/${restaurant.image.path}`;
     } 
     
     if (restaurant.image_file_id) {
