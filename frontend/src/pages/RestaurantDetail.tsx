@@ -7,6 +7,7 @@ import Review from '../components/Review';
 import ReviewForm from '../components/ReviewForm';
 import { Restaurant } from '../types/Restaurant';
 import '../styles/pages/RestaurantDetail.scss';
+import Bookmark from '../components/Bookmark';
 
 interface ReviewData {
   review_id: number;
@@ -589,12 +590,7 @@ const RestaurantDetail: React.FC = () => {
       </div>
 
       <div className="restaurant-actions-footer">
-        <button className="action-button bookmark-button">
-          <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-            <path d="M19 21l-7-5-7 5V5a2 2 0 0 1 2-2h10a2 2 0 0 1 2 2z"></path>
-          </svg>
-          Enregistrer
-        </button>
+        <Bookmark restaurantId={id || -1} text='Enregistrer' />
         <button className="action-button share-button">
           <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
             <circle cx="18" cy="5" r="3"></circle>

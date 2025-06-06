@@ -5,6 +5,7 @@ import SliderFilter from '../components/commom/SliderFilter';
 import { RestaurantService } from '../services/RestaurantService';
 import { useEffect, useState } from 'react';
 import { Restaurant, Review } from '../types/Restaurant';
+import Bookmark from '../components/Bookmark';
 
 // Types supplémentaires pour l'interface UI
 interface RestaurantWithUI extends Restaurant {
@@ -168,18 +169,6 @@ const Restaurants: React.FC = () => {
   };
 
   // Toggle save restaurant
-  const toggleSaveRestaurant = (e: React.MouseEvent, restaurantId: number) => {
-    e.preventDefault();
-    e.stopPropagation();
-    const newSaved = new Set(savedRestaurants);
-    if (newSaved.has(restaurantId)) {
-      newSaved.delete(restaurantId);
-    } else {
-      newSaved.add(restaurantId);
-    }
-    setSavedRestaurants(newSaved);
-  };
-
   // État de chargement moderne
   if (loading) {
     return (
@@ -301,21 +290,19 @@ const Restaurants: React.FC = () => {
                   <Link 
                     to={`/restaurants/${restaurant.restaurant_id}`} 
                     key={restaurant.restaurant_id} 
-                    className="restaurant-card-modern"
+                    className="restaurant-card-modern"  
                   >
                     <div className="card-image">
                       <img src={getImageUrl(restaurant)} alt={restaurant.name} />
                       <div className="image-overlay">
                         <div className="price-badge">{restaurant.priceRange}</div>
-                        <button 
-                          className={`save-btn ${savedRestaurants.has(restaurant.restaurant_id) ? 'saved' : ''}`}
-                          onClick={(e) => toggleSaveRestaurant(e, restaurant.restaurant_id)}
-                          aria-label="Sauvegarder"
-                        >
-                          <svg width="20" height="20" fill="currentColor" viewBox="0 0 24 24">
-                            <path d="M19 21l-7-5-7 5V5a2 2 0 0 1 2-2h10a2 2 0 0 1 2 2v16z"/>
-                          </svg>
-                        </button>
+                        <div   onClick={(e) => {
+                          e.stopPropagation();
+                          e.preventDefault();
+  }} className='save-btn'>
+                           <Bookmark restaurantId={restaurant.restaurant_id}/>
+                        </div>
+
                       </div>
                       {restaurant.type && (
                         <div className="cuisine-tag">
