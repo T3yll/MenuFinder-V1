@@ -50,6 +50,7 @@ export interface User {
   role: string;
   created_at: Date;
   updated_at: Date;
+  image_file_id?: number;
   restaurants?: Restaurant[];
 }
 

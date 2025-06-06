@@ -2,6 +2,10 @@ import React, { useEffect, useState } from 'react';
 import '../styles/pages/profile.scss';
 import { getUserProfile } from '../services/user.service';
 import { Button } from 'antd';
+import CustomAvatar from '../components/Avatar';
+import { Link } from 'react-router-dom';
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import { faEdit } from '@fortawesome/free-solid-svg-icons';
 
 const Profile: React.FC = () => {
     const [user, setUser] = useState<{ username: string; image_path:string; contributions: number; followers: number; following: number }>({
@@ -11,12 +15,21 @@ const Profile: React.FC = () => {
         followers: 0,
         following: 0,
     });
+    const userlocal = JSON.parse(localStorage.getItem('user') || '{}');
+    const userId = userlocal.user_id;
+
+
+
+
+
+
+
 
     useEffect(() => {
         async function fetchUser() {
             try {
                 const data = await getUserProfile();
-                setUser(data);
+                //setUser(data);
             } catch (err) {
                 console.error('Erreur lors du chargement du profil', err);
             }
@@ -32,9 +45,7 @@ const Profile: React.FC = () => {
             </div>
 
             <div className="profile-header">
-                <div className="avatar">
-                    <img src={user.image_path} alt="Avatar utilisateur" />
-                </div>
+                <CustomAvatar fileId={userlocal.image_file_id}/>
                 <div className="profile-info">
                     <h2>{user.username || 'Nom d’utilisateur'}</h2>
                     <div className="stats">
@@ -43,7 +54,12 @@ const Profile: React.FC = () => {
                         <span>Abonnements <strong>{user.following}</strong></span>
                     </div>
                 </div>
-                <Button href='/updateProfile' className="edit-profile-btn">Modifier le profil</Button>
+                <Button className="primary-btn edit-profile-btn">
+                    <Link to={`/updateProfile`} >
+                        <FontAwesomeIcon icon={faEdit} />
+                        Modifier le profil
+                    </Link>
+                </Button>
             </div>
 
             <div className="profile-content">

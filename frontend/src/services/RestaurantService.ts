@@ -50,6 +50,7 @@ export const RestaurantService = {
     }
   },
 
+
   // Récupérer un restaurant par son ID
   async findOne(id: number): Promise<Restaurant> {
     try {

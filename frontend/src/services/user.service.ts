@@ -89,3 +89,16 @@ export async function updateUserProfile(info:UpdateProfileFormData ,id:string): 
     throw new Error('Erreur lors de la mise à jour du profil');
 }
 
+  export async function GetUserImagePath(userId: number): Promise<string> {
+    try {
+      const response = await axios.get(`${process.env.VITE_API_URL}/users/${userId}`, {
+        responseType: 'blob',
+      });
+      const imageUrl = URL.createObjectURL(response.data);
+        console.log('Image URL: avatar : ', imageUrl);
+      return imageUrl;
+    } catch (error) {
+        console.error('Erreur lors de la récupération de l\'image du restaurant:', error);
+        throw error;
+        }
+}

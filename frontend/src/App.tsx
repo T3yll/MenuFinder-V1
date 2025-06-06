@@ -22,11 +22,12 @@ import Dashboard from './pages/Dashboard';
 import DashboardRestaurant from './pages/DashboardRestaurant';
 import AdminMiddleware from './Middleware/AdminMiddleware';
 import Loading from './components/Loading';
+import UpdateProfile from './pages/UpdateProfile';
 
 function App() {
    const [loading, setLoading] = useState(true)
     useEffect(() => {
-        setTimeout(() => setLoading(false), 3300)
+        setTimeout(() => setLoading(false), 1000)
     }, [])
     if (loading) {
         return <Loading/>
@@ -43,15 +44,16 @@ function App() {
               <Route path="/restaurants" element={<><NavBar /><Restaurants /></>} />
               <Route path="/menus" element={<><NavBar /><Menus /></>} />
               <Route path="/profile" element={<><NavBar /><Profile /></>} />
+              <Route path="/updateProfile" element={<><NavBar /><UpdateProfile /></>} />
               {/* <Route path="/updateProfile" element={<><NavBar /><UpdateProfile/></>} /> */}
               <Route path="/map" element={<><NavBar /><Map/></>} />
               <Route path="/register-restaurant" element={<><NavBar /><RegisterRestaurant/></>} />
-              <Route path="/restaurants/:id" element={<RestaurantDetail />} />
-              <Route path="/admin" element={ <AdminMiddleware><div><NavBar /><Dashboard /></div></AdminMiddleware> } />
+              <Route path="/restaurants/:id" element={<><NavBar /><RestaurantDetail /></>} />
+              <Route path="/admin" element={ <AdminMiddleware><><NavBar /><Dashboard /></></AdminMiddleware> } />
               <Route path="/dashboard" element={<><NavBar /><DashboardRestaurant /></>} />
-            <Route path="/edit-restaurant/:id" element={<EditRestaurant />} />
-            <Route path="/restaurant-menus/:id" element={<RestaurantMenus />} />
-            <Route path="/menu-items/:id" element={<MenuItems />} />
+            <Route path="/edit-restaurant/:id" element={<><NavBar /><EditRestaurant /></>} />
+            <Route path="/restaurant-menus/:id" element={<><NavBar /><RestaurantMenus /></>} />
+            <Route path="/menu-items/:id" element={<><NavBar /><MenuItems /></>} />
           </Routes>
             <ToastRedux />
           </div>

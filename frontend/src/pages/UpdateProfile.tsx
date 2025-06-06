@@ -38,7 +38,7 @@ const UpdateProfile: React.FC<UpdateProfileProps> = ({
                 const data = await getUserProfile();
                 setFirstName(data.firstName);
                 setLastName(data.lastName);
-                setPicture(data.image_file_id || '');
+                setPicture(data.image_path || '');
             } catch (err) {
                 console.error('Erreur lors du chargement du profil', err);
             }

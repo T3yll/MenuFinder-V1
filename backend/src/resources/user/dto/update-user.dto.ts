@@ -22,5 +22,5 @@ export class UpdateUserDto {
   
     @IsString()
     @IsOptional()
-    file_image_id: string;
+   image_file_id: string;
 }
