@@ -53,7 +53,7 @@ $border-color: rgba(41, 47, 54, 0.2);
   }
 }
 
-.back-to-home {
+.login-back-to-home {
   display: inline-flex;
   align-items: center;
   color: #4B5563;
@@ -66,7 +66,7 @@ $border-color: rgba(41, 47, 54, 0.2);
     color: vars.$color-primary;
   }
 
-  .back-arrow {
+  .login-back-arrow {
     margin-right: 0.5rem;
     font-size: 1rem;
   }
@@ -75,10 +75,10 @@ $border-color: rgba(41, 47, 54, 0.2);
 .login-form {
   margin-top: 1.5rem;
 
-  .form-group {
+  .login-form-group {
     margin-bottom: 1.25rem;
 
-    .form-label {
+    .login-form-label {
       display: block;
       margin-bottom: 0.5rem;
       font-size: 0.875rem;
@@ -86,12 +86,12 @@ $border-color: rgba(41, 47, 54, 0.2);
       color: $text-color;
     }
 
-    .input-container {
+    .login-input-container {
       position: relative;
       display: flex;
       align-items: center;
 
-      .form-input {
+      .login-form-input {
         width: 100%;
         padding: 0.75rem 1rem;
         border: 1px solid $border-color;
@@ -109,12 +109,12 @@ $border-color: rgba(41, 47, 54, 0.2);
         }
       }
 
-      .password-input {
+      .login-password-input {
         padding-right: 40px;
         /* Espace pour le bouton */
       }
 
-      .password-toggle-btn {
+      .login-password-toggle-btn {
         position: absolute;
         right: 10px;
         top: 50%;
@@ -141,8 +141,10 @@ $border-color: rgba(41, 47, 54, 0.2);
     }
   }
 
-  .form-actions {
+  .login-form-actions {
     margin-top: 1.5rem;
+    display: flex;
+    flex-direction: column;
 
     .login-options {
       display: flex;
@@ -150,7 +152,7 @@ $border-color: rgba(41, 47, 54, 0.2);
       align-items: center;
       margin-bottom: 1.25rem;
 
-      .remember-me {
+      .login-remember-me {
         display: flex;
         align-items: center;
         font-size: 0.875rem;
@@ -160,7 +162,7 @@ $border-color: rgba(41, 47, 54, 0.2);
         cursor: pointer;
         user-select: none;
 
-        .custom-checkbox {
+        .login-custom-checkbox {
           position: absolute;
           opacity: 0;
           cursor: pointer;
@@ -168,7 +170,7 @@ $border-color: rgba(41, 47, 54, 0.2);
           width: 0;
         }
 
-        .checkmark {
+        .login-checkmark {
           position: absolute;
           top: 0;
           left: 0;
@@ -193,11 +195,11 @@ $border-color: rgba(41, 47, 54, 0.2);
           }
         }
 
-        &:hover .checkmark {
+        &:hover .login-checkmark {
           border-color: $secondary-color;
         }
 
-        .custom-checkbox:checked~.checkmark {
+        .login-custom-checkbox:checked~.login-checkmark {
           background-color: $secondary-color;
           border-color: $secondary-color;
 
@@ -207,7 +209,7 @@ $border-color: rgba(41, 47, 54, 0.2);
         }
       }
 
-      .forgot-password {
+      .login-forgot-password {
         font-size: 0.875rem;
         color: vars.$color-primary;
         text-decoration: none;
@@ -242,7 +244,7 @@ $border-color: rgba(41, 47, 54, 0.2);
   }
 }
 
-.error-message {
+.login-error-message {
   background-color: rgba(224, 36, 36, 0.1);
   color: $error-color;
   padding: 0.75rem 1rem;

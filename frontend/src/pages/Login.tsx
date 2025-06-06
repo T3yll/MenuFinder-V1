@@ -111,25 +111,25 @@ const Login: React.FC = () => {
       <div className="login-container">
         <div className="login-card">
           <div className="login-header">
-            <Link to="/" className="back-to-home">
-              <span className="back-arrow">←</span> Retour à l'accueil
+            <Link to="/" className="login-back-to-home">
+              <span className="login-back-arrow">←</span> Retour à l'accueil
             </Link>
             <h1 className="login-title">Connexion</h1>
             <p className="login-subtitle">Accédez à votre compte MenuFinder</p>
           </div>
 
-          {error && <div className="error-message">{error}</div>}
+          {error && <div className="login-error-message">{error}</div>}
 
           <form onSubmit={handleSubmit} className="login-form">
-            <div className="form-group">
-              <label htmlFor="email" className="form-label">
+            <div className="login-form-group">
+              <label htmlFor="email" className="login-form-label">
                 Email
               </label>
-              <div className="input-container">
+              <div className="login-input-container">
                 <input
                   type="email"
                   id="email"
-                  className="form-input"
+                  className="login-form-input"
                   value={email}
                   onChange={(e) => setEmail(e.target.value)}
                   required
@@ -138,15 +138,15 @@ const Login: React.FC = () => {
               </div>
             </div>
 
-            <div className="form-group">
-              <label htmlFor="password" className="form-label">
+            <div className="login-form-group">
+              <label htmlFor="password" className="login-form-label">
                 Mot de passe
               </label>
-              <div className="input-container">
+              <div className="login-input-container">
                 <input
                   type={showPassword ? 'text' : 'password'}
                   id="password"
-                  className="form-input password-input"
+                  className="login-form-input login-password-input"
                   value={password}
                   onChange={(e) => setPassword(e.target.value)}
                   required
@@ -154,7 +154,7 @@ const Login: React.FC = () => {
                 />
                 <button
                   type="button"
-                  className="password-toggle-btn"
+                  className="login-password-toggle-btn"
                   onClick={togglePasswordVisibility}
                   aria-label={
                     showPassword
@@ -167,19 +167,19 @@ const Login: React.FC = () => {
               </div>
             </div>
 
-            <div className="form-actions">
+            <div className="login-form-actions">
               <div className="login-options">
-                <label className="remember-me">
+                <label className="login-remember-me">
                   <input
                     type="checkbox"
-                    className="custom-checkbox"
+                    className="login-custom-checkbox"
                     checked={rememberMe}
                     onChange={() => setRememberMe(!rememberMe)}
                   />
-                  <span className="checkmark"></span>
+                  <span className="login-checkmark"></span>
                   Se souvenir de moi
                 </label>
-                <Link to="/forgot-password" className="forgot-password">
+                <Link to="/forgot-password" className="login-forgot-password">
                   Mot de passe oublié?
                 </Link>
               </div>
