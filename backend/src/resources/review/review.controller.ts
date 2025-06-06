@@ -3,13 +3,14 @@ import { Review } from './entities/review.entity';
 import { ReviewService } from './review.service';
 import { Public } from '@/common/decorators/security/public.decorator';
 import { ApiOperation, ApiResponse } from '@nestjs/swagger';
+import { CreateReviewDto } from './dto/create-review.dto';
 
 @Controller('reviews')
 export class ReviewController {
   constructor(private readonly reviewService: ReviewService) {}
 
   @Post()
-  async create(@Body() review: Review): Promise<Review> {
+  async create(@Body() review: CreateReviewDto): Promise<Review> {
     try {
       return await this.reviewService.create(review);
     } catch (error) {
