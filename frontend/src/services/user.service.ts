@@ -47,7 +47,7 @@ export async function getUserProfile(token: string = localStorage.getItem('token
         throw new Error('Erreur lors du chargement du profil');
     }
     const data = await res.json();
-    data.image_path = await getPath(JSON.parse(localStorage.getItem("user") || '').image_file_id) || 'public/default.png';
+    data.image_path = await getPath(JSON.parse(localStorage.getItem("user") || '{}').image_file_id) || 'public/default.png';
     console.log('getUserProfile', data);
     return data
 }

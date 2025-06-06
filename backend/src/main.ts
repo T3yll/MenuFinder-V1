@@ -29,6 +29,10 @@ async function bootstrap() {
     prefix: '/uploads',
   });
 
+  app.useStaticAssets(join(__dirname, '..', 'seeder','samples'), {
+    prefix: '/samples',
+  });
+
   const port = process.env.PORT ?? 4000;
 
   // Config Swagger
