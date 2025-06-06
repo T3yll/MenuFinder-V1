@@ -37,15 +37,21 @@ export class ReviewController {
     return {code:200,count : await this.reviewService.count()};
   }
 
-  @Get(':id')
-  findOne(@Param('id') id: string): Promise<Review> {
-    return this.reviewService.findOne(+id);
-  }
-
   @Public()
   @Get('restaurant/:id')
   findByRestaurant(@Param('id') id: string): Promise<Review[]> {
     return this.reviewService.findByRestaurant(+id);
+  }
+
+  @Public()
+  @Get('user/:id')
+  findByUser(@Param('id') id: string): Promise<Review[]> {
+    return this.reviewService.findByUser(+id);
+  }
+
+  @Get(':id')
+  findOne(@Param('id') id: string): Promise<Review> {
+    return this.reviewService.findOne(+id);
   }
 
   @Put(':id')

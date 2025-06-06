@@ -98,6 +98,42 @@ export class ReviewService {
     });
   }
 
+  findByUser(userId: number): Promise<Review[]> {
+    return this.reviewRepository.find({ 
+      where: { user_id: userId },
+      relations: ['user', 'restaurant', 'responses', 'responses.user'],
+      select: {
+        user: {
+          id: true,
+          username: true,
+          nom: true,
+          prenom: true,
+          email: true,
+          bAdmin: true,
+          image_file_id: true
+        },
+        responses: {
+          response_id: true,
+          review_id: true,
+          user_id: true,
+          text: true,
+          added_at: true,
+          updated_at: true,
+          user: {
+            id: true,
+            username: true,
+            nom: true,
+            prenom: true,
+            email: true,
+            bAdmin: true,
+            image_file_id: true
+          }
+        }
+      },
+      order: { added_at: 'DESC' }
+    });
+  }
+
   async update(id: number, avis: Review): Promise<Review> {
     await this.reviewRepository.update(id, avis);
     return this.findOne(id);
