@@ -33,6 +33,7 @@ const DashboardRestaurant: React.FC = () => {
     const [error, setError] = useState<string | null>(null);
     const [deleteConfirm, setDeleteConfirm] = useState<number | null>(null);
     const [refreshList, setRefreshList] = useState<boolean>(false);
+    const [reviewsCount, setReviewsCount] = useState<number>(0);
     const navigate = useNavigate();
     const location = useLocation();
     
@@ -70,11 +71,31 @@ const DashboardRestaurant: React.FC = () => {
                 restaurant => restaurant.owner_id === userId
             );
             setRestaurants(userRestaurants);
+            
+            // Récupérer les avis de l'utilisateur
+            await fetchUserReviews(userId);
+            
             setLoading(false);
         } catch (err) {
             setError("Erreur lors de la récupération des restaurants");
             setLoading(false);
             console.error(err);
+        }
+    };
+
+    const fetchUserReviews = async (userId: number) => {
+        try {
+            const response = await fetch(`http://localhost:4000/reviews/user/${userId}`);
+            if (response.ok) {
+                const reviews = await response.json();
+                setReviewsCount(reviews.length);
+            } else {
+                console.error('Erreur lors de la récupération des avis');
+                setReviewsCount(0);
+            }
+        } catch (err) {
+            console.error('Erreur lors de la récupération des avis:', err);
+            setReviewsCount(0);
         }
     };
 
@@ -228,10 +249,7 @@ const DashboardRestaurant: React.FC = () => {
                             <div className="stat-label">Restaurants</div>
                         </div>
                         <div className="stat-card">
-                            <div className="stat-value">
-                                {restaurants.reduce((total, restaurant) => 
-                                    total + (restaurant.rewiews?.length || 0), 0)}
-                            </div>
+                            <div className="stat-value">{reviewsCount}</div>
                             <div className="stat-label">Avis</div>
                         </div>
                         <div className="stat-card">
