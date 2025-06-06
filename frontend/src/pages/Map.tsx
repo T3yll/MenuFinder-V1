@@ -3,6 +3,7 @@ import MapComponent from '../components/MapComponent';
 import useGeolocation from '../hooks/useGeolocation';
 import InfoPopUp from '../components/InfoPopUp';
 import { RestaurantService } from '../services/RestaurantService';
+import  {AdressService}  from '../services/adresse.service';
 import { Restaurant, RestaurantForMap, adaptRestaurantForMap } from '../types/Restaurant';
 import '../styles/pages/Map.scss';
 
@@ -59,7 +60,7 @@ const Map: React.FC = () => {
                                 await new Promise(resolve => setTimeout(resolve, 1000)); // 1 seconde de délai
                             }
                             
-                            const coordinates = await geocodeAddress(restaurant.adress);
+                            const coordinates = await AdressService.geocodeAddress(restaurant.adress);
                             console.log(`Coordonnées obtenues pour ${restaurant.name}:`, coordinates);
                             
                             if (coordinates) {
@@ -93,89 +94,7 @@ const Map: React.FC = () => {
     }, []);
 
     // Fonction pour géocoder une adresse (conversion adresse -> coordonnées)
-    const geocodeAddress = async (adress: any): Promise<{ latitude: number; longitude: number } | null> => {
-        try {
-            const fullAddress = `${adress.number} ${adress.street}, ${adress.postal_code} ${adress.city}, ${adress.country}`;
-            console.log('Géocodage de l\'adresse complète:', fullAddress);
-            
-            // Essayer plusieurs APIs de géocodage
-            
-            // 1. Essayer avec l'API du gouvernement français d'abord (plus fiable pour la France)
-            if (adress.country.toLowerCase().includes('france')) {
-                try {
-                    const frenchApiUrl = `https://api-adresse.data.gouv.fr/search/?q=${encodeURIComponent(fullAddress)}&limit=1`;
-                    console.log('Tentative avec API française:', frenchApiUrl);
-                    
-                    const frenchResponse = await fetch(frenchApiUrl);
-                    if (frenchResponse.ok) {
-                        const frenchData = await frenchResponse.json();
-                        console.log('Réponse API française:', frenchData);
-                        
-                        if (frenchData.features && frenchData.features.length > 0) {
-                            const coordinates = {
-                                latitude: frenchData.features[0].geometry.coordinates[1],
-                                longitude: frenchData.features[0].geometry.coordinates[0]
-                            };
-                            console.log('✅ Coordonnées trouvées avec API française:', coordinates);
-                            return coordinates;
-                        }
-                    }
-                } catch (frenchError) {
-                    console.log('❌ Échec API française:', frenchError);
-                }
-            }
-            
-            // 2. Fallback vers Nominatim avec retry
-            for (let attempt = 1; attempt <= 3; attempt++) {
-                try {
-                    console.log(`Tentative ${attempt}/3 avec Nominatim`);
-                    
-                    const nominatimUrl = `https://nominatim.openstreetmap.org/search?format=json&q=${encodeURIComponent(fullAddress)}&limit=1&countrycodes=fr&addressdetails=1`;
-                    
-                    const response = await fetch(nominatimUrl, {
-                        headers: {
-                            'User-Agent': 'MenuFinder-App/1.0'
-                        }
-                    });
-                    
-                    if (!response.ok) {
-                        console.error(`Erreur HTTP Nominatim (tentative ${attempt}):`, response.status);
-                        if (attempt < 3) {
-                            await new Promise(resolve => setTimeout(resolve, 2000 * attempt)); // Délai croissant
-                            continue;
-                        }
-                        throw new Error(`Erreur HTTP: ${response.status}`);
-                    }
-                    
-                    const data = await response.json();
-                    console.log(`Réponse Nominatim (tentative ${attempt}):`, data);
-                    
-                    if (data && data.length > 0) {
-                        const coordinates = {
-                            latitude: parseFloat(data[0].lat),
-                            longitude: parseFloat(data[0].lon)
-                        };
-                        console.log('✅ Coordonnées trouvées avec Nominatim:', coordinates);
-                        return coordinates;
-                    } else {
-                        console.log(`Aucun résultat Nominatim (tentative ${attempt})`);
-                    }
-                    break;
-                } catch (nominatimError) {
-                    console.error(`❌ Erreur Nominatim (tentative ${attempt}):`, nominatimError);
-                    if (attempt < 3) {
-                        await new Promise(resolve => setTimeout(resolve, 2000 * attempt));
-                    }
-                }
-            }
-            
-            console.log('❌ Tous les services de géocodage ont échoué');
-            return null;
-        } catch (error) {
-            console.error('❌ Erreur générale lors du géocodage:', error);
-            return null;
-        }
-    };
+    
 
     // Coordonnées par défaut variables pour éviter que tous les restaurants soient au même endroit
     const getDefaultCoordinatesForRestaurant = (index: number) => {

@@ -3,11 +3,17 @@ import { useParams, Link } from 'react-router-dom';
 import { useCurrency } from '../contexts/CurrencyContext';
 import { RestaurantService } from '../services/RestaurantService';
 import { MenuService, MealService } from '../services/MenuService';
-import Review from '../components/Review';
+import { useLocalisation } from '../hooks/useLocalisation';
+import { Restaurant, RestaurantForMap } from '../types/Restaurant';
+import MapComponent from '../components/MapComponent';
 import ReviewForm from '../components/ReviewForm';
-import { Restaurant } from '../types/Restaurant';
-import '../styles/pages/RestaurantDetail.scss';
+import Review from '../components/Review';
 import Bookmark from '../components/Bookmark';
+
+
+import '../styles/pages/RestaurantDetail.scss';
+
+
 
 interface ReviewData {
   review_id: number;
@@ -35,7 +41,7 @@ const RestaurantDetail: React.FC = () => {
   const [error, setError] = useState<string | null>(null);
   const [activeTab, setActiveTab] = useState<'info' | 'menu' | 'reviews'>('info');
   const [selectedMenu, setSelectedMenu] = useState<number | null>(null);
-  
+  const { localisation, error: localisationError, loading: localisationLoading } = useLocalisation(id ? parseInt(id) : 0);
   const { formatPrice } = useCurrency();
 
   const API_URL = process.env.VITE_API_URL;
@@ -431,16 +437,12 @@ const RestaurantDetail: React.FC = () => {
               <div className="info-section">
                 <h3>Localisation</h3>
                 <div className="map-container">
-                  {/* Placeholder pour une carte */}
-                  <div className="map-placeholder">
-                    <div className="map-marker">
-                      <svg xmlns="http://www.w3.org/2000/svg" width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-                        <path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"></path>
-                        <circle cx="12" cy="10" r="3"></circle>
-                      </svg>
-                    </div>
-                    <p>Carte interactive disponible prochainement</p>
-                  </div>
+                 <MapComponent restaurants={(() =>{
+                  const tmp = restaurant as RestaurantForMap;
+                  tmp.coordinates = localisation     
+                  console.log("Restaurant pour la carte:", tmp);
+                  return [tmp];
+                 })()} longitude={localisation?.longitude} latitude={localisation?.latitude} />
                 </div>
               </div>
             </div>

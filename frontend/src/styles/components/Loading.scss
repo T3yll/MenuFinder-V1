@@ -1,0 +1,65 @@
+@use '../base/variables' as var;
+
+body {
+	background: var.$color-light;
+}
+
+.loader {
+	height: 100px;
+	top: 50%;
+	left: 50%;
+	aspect-ratio: 1;
+	box-sizing: border-box;
+	position: absolute;
+	transform: rotate(45deg);
+	display: grid;
+	place-content: center;
+	/* 	clip-path: polygon(50% 0%, 100% 49%, 50% 100%, 0% 50%); */
+	mask: conic-gradient(#ffffff 0 10%), conic-gradient(#ffffff 0 0) content-box exclude;
+  overflow: hidden;
+}
+.loader:before {
+	content: "";
+	position: absolute;
+	inset: 0;
+	transform: scale(1.5);
+
+	background: linear-gradient(
+		0,
+		transparent 0%,
+		transparent 10%,
+		transparent 40%,
+		var.$color-primary 50%,
+		var.$color-primary 60%,
+		var.$color-primary 60%
+	);
+	filter: blur(8px);
+	animation: l3 3s linear infinite;
+}
+
+@keyframes l3 {
+	to {
+		rotate: 1turn;
+	}
+}
+
+.item {
+	background: var.$color-primary;
+	height: 70px;
+	width: 70px;
+	border: 5px solid var.$color-secondary;
+	box-shadow: inset -8px -8px 0 rgb(255, 255, 255), inset 8px 8px 0 rgb(255, 255, 255);
+	aspect-ratio: 1;
+	z-index: 2;
+	filter: unset;
+	position: relative;
+}
+.item::after {
+  top: 0;
+  right: 0;
+  display: block;
+  width: 30px;
+  height: 30px;
+  background-color: var.$color-primary;
+  border: 5px solid var.$color-primary;
+}
