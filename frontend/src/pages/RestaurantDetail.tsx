@@ -434,7 +434,7 @@ const RestaurantDetail: React.FC = () => {
                 </div>
               )}
 
-              <div className="info-section">
+              <div className="info-section" style={{ zIndex: 1, position: 'relative'}}>
                 <h3>Localisation</h3>
                 <div className="map-container">
                  <MapComponent restaurants={(() =>{
