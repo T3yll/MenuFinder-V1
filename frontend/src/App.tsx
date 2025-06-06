@@ -10,6 +10,7 @@ import Map from './pages/Map';
 import { CurrencyProvider } from './contexts/CurrencyContext';
 import { Provider } from 'react-redux';
 import { store } from './store/store';
+import { useEffect, useState } from 'react';
 import ToastRedux from './components/commom/toast/ToastRedux';
 import Profile from './pages/Profile';
 import RegisterRestaurant from './pages/RegisterRestaurant';
@@ -20,8 +21,16 @@ import MenuItems from './pages/MenuItems';
 import Dashboard from './pages/Dashboard';
 import DashboardRestaurant from './pages/DashboardRestaurant';
 import AdminMiddleware from './Middleware/AdminMiddleware';
+import Loading from './components/Loading';
 
 function App() {
+   const [loading, setLoading] = useState(true)
+    useEffect(() => {
+        setTimeout(() => setLoading(false), 3300)
+    }, [])
+    if (loading) {
+        return <Loading/>
+    }
   return (
     <Provider store={store}>
       <CurrencyProvider>

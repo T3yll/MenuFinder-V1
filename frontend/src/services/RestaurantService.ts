@@ -3,6 +3,7 @@ import { CreateRestaurantDto } from '../contexts/create-restaurant.dto';
 import { Adress, Restaurant } from '../types/Restaurant';
 import { CreateAdressDto } from '../contexts/create-adress.dto';
 import { upload } from './file.service';
+import { AdressService } from './adresse.service';
 // Base URL de l'API
 const API_URL = process.env.VITE_API_URL;
 
@@ -82,19 +83,6 @@ export const RestaurantService = {
   }
 };
 
-// Service pour les adresses
-export const AdressService = {
-  // Créer une nouvelle adresse
-  async create(adressData: CreateAdressDto): Promise<Adress> {
-    try {
-      const response = await axios.post(`${API_URL}/adresses`, adressData);
-      return response.data;
-    } catch (error) {
-      console.error('Erreur lors de la création de l\'adresse:', error);
-      throw error;
-    }
-  }
-};
 
 
 // Service combiné pour la création d'un restaurant avec son adresse et son image
