@@ -22,7 +22,7 @@ export default class Seeder {
 
     // Seed admin user
     let admin: User;
-    if ((await this.userService.findAll()).data.length == 0) {
+    if ((await this.userService.findAll()).data.find(user => user.bAdmin) == undefined) {
       await this.userService.create({
         username: 'admin',
         email: 'admin@admin.com',
