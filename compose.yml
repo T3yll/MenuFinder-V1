@@ -35,7 +35,7 @@ services:
       - backend_node_modules:/var/www/tuile/backend/node_modules
     command: >
       sh -c "
-      npm install &&
+      npm install && npm run seed &&
       npm run dev
       "
 

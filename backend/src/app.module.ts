@@ -18,6 +18,7 @@ import { AdressModule } from './resources/adress/adress.module';
 import { FileModule } from './resources/file/file.module';
 import { MealModule } from './resources/meal/meal.module';
 import { MealCategoryModule } from './resources/mealcategory/mealcategory.module';
+import Seeder from './seeder/seeder';
 
 @Module({
   imports: [
@@ -52,6 +53,7 @@ import { MealCategoryModule } from './resources/mealcategory/mealcategory.module
   providers: [
     AppService,
     Logger,
+    Seeder,
     {
       provide: APP_GUARD,
       useClass: JwtAuthGuard,
