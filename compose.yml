@@ -40,9 +40,11 @@ services:
       "
 
   frontend:
-    image: node:20
+    build:
+      context: ./frontend
+      dockerfile: Dockerfile
     develop:
-     watch:
+      watch:
         - action: sync
           path: ./web
           target: /src/web

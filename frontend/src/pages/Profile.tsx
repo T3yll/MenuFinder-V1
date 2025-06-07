@@ -6,9 +6,10 @@ import CustomAvatar from '../components/Avatar';
 import { Link } from 'react-router-dom';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faEdit } from '@fortawesome/free-solid-svg-icons';
+import { Block } from '@mui/icons-material';
 
 const Profile: React.FC = () => {
-    const [user, setUser] = useState<{ username: string; image_path:string; contributions: number; followers: number; following: number }>({
+    const [user, setUser] = useState<{ username: string; image_path: string; contributions: number; followers: number; following: number }>({
         username: '',
         image_path: 'public/default.png',
         contributions: 0,
@@ -17,14 +18,8 @@ const Profile: React.FC = () => {
     });
     const userlocal = JSON.parse(localStorage.getItem('user') || '{}');
     const userId = userlocal.user_id;
-
-
-
-
-
-
-
-
+    user.username = userlocal.username;
+    
     useEffect(() => {
         async function fetchUser() {
             try {
@@ -40,26 +35,29 @@ const Profile: React.FC = () => {
 
     return (
         <div className="profile-page">
-            <div className="profile-banner" style={{ backgroundImage: `url(public/banner.png)` ,WebkitFilter:'blur(3px)', backgroundSize: 'cover' }}>
-                <div className="banner-overlay"></div> 
+            <div className="profile-banner" style={{ backgroundImage: `url(public/banner.png)`, WebkitFilter: 'blur(3px)', backgroundSize: 'cover' }}>
+                <div className="banner-overlay"></div>
             </div>
 
             <div className="profile-header">
-                <CustomAvatar fileId={userlocal.image_file_id}/>
+                <CustomAvatar fileId={userlocal.image_file_id} />
                 <div className="profile-info">
-                    <h2>{user.username || 'Nom d’utilisateur'}</h2>
+                    <div className="flex justify-between items-center">
+                        <h2>{user.username || 'Nom d’utilisateur'}</h2>
+                        <Button className="secondary-btn">
+                            <Link to={`/updateProfile`} >
+                                <FontAwesomeIcon icon={faEdit} />
+                            </Link>
+                        </Button>
+                    </div>
+
                     <div className="stats">
                         <span>Contributions <strong>{user.contributions}</strong></span>
                         <span>Abonnés <strong>{user.followers}</strong></span>
                         <span>Abonnements <strong>{user.following}</strong></span>
                     </div>
                 </div>
-                <Button className="primary-btn edit-profile-btn">
-                    <Link to={`/updateProfile`} >
-                        <FontAwesomeIcon icon={faEdit} />
-                        Modifier le profil
-                    </Link>
-                </Button>
+
             </div>
 
             <div className="profile-content">
