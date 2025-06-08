@@ -2,6 +2,7 @@ import React from 'react';
 import { Card, Statistic, Row, Col } from 'antd';
 import { Line } from 'react-chartjs-2';
 import { useAdminStats } from '../hooks/useAdminStats';
+import ReportTable from '../components/reports/ReportTable';
 import {
 
 Chart as ChartJS,
@@ -80,9 +81,7 @@ const Dashboard: React.FC = () => {
                     </Col>
                 ))}
             </Row>
-            <Card>
-                <Line data={lineData} options={lineOptions} />
-            </Card>
+            <ReportTable />
         </div>
     );
 };

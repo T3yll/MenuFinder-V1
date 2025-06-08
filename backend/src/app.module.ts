@@ -18,6 +18,7 @@ import { AdressModule } from './resources/adress/adress.module';
 import { FileModule } from './resources/file/file.module';
 import { MealModule } from './resources/meal/meal.module';
 import { MealCategoryModule } from './resources/mealcategory/mealcategory.module';
+import { ReportModule } from './resources/report/report.module';
 import Seeder from './seeder/seeder';
 
 @Module({
@@ -48,6 +49,7 @@ import Seeder from './seeder/seeder';
     MealModule,
     MealCategoryModule,
     RestauranttagModule,
+    ReportModule,
   ],
   controllers: [AppController],
   providers: [

@@ -14,6 +14,8 @@ import Bookmark from '../components/Bookmark';
 import '../styles/pages/RestaurantDetail.scss';
 import ShareButton from '../components/ShareButton';
 import CustomAvatar from '../components/Avatar';
+import ReportButton from '../components/ReportButton';
+import { number } from 'react-admin';
 
 
 
@@ -594,15 +596,7 @@ const RestaurantDetail: React.FC = () => {
       <div className="restaurant-actions-footer">
         <Bookmark restaurantId={id || -1} text='Enregistrer' />
         <ShareButton text={`Découvrez ${restaurant.name} sur MenuFinder`} url={`${window.location.origin}/restaurants/${id}`} />
-        <button className="action-button reservations-button">
-          <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-            <rect x="3" y="4" width="18" height="18" rx="2" ry="2"></rect>
-            <line x1="16" y1="2" x2="16" y2="6"></line>
-            <line x1="8" y1="2" x2="8" y2="6"></line>
-            <line x1="3" y1="10" x2="21" y2="10"></line>
-          </svg>
-          Réserver
-        </button>
+        <ReportButton RestaurantId={Number.parseInt(id || "-1") || -1}/>
       </div>
     </div>
   );

@@ -1,5 +1,5 @@
 import axios, { AxiosResponse } from "axios";
-import { User } from "../types/User";
+import { User,UserFromDB } from "../types/User";
 import { UpdateProfileFormData } from "../pages/UpdateProfile";
 import {getPath, upload} from "../services/file.service"
 import { generateUsername } from "../helpers/user.helper";
@@ -35,6 +35,24 @@ export const registerUser = async (user: UserRegister) => {
     console.log('registerUser ok');
     return response.data;
 };
+
+export const getUserById = async (id: number): Promise<UserFromDB> => {
+    const response: AxiosResponse<UserFromDB> = await axios.get(`${process.env.VITE_API_URL}/users/${id}`, {
+        headers: {
+            Authorization: `Bearer ${localStorage.getItem('token')}`
+        }
+    });
+    if (response.status !== 200) {
+        throw new Error('Failed to fetch user');
+    }
+    const user = response.data;
+    user.image_path = await getPath(user.image_file_id?.toString() || "-1") || 'public/default.png';
+    console.log('getUserById', user);
+    return user;
+};
+
+
+
 
 export async function getUserProfile(token: string = localStorage.getItem('token') || ''): Promise<User> {
     const res = await fetch(`${process.env.VITE_API_URL}/auth/me`, {

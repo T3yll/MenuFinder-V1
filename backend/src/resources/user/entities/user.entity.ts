@@ -4,6 +4,7 @@ import { Response } from '@/resources/response/entities/response.entity';
 import { Restaurant } from '@/resources/restaurant/entities/restaurant.entity';
 import { Review } from '@/resources/review/entities/review.entity';
 import { Exclude } from 'class-transformer';
+import { Report } from '@/resources/report/entities/report.entity';
 import {
   Entity,
   Column,
@@ -56,6 +57,9 @@ export class User {
 
   @OneToMany(() => Bookmark, bookmark => bookmark.user)
   bookmarks: Bookmark[];
+
+  @OneToMany(() => Report, report => report.userId)
+  reports: Report[];
 
   getUsername(): string {
     return this.username;
