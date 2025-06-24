@@ -2,7 +2,9 @@ import React, { useState, useEffect } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import '../styles/pages/RegisterRestaurant.scss';
 import { RegisterRestaurantService } from '../services/RestaurantService';
-import AutoCompChampAdresse from '../components/common/AddressAutocompleteInput';
+import PostcodeAutocomplete from '../components/common/PostcodeAutocomplete';
+import CityAutocomplete from '../components/common/CityAutocomplete';
+import AddressAutocomplete from '../components/common/AddressAutocomplete';
 
 // Types pour le formulaire
 interface FormData {
@@ -116,6 +118,10 @@ const RegisterRestaurant: React.FC = () => {
       };
       reader.readAsDataURL(files[0]);
     }
+  };
+
+  const setField = (field: keyof FormData) => (value: string) => {
+    setFormData(prev => ({ ...prev, [field]: value }));
   };
 
   const nextStep = () => {
@@ -238,7 +244,7 @@ const handleSubmit = async (e: React.FormEvent) => {
           <p>Votre restaurant a été enregistré avec succès. Vous pouvez maintenant commencer à ajouter vos menus et gérer votre établissement.</p>
           <div className="success-actions">
             <Link to="/" className="btn-secondary">Retour à l'accueil</Link>
-            <Link to="/dashboard/restaurants" className="btn-primary">Gérer mon restaurant</Link>
+            <Link to="/dashboard" className="btn-primary">Gérer mon restaurant</Link>
           </div>
         </div>
       </div>
@@ -404,45 +410,41 @@ const handleSubmit = async (e: React.FormEvent) => {
                 <div className="form-step">
                   <h2 className="form-section-title">Adresse et photo</h2>
                   
-                  <div className="form-group">
-                    <label htmlFor="street">Rue / Numéro *</label>
-                    <input
-                      type="text"
-                      id="street"
-                      name="street"
-                      value={formData.street}
-                      onChange={handleInputChange}
-                      required
-                      placeholder="123 rue de la Gastronomie"
-                    />
-                  </div>
-                  
                   <div className="form-row">
+                  <div className="form-group">
+                      <label htmlFor="zipCode">Code postal *</label>
+                      <PostcodeAutocomplete
+                        name={'zipCode'}
+                        postcode={formData.zipCode}
+                        setPostcode={setField('zipCode')}
+                        setCity={setField('city')}
+                      />
+                    </div>
+
                     <div className="form-group">
                       <label htmlFor="city">Ville *</label>
-                                            <AutoCompChampAdresse
+                      <CityAutocomplete
                         name={'city'}
-                        id={"city"} 
-                        type='Ville'
-                        value={formData.city}
-                        onChange={handleInputChange}
-                        required={true}
+                        city={formData.city}
+                        setCity={setField('city')}
+                        setPostcode={setField('zipCode')}
                       />
                     </div>
                     
-                    <div className="form-group">
-                      <label htmlFor="zipCode">Code postal *</label>
-                      <input
-                        type="text"
-                        id="zipCode"
-                        name="zipCode"
-                        value={formData.zipCode}
-                        onChange={handleInputChange}
-                        required
-                        placeholder="75001"
-                      />
-                    </div>
+                   
                   </div>
+
+                  <div className="form-group">
+                    <label htmlFor="street">Adresse *</label>
+                    <AddressAutocomplete
+                      name={'street'}
+                      postcode={formData.zipCode}
+                      address={formData.street}
+                      setAddress={setField('street')}
+                    />
+                  </div>
+                  
+                  
                   
                   <div className="form-row">
                     <div className="form-group">
@@ -460,14 +462,14 @@ const handleSubmit = async (e: React.FormEvent) => {
                     
                     <div className="form-group">
                       <label htmlFor="country">Pays *</label>
-                      <AutoCompChampAdresse
-                        name={'country'}
-                        id={"country"} 
-                        type='Pays'
+                      <input
+                        type="text"
+                        id="country"
+                        name="country"
                         value={formData.country}
+                        required
                         onChange={handleInputChange}
                         placeholder="France"
-                        required={true}
                       />
                     </div>
                   </div>
