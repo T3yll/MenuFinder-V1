@@ -59,6 +59,7 @@ const ShareButton: React.FC<ShareButtonProps> = ({ text, url }) => {
       {/* Main Share Button */}
        <button 
         onClick={() => handleCopy()}
+        
         style={{ display: 'flex', alignItems: 'center', gap: '4px' }}
         className="share-button action-button"
     >

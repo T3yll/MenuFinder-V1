@@ -1,4 +1,4 @@
-import { Controller, Get, Post, Body, Param, Put, Delete } from '@nestjs/common';
+import { Controller, Get, Post, Body, Param, Put, Delete, Query } from '@nestjs/common';
 import { RestaurantService } from './restaurant.service';
 import { MenuService } from '../menu/menu.service';
 import { ApiBody, ApiOperation, ApiResponse, ApiTags } from '@nestjs/swagger';
@@ -27,6 +27,12 @@ export class RestaurantController {
   findAll(): Promise<Restaurant[]> {
     return this.restaurantService.findAll();
   }
+  @Public()
+  @Get('autocomplete')
+  @ApiOperation({ summary: 'Get restaurants names like query' })
+  async autocomplete(@Query('query') query: string) {
+    return this.restaurantService.findNamesLike(query);
+}
 
    @Get('count')
     @ApiOperation({ summary: 'Get the total number of restaurants' })
@@ -50,6 +56,8 @@ export class RestaurantController {
   getRestaurantMenus(@Param('id') id: string): Promise<Menu[]> {
     return this.menuService.findByRestaurant(+id);
   }
+
+
 
   @Public()
   @Put(':id')
