@@ -1,6 +1,7 @@
 // Import des variables et mixins
 @use '@/styles/base/variables' as vars;
 @use '@/styles/base/mixins' as mix;
+@use "sass:color";
 
 // Styles spécifiques à la page Menus
 .menus {
@@ -582,7 +583,7 @@
     display: inline-block;
 
     &:hover {
-      background-color: darken(vars.$primary-color, 10%);
+      background-color: color.adjust(vars.$primary-color, $lightness: -10%);
     }
   }
 

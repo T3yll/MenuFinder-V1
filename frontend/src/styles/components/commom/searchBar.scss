@@ -1,6 +1,7 @@
 // Import des variables et mixins
 @use '../../base/variables' as var;
 @use '../../base/mixins' as mix;
+@use "sass:color";
 
 /* Barre de recherche */
 .search-container {
@@ -37,7 +38,7 @@
         transition: background-color 0.3s;
 
         &:hover {
-            background-color: darken(var.$primary-color, 10%);
+            background-color: color.adjust(var.$primary-color, $lightness: -10%);
         }
     }
 }

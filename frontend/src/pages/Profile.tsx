@@ -6,7 +6,7 @@ import { Button } from '@mui/material';
 const Profile: React.FC = () => {
     const [user, setUser] = useState<{ username: string; image_path:string; contributions: number; followers: number; following: number }>({
         username: '',
-        image_path: 'public/default.png',
+        image_path: '/default.png',
         contributions: 0,
         followers: 0,
         following: 0,
@@ -27,11 +27,10 @@ const Profile: React.FC = () => {
                 
                 // Récupérer les contributions (avis) depuis l'API
                 const contributionsCount = userId ? await fetchUserContributions(userId) : 0;
-                console.log("username : ", data.prenom, data.nom);
-                
+
                 setUser({
-                    username: `${data.prenom} ${data.nom}` || '',
-                    image_path: data.image_path || 'public/default.png',
+                    username: `${(data as unknown as {prenom: string, nom: string}).prenom} ${(data as unknown as {prenom: string, nom: string}).nom}` || '',
+                    image_path: data.image_path || '/default.png',
                     contributions: contributionsCount,
                     followers: 0, // À implémenter plus tard
                     following: 0, // À implémenter plus tard
@@ -62,7 +61,7 @@ const Profile: React.FC = () => {
 
     return (
         <div className="profile-page">
-            <div className="profile-banner" style={{ backgroundImage: `url(public/banner.png)` ,WebkitFilter:'blur(3px)', backgroundSize: 'cover' }}>
+            <div className="profile-banner" style={{ backgroundImage: `url(/banner.png)` ,WebkitFilter:'blur(3px)', backgroundSize: 'cover' }}>
                 <div className="banner-overlay"></div> 
             </div>
 

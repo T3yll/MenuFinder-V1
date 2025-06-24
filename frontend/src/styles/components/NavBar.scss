@@ -1,4 +1,5 @@
 @use "../base/variables.scss" as var;
+@use "sass:color";
 
 .navbar-container {
   background-color: var.$color-light;
@@ -28,7 +29,7 @@
   background-color: var.$color-secondary;
 
   &:hover {
-    background-color: darken(var.$color-secondary, 10%);
+    background-color: color.adjust(var.$color-secondary, $lightness: -10%);
   }
 }
 
