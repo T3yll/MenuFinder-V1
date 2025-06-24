@@ -1,6 +1,7 @@
 /* Import des variables */
 @use '../base/variables' as vars;
 @use '../base/mixins' as mix;
+@use "sass:color";
 
 .register-restaurant-page {
   min-height: 100vh;
@@ -351,7 +352,7 @@
     border: none;
     
     &:hover {
-      background-color: darken(vars.$color-primary, 5%);
+      background-color: color.adjust(vars.$color-primary, $lightness: -5%);
       transform: translateY(-1px);
     }
     
@@ -697,7 +698,7 @@
       transition: all 0.3s ease;
       
       &:hover {
-        background-color: darken(vars.$color-primary, 5%);
+        background-color: color.adjust(vars.$color-primary, $lightness: -5%);
         transform: translateY(-2px);
       }
     }

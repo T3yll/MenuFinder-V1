@@ -4,8 +4,10 @@ WORKDIR /app
 
 COPY ./package*.json ./
 
-# Installer les dépendances
-RUN npm install
+# Installer les dépendances et corriger les vulnérabilités
+RUN npm install && \
+    npm audit fix --force && \
+    npm cache clean --force
 
 COPY . .
 
