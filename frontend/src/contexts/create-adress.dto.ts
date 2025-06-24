@@ -4,4 +4,6 @@ export interface CreateAdressDto {
   city: string;
   postal_code: number;
   country: string;
+  Longitude?: number;
+  Latitude?: number;
 }

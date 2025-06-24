@@ -1,8 +1,8 @@
 import React, { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
 import '../styles/pages/Menus.scss';
-import SearchBar from '../components/commom/SearchBar';
-import SliderFilter from '../components/commom/SliderFilter';
+import SearchBar from '../components/common/SearchBar';
+import SliderFilter from '../components/common/SliderFilter';
 
 // Interface pour les menus
 interface Menu {

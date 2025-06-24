@@ -13,7 +13,6 @@ export class AdressController {
   create(@Body() createAdressDto: CreateAdressDto): Promise<Adress> {
     return this.adressService.create(createAdressDto);
   }
-
   @Public()
   @Get()
   findAll(): Promise<Adress[]> {

@@ -1,5 +1,7 @@
 import { Restaurant } from '@/resources/restaurant/entities/restaurant.entity';
-import { Entity, PrimaryGeneratedColumn, Column, OneToMany } from 'typeorm';
+import { Optional, Options } from '@nestjs/common';
+import { IsNumber } from 'class-validator';
+import { Entity, PrimaryGeneratedColumn, Column, OneToMany, IsNull } from 'typeorm';
 
 @Entity('Adress')
 export class Adress {
@@ -23,4 +25,14 @@ export class Adress {
 
   @OneToMany(() => Restaurant, restaurant => restaurant.adress)
   restaurants: Restaurant[];
+
+  @Optional()
+  @IsNumber()
+  @Column('decimal', { precision: 10, scale: 8, nullable: true })
+  longitude: number;
+
+  @Optional()
+  @IsNumber()
+  @Column('decimal', { precision: 10, scale: 8, nullable: true })
+  latitude: number;
 }
