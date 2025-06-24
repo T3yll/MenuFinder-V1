@@ -3,6 +3,7 @@ import { Adress } from './entities/adress.entity';
 import { AdressService } from './adress.service';
 import { Public } from '@/common/decorators/security/public.decorator';
 import { CreateAdressDto } from './dto/create-adress.dto';
+import { CreateAdressDto } from './dto/create-adress.dto';
 
 @Controller('adresses')
 export class AdressController {
@@ -10,8 +11,8 @@ export class AdressController {
 
   @Public()
   @Post()
-  create(@Body() adresse: CreateAdressDto): Promise<Adress> {
-    return this.adressService.create(adresse);
+  create(@Body() createAdressDto: CreateAdressDto): Promise<Adress> {
+    return this.adressService.create(createAdressDto);
   }
   @Public()
   @Get()
@@ -23,7 +24,7 @@ export class AdressController {
   findOne(@Param('id') id: string): Promise<Adress> {
     return this.adressService.findOne(+id);
   }
-
+  @Public()
   @Put(':id')
   update(@Param('id') id: string, @Body() adresse: Adress): Promise<Adress> {
     return this.adressService.update(+id, adresse);

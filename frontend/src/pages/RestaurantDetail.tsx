@@ -2,18 +2,80 @@ import { useEffect, useState } from 'react';
 import { useParams, Link } from 'react-router-dom';
 import { useCurrency } from '../contexts/CurrencyContext';
 import { RestaurantService } from '../services/RestaurantService';
-import { Restaurant, Review, MenuItem } from '../types/Restaurant';
+import { MenuService, MealService } from '../services/MenuService';
+import { useLocalisation } from '../hooks/useLocalisation';
+import { Restaurant, RestaurantForMap } from '../types/Restaurant';
+import MapComponent from '../components/MapComponent';
+import ReviewForm from '../components/ReviewForm';
+import Review from '../components/Review';
+import Bookmark from '../components/Bookmark';
+
+
 import '../styles/pages/RestaurantDetail.scss';
+import ShareButton from '../components/ShareButton';
+import CustomAvatar from '../components/Avatar';
+import ReportButton from '../components/ReportButton';
+import { number } from 'react-admin';
+
+
+
+interface ReviewData {
+  review_id: number;
+  restaurant_id: number;
+  user_id: number;
+  text: string;
+  added_at: string;
+  updated_at: string;
+  user?: {
+    id: number;
+    username: string;
+    nom: string;
+    prenom: string;
+    email: string;
+  };
+  rating?: number;
+}
 
 const RestaurantDetail: React.FC = () => {
   const { id } = useParams<{ id: string }>();
   const [restaurant, setRestaurant] = useState<Restaurant | null>(null);
+  const [reviews, setReviews] = useState<ReviewData[]>([]);
+  const [menus, setMenus] = useState<any[]>([]);
   const [loading, setLoading] = useState<boolean>(true);
   const [error, setError] = useState<string | null>(null);
   const [activeTab, setActiveTab] = useState<'info' | 'menu' | 'reviews'>('info');
   const [selectedMenu, setSelectedMenu] = useState<number | null>(null);
-  
+  const { localisation, error: localisationError, loading: localisationLoading } = useLocalisation(id ? parseInt(id) : 0);
   const { formatPrice } = useCurrency();
+
+  const API_URL = process.env.VITE_API_URL;
+
+  // Fonction pour récupérer les avis
+  const fetchReviews = async (restaurantId: number) => {
+    try {
+      const response = await fetch(`${API_URL}/reviews/restaurant/${restaurantId}`);
+      console.log("[RestaurantDetail] response", response);
+      
+      if (response.ok) {
+        const reviewsData = await response.json();
+        console.log("[RestaurantDetail Data] response", reviewsData);
+        setReviews(reviewsData);
+      } else {
+        console.error('Erreur lors de la récupération des avis');
+        setReviews([]);
+      }
+    } catch (error) {
+      console.error('Erreur lors de la récupération des avis:', error);
+      setReviews([]);
+    }
+  };
+
+  // Fonction pour rafraîchir les avis après ajout d'un nouvel avis
+  const handleReviewSubmitted = () => {
+    if (id) {
+      fetchReviews(parseInt(id));
+    }
+  };
 
   useEffect(() => {
     const fetchRestaurantDetails = async () => {
@@ -26,17 +88,57 @@ const RestaurantDetail: React.FC = () => {
         }
         
         const restaurantId = parseInt(id);
-        const data = await RestaurantService.findOne(restaurantId);
         
-        if (data) {
-          setRestaurant(data);
-          // Si le restaurant a des menus, sélectionner le premier par défaut
-          if (data.menus && data.menus.length > 0) {
-            setSelectedMenu(data.menus[0].menu_id);
-          }
-        } else {
+        // 1. Récupérer les détails du restaurant
+        const restaurantData = await RestaurantService.findOne(restaurantId);
+        
+        if (!restaurantData) {
           setError("Aucune donnée reçue de l'API");
+          return;
         }
+        // Récupérer les avis
+        await fetchReviews(restaurantId);
+
+        setRestaurant(restaurantData);
+        
+        // 2. Récupérer les menus du restaurant
+        try {
+          const menusData = await MenuService.findByRestaurant(restaurantId);
+          console.log('Menus récupérés:', menusData);
+          
+          // 3. Pour chaque menu, récupérer ses plats
+          const menusWithMeals = await Promise.all(
+            menusData.map(async (menu) => {
+              try {
+                const meals = await MealService.findByMenu(menu.menu_id);
+                console.log(`Plats du menu ${menu.menu_id}:`, meals);
+                return {
+                  ...menu,
+                  items: meals
+                };
+              } catch (error) {
+                console.error(`Erreur lors de la récupération des plats du menu ${menu.menu_id}:`, error);
+                return {
+                  ...menu,
+                  items: []
+                };
+              }
+            })
+          );
+          
+          setMenus(menusWithMeals);
+          console.log('Menus avec plats:', menusWithMeals);
+          
+          // Sélectionner le premier menu par défaut s'il y en a
+          if (menusWithMeals.length > 0) {
+            setSelectedMenu(menusWithMeals[0].menu_id);
+          }
+          
+        } catch (menuError) {
+          console.error("Erreur lors de la récupération des menus:", menuError);
+          setMenus([]);
+        }
+        
       } catch (err) {
         console.error("Erreur lors de la récupération des détails du restaurant:", err);
         setError("Impossible de charger les détails du restaurant. Veuillez réessayer plus tard.");
@@ -48,14 +150,26 @@ const RestaurantDetail: React.FC = () => {
     fetchRestaurantDetails();
   }, [id]);
 
-  // Calcul de la note moyenne
-  const calculateAverageRating = (reviews?: Review[]): number => {
+  // Calcul de la note moyenne basée sur les ratings des avis
+  const calculateAverageRating = (): number => {
     if (!reviews || reviews.length === 0) {
       return 0;
     }
     
-    const sum = reviews.reduce((total, review) => total + review.rating, 0);
-    return sum / reviews.length;
+    // Filtrer les avis qui ont un rating (pas null)
+    const reviewsWithRating = reviews.filter(review => 
+      review.rating !== null && 
+      review.rating !== undefined && 
+      typeof review.rating === 'number'
+    );
+    
+    if (reviewsWithRating.length === 0) {
+      return 0;
+    }
+    
+    // Calculer la moyenne (rating est garanti d'être un number maintenant)
+    const sum = reviewsWithRating.reduce((total, review) => total + (review.rating as number), 0);
+    return sum / reviewsWithRating.length;
   };
 
   // Afficher les étoiles de notation
@@ -83,7 +197,8 @@ const RestaurantDetail: React.FC = () => {
 
     return stars;
   };
-  const API_URL = 'http://localhost:3000/api';
+  
+  const API_VITE = 'http://localhost:3000/api';
 
   // Obtenir l'URL de l'image
   const getImageUrl = (restaurant: Restaurant) => {
@@ -93,21 +208,21 @@ const RestaurantDetail: React.FC = () => {
         return restaurant.image.path;
         }
         // Sinon, construire l'URL correcte vers le fichier local
-        return `${API_URL}/${restaurant.image.path.replace(/^\//, '')}`;
+        return `${API_VITE}/${restaurant.image.path.replace(/^\//, '')}`;
     }
     // Image par défaut
     return "https://images.unsplash.com/photo-1555396273-367ea4eb4db5?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=1374&q=80";
     };
 
   // Obtenir l'image d'un plat
-  const getMenuItemImageUrl = (item: MenuItem) => {
+  const getMenuItemImageUrl = (item: any) => {
     if (item.image && item.image.path) {
       // Si c'est une URL complète
       if (item.image.path.startsWith('http')) {
         return item.image.path;
       }
       // Sinon, construire l'URL correcte vers le fichier local
-      return `${item.image.path}`;
+      return `${API_VITE}/${item.image.path.replace(/^\//, '')}`;
     }
     // Image par défaut pour les plats
     return "https://images.unsplash.com/photo-1546069901-ba9599a7e63c?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=1480&q=80";
@@ -132,13 +247,13 @@ const RestaurantDetail: React.FC = () => {
   };
 
   // Grouper les plats par catégorie
-  const groupItemsByCategory = (items?: MenuItem[]) => {
+  const groupItemsByCategory = (items?: any[]) => {
     if (!items || items.length === 0) {
       return {};
     }
 
-    return items.reduce((groups: {[key: string]: MenuItem[]}, item) => {
-      const category = item.category || 'Autre';
+    return items.reduce((groups: {[key: string]: any[]}, item) => {
+      const category = item.meal_category?.name || item.category || 'Autre';
       if (!groups[category]) {
         groups[category] = [];
       }
@@ -194,9 +309,9 @@ const RestaurantDetail: React.FC = () => {
     );
   }
 
-  const rating = restaurant.rewiews ? calculateAverageRating(restaurant.rewiews) : 0;
-  const reviewCount = restaurant.rewiews?.length || 0;
-  const selectedMenuData = restaurant.menus?.find(menu => menu.menu_id === selectedMenu);
+  const rating = calculateAverageRating();
+  const reviewCount = reviews.length;
+  const selectedMenuData = menus.find(menu => menu.menu_id === selectedMenu);
   const menuItemsByCategory = selectedMenuData ? groupItemsByCategory(selectedMenuData.items) : {};
 
   return (
@@ -243,7 +358,7 @@ const RestaurantDetail: React.FC = () => {
             className={`tab-button ${activeTab === 'menu' ? 'active' : ''}`}
             onClick={() => setActiveTab('menu')}
           >
-            Menu
+            Menu ({menus.length})
           </button>
           <button 
             className={`tab-button ${activeTab === 'reviews' ? 'active' : ''}`}
@@ -309,9 +424,7 @@ const RestaurantDetail: React.FC = () => {
                 <div className="info-section">
                   <h3>Propriétaire</h3>
                   <div className="owner-info">
-                    <div className="owner-avatar">
-                      {restaurant.owner.username.charAt(0).toUpperCase()}
-                    </div>
+                    <CustomAvatar fileId={restaurant.owner.image_file_id || 0}/>
                     <div className="owner-details">
                       <h4>{restaurant.owner.username}</h4>
                       <p>Membre depuis {new Date(restaurant.owner.created_at).toLocaleDateString('fr-FR', {
@@ -323,19 +436,15 @@ const RestaurantDetail: React.FC = () => {
                 </div>
               )}
 
-              <div className="info-section">
+              <div className="info-section" style={{ zIndex: 1, position: 'relative'}}>
                 <h3>Localisation</h3>
                 <div className="map-container">
-                  {/* Placeholder pour une carte */}
-                  <div className="map-placeholder">
-                    <div className="map-marker">
-                      <svg xmlns="http://www.w3.org/2000/svg" width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-                        <path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"></path>
-                        <circle cx="12" cy="10" r="3"></circle>
-                      </svg>
-                    </div>
-                    <p>Carte interactive disponible prochainement</p>
-                  </div>
+                 <MapComponent restaurants={(() =>{
+                  const tmp = restaurant as RestaurantForMap;
+                  tmp.coordinates = localisation     
+                  console.log("Restaurant pour la carte:", tmp);
+                  return [tmp];
+                 })()} longitude={localisation?.longitude} latitude={localisation?.latitude} />
                 </div>
               </div>
             </div>
@@ -344,16 +453,17 @@ const RestaurantDetail: React.FC = () => {
           {/* Onglet Menu */}
           {activeTab === 'menu' && (
             <div className="menu-tab">
-              {restaurant.menus && restaurant.menus.length > 0 ? (
+              {menus && menus.length > 0 ? (
                 <>
                   <div className="menu-selector">
-                    {restaurant.menus.map(menu => (
+                    {menus.map(menu => (
                       <button
                         key={menu.menu_id}
                         className={`menu-button ${selectedMenu === menu.menu_id ? 'active' : ''}`}
                         onClick={() => setSelectedMenu(menu.menu_id)}
                       >
                         {menu.name}
+                        <span className="menu-items-count">({menu.items?.length || 0} plats)</span>
                       </button>
                     ))}
                   </div>
@@ -371,14 +481,14 @@ const RestaurantDetail: React.FC = () => {
                             <h4 className="category-name">{category}</h4>
                             <div className="menu-items">
                               {items.map(item => (
-                                <div key={item.item_id} className="menu-item">
+                                <div key={item.meal_id || item.item_id} className="menu-item">
                                   {item.image && (
                                     <div className="menu-item-image" style={{ backgroundImage: `url(${getMenuItemImageUrl(item)})` }}></div>
                                   )}
                                   <div className="menu-item-content">
                                     <div className="menu-item-header">
                                       <h5 className="menu-item-name">{item.name}</h5>
-                                      <span className="menu-item-price">{formatPrice(item.price)}</span>
+                                      <span className="menu-item-price">{formatPrice(parseFloat(item.price) || 0)}</span>
                                     </div>
                                     <p className="menu-item-description">{item.description}</p>
                                   </div>
@@ -418,13 +528,26 @@ const RestaurantDetail: React.FC = () => {
                 <div className="average-rating">
                   <div className="rating-number">{rating.toFixed(1)}</div>
                   <div className="stars-summary">{renderStars(rating)}</div>
-                  <div className="review-count">{reviewCount} avis</div>
+                  <div className="review-count">
+                    {reviews.filter(review => review.rating !== null && review.rating !== undefined).length} notes
+                  </div>
                 </div>
 
                 <div className="rating-breakdown">
                   {[5, 4, 3, 2, 1].map(star => {
-                    const count = restaurant.rewiews?.filter(review => Math.floor(review.rating) === star).length || 0;
-                    const percentage = reviewCount > 0 ? (count / reviewCount) * 100 : 0;
+                    // Compter les avis avec cette note exacte
+                    const count = reviews.filter(review => 
+                      review.rating !== null && 
+                      review.rating !== undefined && 
+                      Math.floor(review.rating) === star
+                    ).length;
+                    
+                    // Calculer le pourcentage basé sur le nombre total d'avis avec rating
+                    const totalWithRating = reviews.filter(review => 
+                      review.rating !== null && 
+                      review.rating !== undefined
+                    ).length;
+                    const percentage = totalWithRating > 0 ? (count / totalWithRating) * 100 : 0;
                     
                     return (
                       <div key={star} className="rating-bar">
@@ -439,38 +562,15 @@ const RestaurantDetail: React.FC = () => {
                 </div>
               </div>
 
-              <div className="write-review-button-container">
-                <button className="write-review-button">
-                  <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-                    <path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"></path>
-                    <path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"></path>
-                  </svg>
-                  Écrire un avis
-                </button>
-              </div>
+              <ReviewForm 
+                restaurantId={parseInt(id!)} 
+                onReviewSubmitted={handleReviewSubmitted}
+              />
 
               <div className="reviews-list">
-                {restaurant.rewiews && restaurant.rewiews.length > 0 ? (
-                  restaurant.rewiews.map(review => (
-                    <div key={review.review_id} className="review-card">
-                      <div className="review-header">
-                        <div className="reviewer-info">
-                          <div className="reviewer-avatar">
-                            {review.user?.username.charAt(0).toUpperCase() || 'U'}
-                          </div>
-                          <div className="reviewer-details">
-                            <div className="reviewer-name">{review.user?.username || 'Utilisateur anonyme'}</div>
-                            <div className="review-date">{formatReviewDate(review.created_at)}</div>
-                          </div>
-                        </div>
-                        <div className="review-rating">
-                          {renderStars(review.rating)}
-                        </div>
-                      </div>
-                      <div className="review-content">
-                        <p>{review.comment}</p>
-                      </div>
-                    </div>
+                {reviews.length > 0 ? (
+                  reviews.map(review => (
+                    <Review key={review.review_id} review={review} />
                   ))
                 ) : (
                   <div className="empty-reviews">
@@ -494,31 +594,9 @@ const RestaurantDetail: React.FC = () => {
       </div>
 
       <div className="restaurant-actions-footer">
-        <button className="action-button bookmark-button">
-          <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-            <path d="M19 21l-7-5-7 5V5a2 2 0 0 1 2-2h10a2 2 0 0 1 2 2z"></path>
-          </svg>
-          Enregistrer
-        </button>
-        <button className="action-button share-button">
-          <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-            <circle cx="18" cy="5" r="3"></circle>
-            <circle cx="6" cy="12" r="3"></circle>
-            <circle cx="18" cy="19" r="3"></circle>
-            <line x1="8.59" y1="13.51" x2="15.42" y2="17.49"></line>
-            <line x1="15.41" y1="6.51" x2="8.59" y2="10.49"></line>
-          </svg>
-          Partager
-        </button>
-        <button className="action-button reservations-button">
-          <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-            <rect x="3" y="4" width="18" height="18" rx="2" ry="2"></rect>
-            <line x1="16" y1="2" x2="16" y2="6"></line>
-            <line x1="8" y1="2" x2="8" y2="6"></line>
-            <line x1="3" y1="10" x2="21" y2="10"></line>
-          </svg>
-          Réserver
-        </button>
+        <Bookmark restaurantId={id || -1} text='Enregistrer' />
+        <ShareButton text={`Découvrez ${restaurant.name} sur MenuFinder`} url={`${window.location.origin}/restaurants/${id}`} />
+        <ReportButton RestaurantId={Number.parseInt(id || "-1") || -1}/>
       </div>
     </div>
   );

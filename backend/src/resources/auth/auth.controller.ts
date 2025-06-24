@@ -53,4 +53,11 @@ export class AuthController {
     const user = await this.userService.selectPublicInfo(userId); // Utilise l'instance du service User
     return user;
   }
+  @UseGuards(JwtAuthGuard)
+  @Get('isAdmin')
+  async isAdmin(@Request() req) {
+    const userId = req.user.userId; // Récupère l'ID utilisateur depuis le JWT
+    const user = await this.userService.isAdmin(userId); // Utilise l'instance du service User
+    return user;
+  }
 }

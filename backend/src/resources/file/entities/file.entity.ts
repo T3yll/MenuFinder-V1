@@ -6,7 +6,7 @@ import { Entity, PrimaryGeneratedColumn, Column, OneToMany } from 'typeorm';
 @Entity('file')
 export class File {
   @PrimaryGeneratedColumn({ unsigned: true })
-  file_id: number;
+  file_id: string;
 
   @Column('text')
   path: string;

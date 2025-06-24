@@ -1,133 +1,14 @@
 import React, { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
 import '../styles/pages/Home.scss';
-import SearchBar from '../components/common/SearchBar';
-// import '../styles/pages/Home.scss';
-
-interface Restaurant {
-    id: number;
-    name: string;
-    category: string;
-    rating: number;
-    priceRange: string;
-    image: string;
-    location: string;
-}
-
-const SAMPLE_RESTAURANTS: Restaurant[] = [
-    {
-        id: 1,
-        name: "McDonald",
-        category: "Burger",
-        rating: 4.1,
-        priceRange: "Entre 10€ et 20€ par personne",
-        image: "https://th.bing.com/th/id/OIP.yCEfne1mh87jp5Ppnf0SWgHaEL?rs=1&pid=ImgDetMain",
-        location: "italien"
-    },
-    {
-        id: 2,
-        name: "Sushi Palace",
-        category: "Sushi",
-        rating: 4.7,
-        priceRange: "Entre 15€ et 30€ par personne",
-        image: "https://images.unsplash.com/photo-1583623025817-d180a2221d0a?ixlib=rb-1.2.1&auto=format&fit=crop&w=800&q=80",
-        location: "japonais"
-    },
-    {
-        id: 3,
-        name: "Thai Delight",
-        category: "Thai",
-        rating: 4.5,
-        priceRange: "Entre 12€ et 25€ par personne",
-        image: "https://images.unsplash.com/photo-1569562211093-4ed0d0758f12?ixlib=rb-1.2.1&auto=format&fit=crop&w=800&q=80",
-        location: "thaïlandais"
-    },
-    {
-        id: 4,
-        name: "Pizza Roma",
-        category: "Italien",
-        rating: 4.3,
-        priceRange: "Entre 10€ et 20€ par personne",
-        image: "https://images.unsplash.com/photo-1579751626657-72bc17010498?ixlib=rb-1.2.1&auto=format&fit=crop&w=800&q=80",
-        location: "italien"
-    },
-    {
-        id: 5,
-        name: "Burger King",
-        category: "Burger",
-        rating: 3.9,
-        priceRange: "Entre 8€ et 15€ par personne",
-        image: "https://images.unsplash.com/photo-1572802419224-296b0aeee0d9?ixlib=rb-1.2.1&auto=format&fit=crop&w=800&q=80",
-        location: "américain"
-    },
-    {
-        id: 6,
-        name: "Pasta Palace",
-        category: "Italien",
-        rating: 4.4,
-        priceRange: "Entre 12€ et 25€ par personne",
-        image: "https://images.unsplash.com/photo-1555396273-367ea4eb4db5?ixlib=rb-1.2.1&auto=format&fit=crop&w=800&q=80",
-        location: "italien"
-    },
-    {
-        id: 7,
-        name: "La Charcuterie",
-        category: "Italien",
-        rating: 4.7,
-        priceRange: "Entre 12€ et 25€ par personne",
-        image: "https://images.unsplash.com/photo-1572802419224-296b0aeee0d9?ixlib=rb-1.2.1&auto=format&fit=crop&w=800&q=80",
-        location: "américain"
-    },
-    {
-        id: 8,
-        name: "Le Jardin Vert",
-        category: "vegetarien",
-        rating: 4.5,
-        priceRange: "Entre 12€ et 25€ par personne",
-        image: "https://images.unsplash.com/photo-1572449043416-55f4685c9bb7?ixlib=rb-1.2.1&auto=format&fit=crop&w=1480&q=80",
-        location: "végétarien"
-    },
-    {
-        id: 9,
-        name: "La Méditerranée",
-        category: "méditerranéen",
-        rating: 4.4,
-        priceRange: "Entre 12€ et 25€ par personne",
-        image: "https://images.unsplash.com/photo-1572449043416-55f4685c9bb7?ixlib=rb-1.2.1&auto=format&fit=crop&w=1480&q=80",
-        location: "méditerranéen"
-    },
-    {
-        id: 10,
-        name: "Le Crépuscule",
-        category: "francais",
-        rating: 4.6,
-        priceRange: "Entre 12€ et 25€ par personne",
-        image: "https://images.unsplash.com/photo-1572449043416-55f4685c9bb7?ixlib=rb-1.2.1&auto=format&fit=crop&w=1480&q=80",
-        location: "Français"
-    }
-];
-
-const CATEGORIES = [
-    { id: 'all', name: 'Tous', emoji: '🍽️' },
-    { id: 'burger', name: 'Burger', emoji: '🍔' },
-    { id: 'sushi', name: 'Sushi', emoji: '🍣' },
-    { id: 'thai', name: 'Thai', emoji: '🥢' },
-    { id: 'italien', name: 'Italien', emoji: '🍝' },
-    { id: 'francais', name: 'Français', emoji: '🥐' },
-    { id: 'indien', name: 'Indien', emoji: '🍛' },
-    { id: 'mexicain', name: 'Mexicain', emoji: '🌮' },
-    { id: 'vegetarien', name: 'Végétarien', emoji: '🥗' }
-];
+import SearchBar from '../components/commom/SearchBar';
 
 const Home: React.FC = () => {
     const [searchQuery, setSearchQuery] = useState('');
-    const [userCity, setUserCity] = useState('votre ville');
-    const [selectedCategory, setSelectedCategory] = useState('all');
-    const [filteredRestaurants, setFilteredRestaurants] = useState<Restaurant[]>(SAMPLE_RESTAURANTS);
+    const [userCity, setUserCity] = useState('Paris');
 
     useEffect(() => {
         if (navigator.geolocation) {
-            console.log(navigator.geolocation)
             navigator.geolocation.getCurrentPosition(
                 async (position) => {
                     try {
@@ -149,139 +30,233 @@ const Home: React.FC = () => {
         }
     }, []);
 
-    useEffect(() => {
-        let filtered = SAMPLE_RESTAURANTS;
-
-        // Filtrer par catégorie
-        if (selectedCategory !== 'all') {
-            filtered = filtered.filter(restaurant => restaurant.category.toLowerCase() === selectedCategory);
-        }
-
-        // Filtrer par recherche
-        if (searchQuery.trim()) {
-            const query = searchQuery.toLowerCase();
-            filtered = filtered.filter(restaurant =>
-                restaurant.name.toLowerCase().includes(query) ||
-                restaurant.category.toLowerCase().includes(query) ||
-                restaurant.location.toLowerCase().includes(query)
-            );
-        }
-
-        // Limiter à 9 restaurants maximum
-        setFilteredRestaurants(filtered.slice(0, 9));
-    }, [searchQuery, selectedCategory]);
-
     const handleSearch = (e: React.FormEvent) => {
         e.preventDefault();
-        // La recherche est maintenant gérée par useEffect
         console.log('Recherche de:', searchQuery);
     };
 
-    const handleCategoryChange = (categoryId: string) => {
-        setSelectedCategory(categoryId);
-    };
-
     return (
-        <div>
-            {/* Section Héro avec recherche */}
-            <section className="hero"
-                style={{ paddingTop: '0', marginTop: '0', height: 'auto' }}>
-                <div className="hero-bg">
-                    <div className="hero-overlay"></div>
-                    <div className="hero-image"
-                        style={{ backgroundImage: "url('https://images.unsplash.com/photo-1555396273-367ea4eb4db5?ixlib=rb-1.2.1&auto=format&fit=crop&w=1074&q=80')" }}></div>
-                </div>
-                <div className="hero-content" style={{ paddingTop: '2rem' }}>
-                    <h1 className="hero-title" style={{ margin: 0 }}>Découvrez les
-                        meilleurs de {userCity}</h1>
-                    <p className="hero-subtitle">Trouvez facilement les menus et
-                        restaurants qui vous correspondent selon vos envies et
-                        votre emplacement.</p>
-                    <p>test</p>
-                    {SearchBar(searchQuery, setSearchQuery)}
-                </div>
-            </section>
-
-            {/* Barre de catégories */}
-            <nav className="categories-nav">
-                <div className="categories-container">
-                    <div className="categories-scroll no-scrollbar">
-                        <div className="categories-list">
-                            {CATEGORIES.map((category) => (
-                                <button
-                                    key={category.id}
-                                    onClick={() => handleCategoryChange(category.id)}
-                                    className={`category-btn ${selectedCategory === category.id ? 'active' : ''}`}
-                                >
-                                    <span
-                                        className="category-emoji">{category.emoji}</span>
-                                    {category.name}
+        <div className="modern-landing">
+            {/* Hero Section Ultra-Modern */}
+            <section className="hero-modern">
+                <div className="hero-container">
+                    <div className="hero-content">
+                        <div className="hero-badge">
+                            <span>🍔</span>
+                            <span>Livraison en 30min</span>
+                        </div>
+                        <h1 className="hero-title">
+                            Commandez vos plats
+                            <br />
+                            <span className="gradient-text">favoris à {userCity}</span>
+                        </h1>
+                        <p className="hero-description">
+                            Des milliers de restaurants. Une seule app. 
+                            Votre repas livré en un temps record.
+                        </p>
+                        
+                        <div className="search-container">
+                            <div className="search-wrapper">
+                                <div className="search-icon">📍</div>
+                                <input 
+                                    type="text" 
+                                    placeholder={`Trouvez un restaurant à ${userCity}...`}
+                                    className="search-input"
+                                    value={searchQuery}
+                                    onChange={(e) => setSearchQuery(e.target.value)}
+                                />
+                                <button className="search-btn">
+                                    <svg width="20" height="20" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
+                                    </svg>
                                 </button>
-                            ))}
+                            </div>
+                        </div>
+
+                        <div className="quick-actions">
+                            <span className="quick-label">Populaires:</span>
+                            <div className="quick-tags">
+                                <span className="quick-tag">🍕 Pizza</span>
+                                <span className="quick-tag">🍔 Burgers</span>
+                                <span className="quick-tag">🍱 Sushi</span>
+                                <span className="quick-tag">🥗 Salade</span>
+                            </div>
                         </div>
                     </div>
-                </div>
-            </nav>
-
-            {/* Section des restaurants */}
-            <section className="section section-light">
-                <div className="section-container">
-                    <h2 className="section-title">Explorez par catégorie</h2>
-                    <div className="restaurant-grid">
-                        {filteredRestaurants.length > 0 ? (
-                            filteredRestaurants.map((restaurant) => (
-                                <div key={restaurant.id}
-                                    className="restaurant-card">
-                                    <div style={{ overflow: 'hidden' }}>
-                                        <img src={restaurant.image}
-                                            alt={restaurant.name}
-                                            className="restaurant-image" />
+                    
+                    <div className="hero-visual">
+                        <div className="phone-mockup">
+                            <div className="phone-content">
+                                <div className="app-header">
+                                    <div className="location">📍 {userCity}</div>
+                                    <div className="avatar">👤</div>
+                                </div>
+                                <div className="app-search">
+                                    <div className="search-bar-mini">🔍 Que voulez-vous manger ?</div>
+                                </div>
+                                <div className="categories-mini">
+                                    <div className="cat-item">🍔</div>
+                                    <div className="cat-item">🍕</div>
+                                    <div className="cat-item">🍱</div>
+                                    <div className="cat-item">🥗</div>
+                                </div>
+                                <div className="restaurants-mini">
+                                    <div className="resto-card-mini">
+                                        <div className="resto-img"></div>
+                                        <div className="resto-info">
+                                            <div className="resto-name">McDonald's</div>
+                                            <div className="resto-rating">⭐ 4.2 • 15-25 min</div>
+                                        </div>
                                     </div>
-                                    <div style={{ padding: '1.5rem' }}>
-                                        <h3 className="restaurant-name">{restaurant.name}</h3>
-                                        <p className="restaurant-price">
-                                            {restaurant.priceRange} · <span
-                                                className="restaurant-rating">{restaurant.rating}
-                                                <span
-                                                    style={{ color: '#FFD166' }}>★</span></span>
-                                        </p>
-                                        <span
-                                            className="restaurant-category">{restaurant.category}</span>
-                                        <div style={{
-                                            marginTop: '1rem',
-                                            textAlign: 'right'
-                                        }}>
-                                            <Link
-                                                to={`/restaurant/${restaurant.id}`}
-                                                className="view-menu-link">Voir
-                                                le menu →</Link>
+                                    <div className="resto-card-mini">
+                                        <div className="resto-img"></div>
+                                        <div className="resto-info">
+                                            <div className="resto-name">Pizza Palace</div>
+                                            <div className="resto-rating">⭐ 4.5 • 20-30 min</div>
                                         </div>
                                     </div>
                                 </div>
-                            ))
-                        ) : (
-                            <div className="text-center py-12">
-                                <p className="text-xl text-dark/70">Aucun
-                                    restaurant trouvé dans cette catégorie</p>
                             </div>
-                        )}
+                        </div>
                     </div>
                 </div>
             </section>
 
-            {/* Section CTA */}
-            <section className="cta-section">
-                <div className="section-container">
-                    <h2 className="cta-title">Vous êtes restaurateur ?</h2>
-                    <p className="cta-text">Rejoignez MenuFinder et faites
-                        découvrir votre établissement et vos spécialités à des
-                        milliers de clients potentiels.</p>
-                    <Link
-                        to="/register-restaurant"
-                        className="inline-block px-6 py-3 bg-[#fda928] text-white font-medium rounded-md hover:bg-[#fda928]/90 transition-colors"
-                    >
-                        Ajouter mon restaurant
-                    </Link>
+            {/* Features Grid */}
+            <section className="features-modern">
+                <div className="container">
+                    <div className="features-grid">
+                        <div className="feature-item">
+                            <div className="feature-icon">⚡</div>
+                            <h3>Livraison express</h3>
+                            <p>En moyenne 30 minutes</p>
+                        </div>
+                        <div className="feature-item">
+                            <div className="feature-icon">🛡️</div>
+                            <h3>Paiement sécurisé</h3>
+                            <p>Protection garantie</p>
+                        </div>
+                        <div className="feature-item">
+                            <div className="feature-icon">📱</div>
+                            <h3>Suivi en temps réel</h3>
+                            <p>Suivez votre commande</p>
+                        </div>
+                        <div className="feature-item">
+                            <div className="feature-icon">⭐</div>
+                            <h3>Restaurants premium</h3>
+                            <p>Qualité garantie</p>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            {/* How it works - Modern */}
+            <section className="process-modern">
+                <div className="container">
+                    <h2 className="section-title">Comment ça marche</h2>
+                    <div className="process-steps">
+                        <div className="process-step">
+                            <div className="step-visual">
+                                <div className="step-circle">1</div>
+                                <div className="step-icon">🔍</div>
+                            </div>
+                            <h3>Explorez</h3>
+                            <p>Parcourez des milliers de restaurants près de chez vous</p>
+                        </div>
+                        <div className="process-arrow">
+                            <svg width="24" height="24" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17 8l4 4m0 0l-4 4m4-4H3" />
+                            </svg>
+                        </div>
+                        <div className="process-step">
+                            <div className="step-visual">
+                                <div className="step-circle">2</div>
+                                <div className="step-icon">🛒</div>
+                            </div>
+                            <h3>Commandez</h3>
+                            <p>Choisissez vos plats favoris et ajoutez-les au panier</p>
+                        </div>
+                        <div className="process-arrow">
+                            <svg width="24" height="24" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17 8l4 4m0 0l-4 4m4-4H3" />
+                            </svg>
+                        </div>
+                        <div className="process-step">
+                            <div className="step-visual">
+                                <div className="step-circle">3</div>
+                                <div className="step-icon">🚚</div>
+                            </div>
+                            <h3>Savourez</h3>
+                            <p>Votre repas arrive chaud directement chez vous</p>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            {/* Stats Section - Uber style */}
+            <section className="stats-modern">
+                <div className="container">
+                    <div className="stats-content">
+                        <h2>King Eats en chiffres</h2>
+                        <div className="stats-grid">
+                            <div className="stat-item">
+                                <div className="stat-number">50K+</div>
+                                <div className="stat-label">Commandes livrées</div>
+                            </div>
+                            <div className="stat-divider"></div>
+                            <div className="stat-item">
+                                <div className="stat-number">1200+</div>
+                                <div className="stat-label">Restaurants partenaires</div>
+                            </div>
+                            <div className="stat-divider"></div>
+                            <div className="stat-item">
+                                <div className="stat-number">28min</div>
+                                <div className="stat-label">Temps moyen de livraison</div>
+                            </div>
+                            <div className="stat-divider"></div>
+                            <div className="stat-item">
+                                <div className="stat-number">4.9⭐</div>
+                                <div className="stat-label">Note moyenne</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            {/* Restaurant Partner CTA */}
+            <section className="partner-cta">
+                <div className="container">
+                    <div className="cta-card">
+                        <div className="cta-content">
+                            <div className="cta-icon">👨‍🍳</div>
+                            <h2>Rejoignez nos partenaires restaurateurs</h2>
+                            <p>Développez votre business avec King Eats. Atteignez de nouveaux clients et augmentez vos revenus.</p>
+                            <div className="cta-benefits">
+                                <span className="benefit">✓ Inscription gratuite</span>
+                                <span className="benefit">✓ Commission attractive</span>
+                                <span className="benefit">✓ Support dédié 7j/7</span>
+                            </div>
+                            <Link to="/register-restaurant" className="cta-button">
+                                Devenir partenaire
+                                <svg width="20" height="20" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17 8l4 4m0 0l-4 4m4-4H3" />
+                                </svg>
+                            </Link>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            {/* Footer CTA */}
+            <section className="footer-cta">
+                <div className="container">
+                    <div className="footer-content">
+                        <h2>Prêt à commander ?</h2>
+                        <p>Découvrez les meilleurs restaurants de {userCity}</p>
+                        <Link to="/restaurants" className="main-cta-button">
+                            Commencer ma commande
+                        </Link>
+                    </div>
                 </div>
             </section>
         </div>

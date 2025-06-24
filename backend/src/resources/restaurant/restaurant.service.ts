@@ -12,6 +12,11 @@ export class RestaurantService {
     private restaurantRepository: Repository<Restaurant>,
   ) {}
 
+  async count(): Promise<number> {
+    const count = await this.restaurantRepository.count();
+    return count;
+  }
+
   async create(createRestaurantDto: CreateRestaurantDto): Promise<Restaurant> {
     // Vérifier si les clés étrangères existent avant de créer le restaurant
     try {

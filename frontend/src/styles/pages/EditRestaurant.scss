@@ -1,0 +1,325 @@
+/* EditRestaurant.scss */
+@use "sass:color";
+
+.edit-restaurant-container {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 2rem;
+  
+  .edit-header {
+    display: flex;
+    flex-direction: column;
+    margin-bottom: 2rem;
+    
+    .header-nav {
+      display: flex;
+      gap: 1.5rem;
+      margin-bottom: 1rem;
+    }
+    
+    .btn-back {
+      background: none;
+      border: none;
+      color: #666;
+      cursor: pointer;
+      padding: 0.5rem;
+      display: flex;
+      align-items: center;
+      text-decoration: none;
+      font-size: 0.9rem;
+      
+      &:hover {
+        color: #fda928;
+      }
+    }
+    
+    h1 {
+      margin: 0;
+      font-size: 1.8rem;
+      color: #333;
+    }
+  }
+  
+  .success-message {
+    background-color: #d4edda;
+    color: #155724;
+    padding: 1rem;
+    border-radius: 4px;
+    margin-bottom: 1.5rem;
+    text-align: center;
+  }
+  
+  .error-message {
+    background-color: #f8d7da;
+    color: #721c24;
+    padding: 2rem;
+    border-radius: 8px;
+    margin-bottom: 1.5rem;
+    text-align: center;
+    
+    h2 {
+      margin-top: 0;
+    }
+    
+    .btn {
+      margin-top: 1rem;
+    }
+  }
+  
+  .loading-spinner {
+    display: flex;
+    justify-content: center;
+    padding: 3rem;
+    color: #666;
+  }
+  
+  .edit-form-container {
+    display: grid;
+    grid-template-columns: 3fr 2fr;
+    gap: 2rem;
+    
+    @media (max-width: 768px) {
+      grid-template-columns: 1fr;
+    }
+  }
+  
+  .edit-form {
+    background-color: white;
+    border-radius: 8px;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+    padding: 1.5rem;
+    
+    .form-group {
+      margin-bottom: 1.5rem;
+      
+      label {
+        display: block;
+        margin-bottom: 0.5rem;
+        font-weight: 500;
+        color: #333;
+      }
+      
+      input, select, textarea {
+        width: 100%;
+        padding: 0.8rem;
+        border: 1px solid #ddd;
+        border-radius: 4px;
+        font-size: 1rem;
+        
+        &:focus {
+          border-color: #fda928;
+          outline: none;
+          box-shadow: 0 0 0 2px rgba(253, 169, 40, 0.2);
+        }
+      }
+      
+      select {
+        background-color: white;
+      }
+      
+      textarea {
+        min-height: 120px;
+        resize: vertical;
+      }
+      
+      .image-upload-container {
+        .image-preview {
+          margin-bottom: 1rem;
+          width: 100%;
+          height: 200px;
+          border: 2px dashed #ddd;
+          border-radius: 4px;
+          overflow: hidden;
+          position: relative;
+          cursor: pointer;
+          display: flex;
+          align-items: center;
+          justify-content: center;
+          
+          img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            display: block;
+          }
+          
+          .no-image {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            width: 100%;
+            height: 100%;
+            background-color: #f9f9f9;
+            color: #888;
+          }
+          
+          .image-overlay {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0, 0, 0, 0.5);
+            color: white;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            opacity: 0;
+            transition: opacity 0.2s ease;
+            
+            &:hover {
+              opacity: 1;
+            }
+          }
+          
+          &:hover .image-overlay {
+            opacity: 1;
+          }
+        }
+        
+        .btn-secondary {
+          background-color: #f0f0f0;
+          color: #333;
+          padding: 0.6rem 1rem;
+          border-radius: 4px;
+          border: none;
+          cursor: pointer;
+          font-size: 0.9rem;
+          
+          &:hover {
+            background-color: #e0e0e0;
+          }
+        }
+      }
+    }
+    
+    .form-actions {
+      display: flex;
+      justify-content: flex-end;
+      gap: 1rem;
+      margin-top: 2rem;
+      
+      .btn {
+        padding: 0.7rem 1.5rem;
+        border-radius: 4px;
+        font-weight: 500;
+        cursor: pointer;
+        transition: all 0.2s ease;
+        border: none;
+        
+        &.btn-cancel {
+          background-color: #e0e0e0;
+          color: #333;
+          
+          &:hover {
+            background-color: color.adjust(#e0e0e0, $lightness: -5%);
+          }
+        }
+        
+        &.btn-save {
+          background-color: #fda928;
+          color: white;
+          
+          &:hover {
+            background-color: color.adjust(#fda928, $lightness: -5%);
+          }
+          
+          &:disabled {
+            background-color: #fdb95f;
+            cursor: not-allowed;
+          }
+        }
+      }
+    }
+  }
+  
+  .restaurant-preview {
+    h3 {
+      margin-top: 0;
+      margin-bottom: 1rem;
+      font-size: 1.3rem;
+      color: #333;
+    }
+    
+    .preview-card {
+      background-color: white;
+      border-radius: 8px;
+      box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+      overflow: hidden;
+      
+      .preview-image {
+        height: 200px;
+        width: 100%;
+        overflow: hidden;
+        
+        img {
+          width: 100%;
+          height: 100%;
+          object-fit: cover;
+        }
+        
+        .image-placeholder {
+          width: 100%;
+          height: 100%;
+          display: flex;
+          align-items: center;
+          justify-content: center;
+          background-color: #eee;
+          font-size: 0.9rem;
+          color: #666;
+        }
+      }
+      
+              .preview-info {
+        padding: 1.5rem;
+        
+        h4 {
+          margin: 0 0 0.5rem;
+          font-size: 1.3rem;
+          color: #333;
+        }
+        
+        .preview-type {
+          margin: 0 0 0.5rem;
+          font-size: 0.9rem;
+          color: #666;
+          text-transform: capitalize;
+        }
+        
+        .preview-address {
+          margin: 0 0 0.5rem;
+          font-size: 0.85rem;
+          color: #888;
+        }
+        
+        .preview-description {
+          margin: 0.5rem 0 0;
+          font-size: 0.85rem;
+          color: #666;
+          line-height: 1.4;
+        }
+      }
+    }
+  }
+  
+  .btn {
+    padding: 0.6rem 1rem;
+    border-radius: 4px;
+    font-weight: 500;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    border: none;
+    display: inline-flex;
+    align-items: center;
+    text-decoration: none;
+    
+    &.btn-primary {
+      background-color: #fda928;
+      color: white;
+      
+      &:hover {
+        background-color: color.adjust(#fda928, $lightness: -5%);
+      }
+    }
+  }
+}

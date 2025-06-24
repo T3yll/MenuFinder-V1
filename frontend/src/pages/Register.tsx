@@ -1,7 +1,6 @@
 import React, { useState } from 'react';
-import { Link, Navigate, useNavigate } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 import '../styles/pages/Register.scss';
-import { log } from 'console';
 import { registerUser } from '../services/user.service';
 // import './Register.css';
 
@@ -65,29 +64,27 @@ const Register: React.FC = () => {
     setError('');
 
     if (!validateForm()) {
-      console.log('validateForm');
+      console.log('validateForm failed');
       return;
     }
 
     console.log('validateForm ok');
-
     setIsLoading(true);
 
-    console.log('setIsLoading ok');
-
     try {
-      console.log('Register start:', { prenom, nom,username, email, password, confirmPassword });
-console.log(process.env);
-setUsername(`${prenom}-${nom}-${Math.floor(Math.random() * 1000)}`);
-      console.log('username', username);
-    
-      const user = await registerUser({ prenom, nom,username, email, password, confirmPassword });
+const userData = {
+        prenom,
+        nom,
+        email,
+        password
+        // Remove username and confirmPassword - they shouldn't be sent to backend
+      };
+      
+      const user = await registerUser(userData);
 
       console.log('Register success');
       console.log('user', user);
       Navigate("/login");
-      
-
 
     } catch (err) {
       console.error('Erreur lors de l\'inscription:', err);
@@ -110,27 +107,27 @@ setUsername(`${prenom}-${nom}-${Math.floor(Math.random() * 1000)}`);
       <div className="register-container">
         <div className="register-card">
           <div className="register-header">
-            <Link to="/" className="back-to-home">
-              <span className="back-arrow">←</span> Retour à l'accueil
+            <Link to="/" className="register-back-to-home">
+              <span className="register-back-arrow">←</span> Retour à l'accueil
             </Link>
             <h1 className="register-title">Inscription</h1>
             <p className="register-subtitle">Créez votre compte MenuFinder</p>
           </div>
 
           {error && (
-            <div className="error-message">
+            <div className="register-error-message">
               {error}
             </div>
           )}
 
           <form onSubmit={handleSubmit} className="register-form">
-            <div className="form-group">
-              <label htmlFor="name" className="form-label">Prénom</label>
-              <div className="input-container">
+            <div className="register-form-group">
+              <label htmlFor="name" className="register-form-label">Prénom</label>
+              <div className="register-input-container">
                 <input
                   type="text"
                   id="name"
-                  className="form-input"
+                  className="register-form-input"
                   value={prenom}
                   onChange={(e) => setFirstName(e.target.value)}
                   required
@@ -139,13 +136,13 @@ setUsername(`${prenom}-${nom}-${Math.floor(Math.random() * 1000)}`);
               </div>
             </div>
 
-            <div className="form-group">
-              <label htmlFor="name" className="form-label">Nom de famille</label>
-              <div className="input-container">
+            <div className="register-form-group">
+              <label htmlFor="name" className="register-form-label">Nom de famille</label>
+              <div className="register-input-container">
                 <input
                   type="text"
                   id="name"
-                  className="form-input"
+                  className="register-form-input"
                   value={nom}
                   onChange={(e) => setLastName(e.target.value)}
                   required
@@ -155,13 +152,13 @@ setUsername(`${prenom}-${nom}-${Math.floor(Math.random() * 1000)}`);
             </div>
 
 
-            <div className="form-group">
-              <label htmlFor="email" className="form-label">Email</label>
-              <div className="input-container">
+            <div className="register-form-group">
+              <label htmlFor="email" className="register-form-label">Email</label>
+              <div className="register-input-container">
                 <input
                   type="email"
                   id="email"
-                  className="form-input"
+                  className="register-form-input"
                   value={email}
                   onChange={(e) => setEmail(e.target.value)}
                   required
@@ -170,13 +167,13 @@ setUsername(`${prenom}-${nom}-${Math.floor(Math.random() * 1000)}`);
               </div>
             </div>
 
-            <div className="form-group">
-              <label htmlFor="password" className="form-label">Mot de passe</label>
-              <div className="input-container">
+            <div className="register-form-group">
+              <label htmlFor="password" className="register-form-label">Mot de passe</label>
+              <div className="register-input-container">
                 <input
                   type={showPassword ? "text" : "password"}
                   id="password"
-                  className="form-input password-input"
+                  className="register-form-input register-password-input"
                   value={password}
                   onChange={(e) => setPassword(e.target.value)}
                   required
@@ -184,23 +181,23 @@ setUsername(`${prenom}-${nom}-${Math.floor(Math.random() * 1000)}`);
                 />
                 <button
                   type="button"
-                  className="password-toggle-btn"
+                  className="register-password-toggle-btn"
                   onClick={togglePasswordVisibility}
                   aria-label={showPassword ? "Masquer le mot de passe" : "Afficher le mot de passe"}
                 >
                   {showPassword ? '👁️' : '👁️‍🗨️'}
                 </button>
               </div>
-              <small className="password-hint">8 caractères minimum</small>
+              <small className="register-password-hint">8 caractères minimum</small>
             </div>
 
-            <div className="form-group">
-              <label htmlFor="confirmPassword" className="form-label">Confirmer le mot de passe</label>
-              <div className="input-container">
+            <div className="register-form-group">
+              <label htmlFor="confirmPassword" className="register-form-label">Confirmer le mot de passe</label>
+              <div className="register-input-container">
                 <input
                   type={showConfirmPassword ? "text" : "password"}
-                  id="confirmPassword"
-                  className="form-input password-input"
+                  id="password"
+                  className="register-form-input register-password-input"
                   value={confirmPassword}
                   onChange={(e) => setConfirmPassword(e.target.value)}
                   required
@@ -208,7 +205,7 @@ setUsername(`${prenom}-${nom}-${Math.floor(Math.random() * 1000)}`);
                 />
                 <button
                   type="button"
-                  className="password-toggle-btn"
+                  className="register-password-toggle-btn"
                   onClick={toggleConfirmPasswordVisibility}
                   aria-label={showConfirmPassword ? "Masquer le mot de passe" : "Afficher le mot de passe"}
                 >
@@ -217,20 +214,20 @@ setUsername(`${prenom}-${nom}-${Math.floor(Math.random() * 1000)}`);
               </div>
             </div>
 
-            <div className="form-group">
-              <label className="terms-checkbox">
+            <div className="register-form-group">
+              <label className="register-terms-checkbox">
                 <input
                   type="checkbox"
-                  className="custom-checkbox"
+                  className="register-custom-checkbox"
                   checked={agreeTerms}
                   onChange={() => setAgreeTerms(!agreeTerms)}
                 />
-                <span className="checkmark"></span>
-                J'accepte les <Link to="/terms" className="terms-link">conditions d'utilisation</Link> et la <Link to="/privacy" className="terms-link">politique de confidentialité</Link>
+                <span className="register-checkmark"></span>
+                J'accepte les <Link to="/terms" className="register-terms-link">conditions d'utilisation</Link> et la <Link to="/privacy" className="register-terms-link">politique de confidentialité</Link>
               </label>
             </div>
 
-            <div className="form-actions">
+            <div className="register-form-actions">
               <button
                 type="submit"
                 className="register-button"

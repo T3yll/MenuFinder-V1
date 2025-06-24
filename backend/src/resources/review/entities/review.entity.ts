@@ -1,7 +1,17 @@
 import { Response } from '@/resources/response/entities/response.entity';
 import { Restaurant } from '@/resources/restaurant/entities/restaurant.entity';
 import { User } from '@/resources/user/entities/user.entity';
-import { Entity, PrimaryGeneratedColumn, Column, ManyToOne, OneToMany, JoinColumn } from 'typeorm';
+import { Max, Min } from 'class-validator';
+import {
+  Entity,
+  PrimaryGeneratedColumn,
+  Column,
+  ManyToOne,
+  OneToMany,
+  JoinColumn,
+  CreateDateColumn,
+  UpdateDateColumn
+} from 'typeorm';
 
 @Entity('Review')
 export class Review {
@@ -12,15 +22,20 @@ export class Review {
   restaurant_id: number;
 
   @Column()
+  @Min(1)
+  @Max(5)
+  rating: number;
+
+  @Column()
   user_id: number;
 
   @Column('text')
   text: string;
 
-  @Column('date')
+  @CreateDateColumn()
   added_at: Date;
 
-  @Column('date')
+  @UpdateDateColumn()
   updated_at: Date;
 
   @ManyToOne(() => Restaurant, restaurant => restaurant.rewiews)
@@ -31,6 +46,6 @@ export class Review {
   @JoinColumn({ name: 'user_id' })
   user: User;
 
-  @OneToMany(() => Response, response => response)
+  @OneToMany(() => Response, response => response.review)
   responses: Response[];
 }

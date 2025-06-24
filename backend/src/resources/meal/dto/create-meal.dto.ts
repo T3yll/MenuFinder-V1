@@ -1,8 +1,10 @@
-import { IsNotEmpty, IsNumber, IsString, Min, MaxLength, IsPositive } from 'class-validator';
+import { IsNotEmpty, IsNumber, IsString, IsOptional, Min, MaxLength, IsDecimal } from 'class-validator';
+import { Type } from 'class-transformer';
 
 export class CreateMealDto {
   @IsNotEmpty()
   @IsNumber()
+  @Type(() => Number)
   @Min(1)
   menu_id: number;
 
@@ -11,22 +13,23 @@ export class CreateMealDto {
   @MaxLength(255)
   name: string;
 
+  @IsOptional()
+  @IsString()
+  description?: string;
+
   @IsNotEmpty()
   @IsNumber()
-  @IsPositive()
+  @Type(() => Number)
+  @Min(0)
   price: number;
 
-  @IsNotEmpty()
+  @IsOptional()
   @IsNumber()
-  @Min(1)
-  meal_category_id: number;
+  @Type(() => Number)
+  meal_category_id?: number;
 
-  @IsNotEmpty()
-  @IsString()
-  ingredients: string;
-
-  @IsNotEmpty()
+  @IsOptional()
   @IsNumber()
-  @Min(1)
-  image_file_id: number;
+  @Type(() => Number)
+  image_file_id?: number;
 }

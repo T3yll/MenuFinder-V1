@@ -10,19 +10,22 @@ export class MealCategoryService {
     private mealCategoryRepository: Repository<MealCategory>,
   ) {}
 
-  create(mealCategory: MealCategory): Promise<MealCategory> {
+  async create(mealCategory: MealCategory): Promise<MealCategory> {
     return this.mealCategoryRepository.save(mealCategory);
   }
 
-  findAll(): Promise<MealCategory[]> {
+  async findAll(): Promise<MealCategory[]> {
     return this.mealCategoryRepository.find();
   }
 
-  findOne(id: number): Promise<MealCategory> {
-    return this.mealCategoryRepository.findOne({ where: { meal_category_id: id } });
+  async findOne(id: number): Promise<MealCategory> {
+    return this.mealCategoryRepository.findOne({
+      where: { meal_category_id: id },
+      relations: ['meals']
+    });
   }
 
-  async update(id: number, mealCategory: MealCategory): Promise<MealCategory> {
+  async update(id: number, mealCategory: Partial<MealCategory>): Promise<MealCategory> {
     await this.mealCategoryRepository.update(id, mealCategory);
     return this.findOne(id);
   }

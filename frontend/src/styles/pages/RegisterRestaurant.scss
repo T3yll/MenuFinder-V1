@@ -634,7 +634,14 @@
     }
   }
 }
-
+.section-container {
+  margin: 10rem;
+  border-radius: 0.75rem;
+  
+  @media (min-width: 640px) {
+    padding: 3rem;
+  }
+}
 /* Success Page */
 .success-container {
   display: flex;

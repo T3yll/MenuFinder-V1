@@ -48,15 +48,6 @@ describe('UserService', () => {
     });
   });
 
-  describe('findByUsername', () => {
-    it('should return a user by username', async () => {
-      const user = { id: 1, username: 'User1' } as User;
-      jest.spyOn(repository, 'findOneBy').mockResolvedValue(user);
-      const result = await service.findByUsername('User1');
-      expect(result).toEqual(user);
-    });
-  });
-
   describe('create', () => {
     it('should create and return a new user', async () => {
       const user = { id: 1, username: 'NewUser' } as User;

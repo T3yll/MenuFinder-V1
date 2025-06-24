@@ -1,6 +1,6 @@
 services:
   backend:
-    build: 
+    build:
       context: .
       dockerfile: ./backend/Dockerfile
     working_dir: /var/www/tuile/backend 
@@ -14,9 +14,9 @@ services:
         - action: rebuild
           path: package.json
     ports:
-      - "${BACKEND_PORT:-4000}:4000"
+      - '${BACKEND_PORT:-4000}:4000'
     expose:
-      - "4000"
+      - '4000'
     environment:
       NODE_ENV: development
       DB_HOST: ${DB_HOST:-postgres}
@@ -34,15 +34,14 @@ services:
       - ./backend:/var/www/tuile/backend
       - backend_node_modules:/var/www/tuile/backend/node_modules
     command: >
-      sh -c "
-      npm install &&
-      npm run dev
-      "
+      sh -c "npm install && npm run seed && npm run dev"
 
   frontend:
-    image: node:20
+    build:
+      context: ./frontend
+      dockerfile: Dockerfile
     develop:
-     watch:
+      watch:
         - action: sync
           path: ./web
           target: /src/web
@@ -52,7 +51,7 @@ services:
           path: package.json
     working_dir: /app
     ports:
-      - "3000:3000"
+      - '3000:3000'
     environment:
       - NODE_ENV=development
     networks:
@@ -75,7 +74,7 @@ services:
       POSTGRES_PASSWORD: ${DB_PASSWORD:-postgres}
       POSTGRES_DB: ${DB_NAME:-postgres}
     ports:
-      - "${DB_PORT:-5432}:5432"
+      - '${DB_PORT:-5432}:5432'
     networks:
       - app-network
     volumes:

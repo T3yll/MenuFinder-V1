@@ -16,8 +16,10 @@ import { ResponseModule } from './resources/response/response.module';
 import { BookmarkModule } from './resources/bookmark/bookmark.module';
 import { AdressModule } from './resources/adress/adress.module';
 import { FileModule } from './resources/file/file.module';
-import { MealcategoryModule } from './resources/mealcategory/mealcategory.module';
 import { MealModule } from './resources/meal/meal.module';
+import { MealCategoryModule } from './resources/mealcategory/mealcategory.module';
+import { ReportModule } from './resources/report/report.module';
+import Seeder from './seeder/seeder';
 
 @Module({
   imports: [
@@ -45,13 +47,15 @@ import { MealModule } from './resources/meal/meal.module';
     AdressModule,
     FileModule,
     MealModule,
-    MealcategoryModule,
+    MealCategoryModule,
     RestauranttagModule,
+    ReportModule,
   ],
   controllers: [AppController],
   providers: [
     AppService,
     Logger,
+    Seeder,
     {
       provide: APP_GUARD,
       useClass: JwtAuthGuard,

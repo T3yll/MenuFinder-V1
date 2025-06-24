@@ -4,19 +4,9 @@ import { Repository } from 'typeorm';
 import * as fs from 'fs';
 import * as path from 'path';
 import { File } from './entities/file.entity';
+import  MulterFile from '@/common/interfaces/multer-file.interface';
 
-// Interface pour le fichier uploadé, pour éviter les erreurs de type Express.Multer
-interface MulterFile {
-  fieldname: string;
-  originalname: string;
-  encoding: string;
-  mimetype: string;
-  size: number;
-  destination: string;
-  filename: string;
-  path: string;
-  buffer: Buffer;
-}
+
 
 @Injectable()
 export class FileService {
@@ -48,16 +38,16 @@ export class FileService {
     return this.fileRepository.find();
   }
 
-  findOne(id: number): Promise<File> {
+  findOne(id: string): Promise<File> {
     return this.fileRepository.findOne({ where: { file_id: id } });
   }
 
-  async update(id: number, file: File): Promise<File> {
+  async update(id: string, file: File): Promise<File> {
     await this.fileRepository.update(id, file);
     return this.findOne(id);
   }
 
-  async remove(id: number): Promise<void> {
+  async remove(id: string): Promise<void> {
     const file = await this.findOne(id);
     if (file && fs.existsSync(file.path)) {
       fs.unlinkSync(file.path);

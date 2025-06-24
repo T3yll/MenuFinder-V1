@@ -22,7 +22,7 @@
     "test:cov": "jest --coverage",
     "test:debug": "node --inspect-brk -r tsconfig-paths/register -r ts-node/register node_modules/.bin/jest --runInBand",
     "test:e2e": "jest --config ./test/jest-e2e.json",
-    "seed": "docker compose exec nest ts-node src/seeds/run-seed.ts",
+    "seed": "ts-node -r tsconfig-paths/register src/run-seed.ts",
     "seed:clear": "docker compose exec nest ts-node src/seeds/clear-seed.ts"
   },
   "dependencies": {
