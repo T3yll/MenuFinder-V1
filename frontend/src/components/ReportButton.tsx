@@ -18,7 +18,16 @@ const ReportButton: React.FC<ReportButtonProps> = ({RestaurantId}) => {
 
   const dispatch = useAppDispatch();
 
-  const openModal = () => setIsOpen(true);
+  const openModal = () => {
+    if (localStorage.getItem('user') === null) {
+      dispatch(showToast({
+        message: "Vous devez être connecté pour signaler un problème.",
+        severity: 'error'
+      }));
+      return;
+    }
+    setIsOpen(true);
+  }
   const closeModal = () => setIsOpen(false);
 
   const handleSubmit = (e: React.FormEvent) => {

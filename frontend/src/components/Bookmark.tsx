@@ -5,6 +5,8 @@ import { Button } from 'antd';
 import { BookmarkService } from '../services/bookmarks.service';
 import { useBookmarked } from '../hooks/useBookmarked';
 import { number } from 'react-admin';
+import { useAppDispatch } from '../hooks/storeToast';
+import { showToast } from '../store/slice/toastSlice';
 
 interface BookmarkProps {
     onToggle?: (bookmarked: boolean) => void;
@@ -20,15 +22,25 @@ const Bookmark: React.FC<BookmarkProps> = ({
     disabled = false,
     text,
     restaurantId
-
 }) => {
 
+    const dispatch = useAppDispatch();
+    
     const [bookmarked, setBookmarked] = useBookmarked(restaurantId);
 
     const handleClick = (e : React.MouseEvent<HTMLButtonElement>) => {
         e.stopPropagation();
         e.preventDefault();
-        if (disabled) return; // Ignore click if disabled
+        if (localStorage.getItem('user') === null) {
+            disabled = true;
+        }
+        if (disabled) {
+            dispatch(showToast({
+                message: "Vous devez être connecté pour ajouter un restaurant à vos favoris.",
+                severity: 'error'
+            }));
+            return; // Ignore click if disabled
+        }
         const newState = !bookmarked;
         setBookmarked(newState);
         const userid = JSON.parse(localStorage.getItem('user') || '{}').id;
@@ -46,15 +58,16 @@ const Bookmark: React.FC<BookmarkProps> = ({
     };
 
 return (
-    <button 
+    <button
+        disabled={disabled}
         onClick={handleClick}  
         style={{ display: 'flex', alignItems: 'center', gap: '4px' }}
         className="bookmark-button action-button"
     >
         {bookmarked ? (
-            <FaBookmark size={size} color="#ff9800" />
+            <FaBookmark size={size} color={disabled ? "#bdbdbd" : "#ff9800"} />
         ) : (
-            <FaRegBookmark size={size} color="black" />
+            <FaRegBookmark size={size} color={disabled ? "#bdbdbd" : "black"} />
         )}
         {text}
     </button>
