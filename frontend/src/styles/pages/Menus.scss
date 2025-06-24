@@ -582,7 +582,8 @@
     display: inline-block;
 
     &:hover {
-      background-color: darken(vars.$primary-color, 10%);
+      background-color: vars.$primary-color;
+      filter: brightness(0.9);
     }
   }
 

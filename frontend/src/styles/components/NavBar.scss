@@ -28,7 +28,8 @@
   background-color: var.$color-secondary;
 
   &:hover {
-    background-color: darken(var.$color-secondary, 10%);
+    background-color: var.$color-secondary;
+    filter: brightness(0.9);
   }
 }
 
