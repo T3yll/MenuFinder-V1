@@ -7,6 +7,7 @@ import { RestaurantTag } from '@/resources/restauranttag/entities/restauranttag.
 import { Bookmark } from '@/resources/bookmark/entities/bookmark.entity';
 import { File } from '@/resources/file/entities/file.entity';
 
+import { Report } from '@/resources/report/entities/report.entity';
 @Entity('Restaurant')
 export class Restaurant {
   @PrimaryGeneratedColumn({ unsigned: true })
@@ -50,4 +51,7 @@ export class Restaurant {
 
   @OneToMany(() => Bookmark, bookmark => bookmark.restaurant)
   bookmarks: Bookmark[];
+
+  @OneToMany(() => Report, report => report.restaurantId)
+  reports: Report[];
 }

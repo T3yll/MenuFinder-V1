@@ -1,8 +1,8 @@
 import { useState, useEffect } from 'react';
 
 interface GeolocationState {
-  latitude: number | null;
-  longitude: number | null;
+  latitude?: number ;
+  longitude?: number;
   error: string | null;
   loading: boolean;
   permission: 'granted' | 'denied' | 'prompt' | 'unknown';
@@ -10,8 +10,8 @@ interface GeolocationState {
 
 export const useGeolocation = () => {
   const [state, setState] = useState<GeolocationState>({
-    latitude: null,
-    longitude: null,
+    latitude: undefined,
+    longitude: undefined,
     error: null,
     loading: true,
     permission: 'unknown'

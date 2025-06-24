@@ -3,11 +3,21 @@ import { useParams, Link } from 'react-router-dom';
 import { useCurrency } from '../contexts/CurrencyContext';
 import { RestaurantService } from '../services/RestaurantService';
 import { MenuService, MealService } from '../services/MenuService';
-import Review from '../components/Review';
+import { useLocalisation } from '../hooks/useLocalisation';
+import { Restaurant, RestaurantForMap } from '../types/Restaurant';
+import MapComponent from '../components/MapComponent';
 import ReviewForm from '../components/ReviewForm';
-import { Restaurant } from '../types/Restaurant';
-import '../styles/pages/RestaurantDetail.scss';
+import Review from '../components/Review';
 import Bookmark from '../components/Bookmark';
+
+
+import '../styles/pages/RestaurantDetail.scss';
+import ShareButton from '../components/ShareButton';
+import CustomAvatar from '../components/Avatar';
+import ReportButton from '../components/ReportButton';
+import { number } from 'react-admin';
+
+
 
 interface ReviewData {
   review_id: number;
@@ -35,7 +45,7 @@ const RestaurantDetail: React.FC = () => {
   const [error, setError] = useState<string | null>(null);
   const [activeTab, setActiveTab] = useState<'info' | 'menu' | 'reviews'>('info');
   const [selectedMenu, setSelectedMenu] = useState<number | null>(null);
-  
+  const { localisation, error: localisationError, loading: localisationLoading } = useLocalisation(id ? parseInt(id) : 0);
   const { formatPrice } = useCurrency();
 
   const API_URL = process.env.VITE_API_URL;
@@ -414,9 +424,7 @@ const RestaurantDetail: React.FC = () => {
                 <div className="info-section">
                   <h3>Propriétaire</h3>
                   <div className="owner-info">
-                    <div className="owner-avatar">
-                      {restaurant.owner.username.charAt(0).toUpperCase()}
-                    </div>
+                    <CustomAvatar fileId={restaurant.owner.image_file_id || 0}/>
                     <div className="owner-details">
                       <h4>{restaurant.owner.username}</h4>
                       <p>Membre depuis {new Date(restaurant.owner.created_at).toLocaleDateString('fr-FR', {
@@ -428,19 +436,15 @@ const RestaurantDetail: React.FC = () => {
                 </div>
               )}
 
-              <div className="info-section">
+              <div className="info-section" style={{ zIndex: 1, position: 'relative'}}>
                 <h3>Localisation</h3>
                 <div className="map-container">
-                  {/* Placeholder pour une carte */}
-                  <div className="map-placeholder">
-                    <div className="map-marker">
-                      <svg xmlns="http://www.w3.org/2000/svg" width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-                        <path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"></path>
-                        <circle cx="12" cy="10" r="3"></circle>
-                      </svg>
-                    </div>
-                    <p>Carte interactive disponible prochainement</p>
-                  </div>
+                 <MapComponent restaurants={(() =>{
+                  const tmp = restaurant as RestaurantForMap;
+                  tmp.coordinates = localisation     
+                  console.log("Restaurant pour la carte:", tmp);
+                  return [tmp];
+                 })()} longitude={localisation?.longitude} latitude={localisation?.latitude} />
                 </div>
               </div>
             </div>
@@ -591,25 +595,8 @@ const RestaurantDetail: React.FC = () => {
 
       <div className="restaurant-actions-footer">
         <Bookmark restaurantId={id || -1} text='Enregistrer' />
-        <button className="action-button share-button">
-          <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-            <circle cx="18" cy="5" r="3"></circle>
-            <circle cx="6" cy="12" r="3"></circle>
-            <circle cx="18" cy="19" r="3"></circle>
-            <line x1="8.59" y1="13.51" x2="15.42" y2="17.49"></line>
-            <line x1="15.41" y1="6.51" x2="8.59" y2="10.49"></line>
-          </svg>
-          Partager
-        </button>
-        <button className="action-button reservations-button">
-          <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-            <rect x="3" y="4" width="18" height="18" rx="2" ry="2"></rect>
-            <line x1="16" y1="2" x2="16" y2="6"></line>
-            <line x1="8" y1="2" x2="8" y2="6"></line>
-            <line x1="3" y1="10" x2="21" y2="10"></line>
-          </svg>
-          Réserver
-        </button>
+        <ShareButton text={`Découvrez ${restaurant.name} sur MenuFinder`} url={`${window.location.origin}/restaurants/${id}`} />
+        <ReportButton RestaurantId={Number.parseInt(id || "-1") || -1}/>
       </div>
     </div>
   );

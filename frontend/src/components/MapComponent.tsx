@@ -24,8 +24,8 @@ import ShareIcon from '@mui/icons-material/Share';
 import DirectionsIcon from '@mui/icons-material/Directions';
 
 interface MapComponentProps {
-  latitude: number | null;
-  longitude: number | null;
+  latitude?: number ;
+  longitude?: number;
   restaurants: RestaurantForMap[];
 }
 
@@ -447,10 +447,20 @@ const ModernRestaurantPopup: React.FC<{ restaurant: RestaurantForMap }> = ({ res
 };
 
 const MapComponent: React.FC<MapComponentProps> = ({ latitude, longitude, restaurants }) => {
-  const lat: number = latitude || 48.8566; // Default to Paris
-  const lng: number = longitude || 2.3522;
-
+  const [lat, setLat] = React.useState<number>(latitude || 48.8566);
+  const [lng, setLng] = React.useState<number>(longitude || 2.3522);
+  React.useEffect(() => {
+    if (latitude) {
+      setLat(latitude);
+    }
+  }, [latitude]);
+  React.useEffect(() => {
+    if (longitude) {
+      setLng(longitude);
+    }
+  }, [longitude]);
   const [zoom, setZoom] = React.useState<number>(13);
+
 
   // Créer une icône personnalisée pour les restaurants (votre logique existante améliorée)
   const createRestaurantIcon = (restaurant: RestaurantForMap, zoom: number) => {

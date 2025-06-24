@@ -35,6 +35,7 @@ export const register = async (credentials: RegisterCredentials): Promise<AuthRe
 }
 
 export const isAdmin = async (): Promise<boolean> => {
+    try{
     const response = await axios.get(`${API_URL}isAdmin`, {
         headers: {
             'Authorization': `Bearer ${localStorage.getItem('token')}`
@@ -46,6 +47,10 @@ export const isAdmin = async (): Promise<boolean> => {
        return false;
     }
     return true;
+    } catch (error) {
+        console.log('error', error);
+        return false;
+    }
 }
 
 export const logout = async (): Promise<void> => {

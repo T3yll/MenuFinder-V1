@@ -6,6 +6,10 @@ const API_URL = process.env.VITE_API_URL;
 // Service pour les fichiers
 
 export const getPath = async(fileId: string): Promise<string> => {
+  if (fileId == null || fileId == undefined || fileId == '') {
+    console.warn('Aucun fileId fourni, retour du chemin par défaut');
+    return 'public/default.png'; // Chemin par défaut si aucun fileId n'est fourni
+  }
     try {
       const response = await axios.get(`${API_URL}/files/${fileId}`);
       if (response.status === 200) {
