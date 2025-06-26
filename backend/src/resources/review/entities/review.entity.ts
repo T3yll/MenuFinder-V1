@@ -1,16 +1,17 @@
 import { Response } from '@/resources/response/entities/response.entity';
 import { Restaurant } from '@/resources/restaurant/entities/restaurant.entity';
 import { User } from '@/resources/user/entities/user.entity';
+import { ReviewReport } from '@/resources/review/entities/review-report.entity';
 import { Max, Min } from 'class-validator';
 import {
-  Entity,
-  PrimaryGeneratedColumn,
-  Column,
-  ManyToOne,
-  OneToMany,
-  JoinColumn,
-  CreateDateColumn,
-  UpdateDateColumn
+    Entity,
+    PrimaryGeneratedColumn,
+    Column,
+    ManyToOne,
+    OneToMany,
+    JoinColumn,
+    CreateDateColumn,
+    UpdateDateColumn
 } from 'typeorm';
 
 @Entity('Review')
@@ -48,4 +49,7 @@ export class Review {
 
   @OneToMany(() => Response, response => response.review)
   responses: Response[];
+
+  @OneToMany(() => ReviewReport, report => report.review)
+  reports: ReviewReport[];
 }

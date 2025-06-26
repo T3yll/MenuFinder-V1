@@ -3,6 +3,7 @@ import { File } from '@/resources/file/entities/file.entity';
 import { Response } from '@/resources/response/entities/response.entity';
 import { Restaurant } from '@/resources/restaurant/entities/restaurant.entity';
 import { Review } from '@/resources/review/entities/review.entity';
+import { ReviewReport } from '@/resources/review/entities/review-report.entity';
 import { Exclude } from 'class-transformer';
 import { Report } from '@/resources/report/entities/report.entity';
 import {
@@ -60,6 +61,9 @@ export class User {
 
   @OneToMany(() => Report, report => report.userId)
   reports: Report[];
+
+  @OneToMany(() => ReviewReport, reviewReport => reviewReport.reporter)
+  reportedReviews: ReviewReport[];
 
   getUsername(): string {
     return this.username;

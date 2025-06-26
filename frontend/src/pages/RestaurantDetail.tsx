@@ -10,14 +10,10 @@ import ReviewForm from '../components/ReviewForm';
 import Review from '../components/Review';
 import Bookmark from '../components/Bookmark';
 
-
 import '../styles/pages/RestaurantDetail.scss';
 import ShareButton from '../components/ShareButton';
 import CustomAvatar from '../components/Avatar';
 import ReportButton from '../components/ReportButton';
-import { number } from 'react-admin';
-
-
 
 interface ReviewData {
   review_id: number;
@@ -43,9 +39,15 @@ const RestaurantDetail: React.FC = () => {
   const [menus, setMenus] = useState<any[]>([]);
   const [loading, setLoading] = useState<boolean>(true);
   const [error, setError] = useState<string | null>(null);
-  const [activeTab, setActiveTab] = useState<'info' | 'menu' | 'reviews'>('info');
+  const [activeTab, setActiveTab] = useState<'info' | 'menu' | 'reviews'>(
+    'info'
+  );
   const [selectedMenu, setSelectedMenu] = useState<number | null>(null);
-  const { localisation, error: localisationError, loading: localisationLoading } = useLocalisation(id ? parseInt(id) : 0);
+  const {
+    localisation,
+    error: localisationError,
+    loading: localisationLoading,
+  } = useLocalisation(id ? parseInt(id) : 0);
   const { formatPrice } = useCurrency();
 
   const API_URL = process.env.VITE_API_URL;
@@ -53,12 +55,14 @@ const RestaurantDetail: React.FC = () => {
   // Fonction pour récupérer les avis
   const fetchReviews = async (restaurantId: number) => {
     try {
-      const response = await fetch(`${API_URL}/reviews/restaurant/${restaurantId}`);
-      console.log("[RestaurantDetail] response", response);
-      
+      const response = await fetch(
+        `${API_URL}/reviews/restaurant/${restaurantId}`
+      );
+      console.log('[RestaurantDetail] response', response);
+
       if (response.ok) {
         const reviewsData = await response.json();
-        console.log("[RestaurantDetail Data] response", reviewsData);
+        console.log('[RestaurantDetail Data] response', reviewsData);
         setReviews(reviewsData);
       } else {
         console.error('Erreur lors de la récupération des avis');
@@ -82,16 +86,16 @@ const RestaurantDetail: React.FC = () => {
       try {
         setLoading(true);
         setError(null);
-        
+
         if (!id) {
-          throw new Error("ID du restaurant manquant");
+          throw new Error('ID du restaurant manquant');
         }
-        
+
         const restaurantId = parseInt(id);
-        
+
         // 1. Récupérer les détails du restaurant
         const restaurantData = await RestaurantService.findOne(restaurantId);
-        
+
         if (!restaurantData) {
           setError("Aucune donnée reçue de l'API");
           return;
@@ -99,14 +103,14 @@ const RestaurantDetail: React.FC = () => {
         // Récupérer les avis
         await fetchReviews(restaurantId);
 
-        console.log("[RestaurantDetail] restaurantData", restaurantData);
+        console.log('[RestaurantDetail] restaurantData', restaurantData);
         setRestaurant(restaurantData);
-        
+
         // 2. Récupérer les menus du restaurant
         try {
           const menusData = await MenuService.findByRestaurant(restaurantId);
           console.log('Menus récupérés:', menusData);
-          
+
           // 3. Pour chaque menu, récupérer ses plats
           const menusWithMeals = await Promise.all(
             menusData.map(async (menu) => {
@@ -115,34 +119,40 @@ const RestaurantDetail: React.FC = () => {
                 console.log(`Plats du menu ${menu.menu_id}:`, meals);
                 return {
                   ...menu,
-                  items: meals
+                  items: meals,
                 };
               } catch (error) {
-                console.error(`Erreur lors de la récupération des plats du menu ${menu.menu_id}:`, error);
+                console.error(
+                  `Erreur lors de la récupération des plats du menu ${menu.menu_id}:`,
+                  error
+                );
                 return {
                   ...menu,
-                  items: []
+                  items: [],
                 };
               }
             })
           );
-          
+
           setMenus(menusWithMeals);
           console.log('Menus avec plats:', menusWithMeals);
-          
+
           // Sélectionner le premier menu par défaut s'il y en a
           if (menusWithMeals.length > 0) {
             setSelectedMenu(menusWithMeals[0].menu_id);
           }
-          
         } catch (menuError) {
-          console.error("Erreur lors de la récupération des menus:", menuError);
+          console.error('Erreur lors de la récupération des menus:', menuError);
           setMenus([]);
         }
-        
       } catch (err) {
-        console.error("Erreur lors de la récupération des détails du restaurant:", err);
-        setError("Impossible de charger les détails du restaurant. Veuillez réessayer plus tard.");
+        console.error(
+          'Erreur lors de la récupération des détails du restaurant:',
+          err
+        );
+        setError(
+          'Impossible de charger les détails du restaurant. Veuillez réessayer plus tard.'
+        );
       } finally {
         setLoading(false);
       }
@@ -156,20 +166,24 @@ const RestaurantDetail: React.FC = () => {
     if (!reviews || reviews.length === 0) {
       return 0;
     }
-    
+
     // Filtrer les avis qui ont un rating (pas null)
-    const reviewsWithRating = reviews.filter(review => 
-      review.rating !== null && 
-      review.rating !== undefined && 
-      typeof review.rating === 'number'
+    const reviewsWithRating = reviews.filter(
+      (review) =>
+        review.rating !== null &&
+        review.rating !== undefined &&
+        typeof review.rating === 'number'
     );
-    
+
     if (reviewsWithRating.length === 0) {
       return 0;
     }
-    
+
     // Calculer la moyenne (rating est garanti d'être un number maintenant)
-    const sum = reviewsWithRating.reduce((total, review) => total + (review.rating as number), 0);
+    const sum = reviewsWithRating.reduce(
+      (total, review) => total + (review.rating as number),
+      0
+    );
     return sum / reviewsWithRating.length;
   };
 
@@ -182,38 +196,50 @@ const RestaurantDetail: React.FC = () => {
 
     // Étoiles pleines
     for (let i = 0; i < fullStars; i++) {
-      stars.push(<span key={`full-${i}`} className="star full">★</span>);
+      stars.push(
+        <span key={`full-${i}`} className="star full">
+          ★
+        </span>
+      );
     }
 
     // Demi-étoile si nécessaire
     if (hasHalfStar) {
-      stars.push(<span key="half" className="star half">★</span>);
+      stars.push(
+        <span key="half" className="star half">
+          ★
+        </span>
+      );
     }
 
     // Étoiles vides
     const emptyStarsCount = 5 - stars.length;
     for (let i = 0; i < emptyStarsCount; i++) {
-      stars.push(<span key={`empty-${i}`} className="star empty">☆</span>);
+      stars.push(
+        <span key={`empty-${i}`} className="star empty">
+          ☆
+        </span>
+      );
     }
 
     return stars;
   };
-  
+
   const API_VITE = 'http://localhost:3000/api';
 
   // Obtenir l'URL de l'image
   const getImageUrl = (restaurant: Restaurant) => {
     if (restaurant.image && restaurant.image.path) {
-        // Si c'est une URL complète
-        if (restaurant.image.path.startsWith('http')) {
+      // Si c'est une URL complète
+      if (restaurant.image.path.startsWith('http')) {
         return restaurant.image.path;
-        }
-        // Sinon, construire l'URL correcte vers le fichier local
-        return `${API_VITE}/${restaurant.image.path.replace(/^\//, '')}`;
+      }
+      // Sinon, construire l'URL correcte vers le fichier local
+      return `${API_VITE}/${restaurant.image.path.replace(/^\//, '')}`;
     }
     // Image par défaut
-    return "https://images.unsplash.com/photo-1555396273-367ea4eb4db5?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=1374&q=80";
-    };
+    return 'https://images.unsplash.com/photo-1555396273-367ea4eb4db5?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=1374&q=80';
+  };
 
   // Obtenir l'image d'un plat
   const getMenuItemImageUrl = (item: any) => {
@@ -226,7 +252,7 @@ const RestaurantDetail: React.FC = () => {
       return `${API_VITE}/${item.image.path.replace(/^\//, '')}`;
     }
     // Image par défaut pour les plats
-    return "https://images.unsplash.com/photo-1546069901-ba9599a7e63c?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=1480&q=80";
+    return 'https://images.unsplash.com/photo-1546069901-ba9599a7e63c?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=1480&q=80';
   };
 
   // Obtenir l'adresse formatée
@@ -234,7 +260,7 @@ const RestaurantDetail: React.FC = () => {
     if (restaurant.adress) {
       return `${restaurant.adress.street}, ${restaurant.adress.postal_code || ''} ${restaurant.adress.city}, ${restaurant.adress.country}`;
     }
-    return "Adresse non disponible";
+    return 'Adresse non disponible';
   };
 
   // Format de date pour les avis
@@ -243,7 +269,7 @@ const RestaurantDetail: React.FC = () => {
     return date.toLocaleDateString('fr-FR', {
       day: 'numeric',
       month: 'long',
-      year: 'numeric'
+      year: 'numeric',
     });
   };
 
@@ -253,7 +279,7 @@ const RestaurantDetail: React.FC = () => {
       return {};
     }
 
-    return items.reduce((groups: {[key: string]: any[]}, item) => {
+    return items.reduce((groups: { [key: string]: any[] }, item) => {
       const category = item.meal_category?.name || item.category || 'Autre';
       if (!groups[category]) {
         groups[category] = [];
@@ -277,14 +303,27 @@ const RestaurantDetail: React.FC = () => {
   if (error) {
     return (
       <div className="error-container">
-        <svg xmlns="http://www.w3.org/2000/svg" width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+        <svg
+          xmlns="http://www.w3.org/2000/svg"
+          width="48"
+          height="48"
+          viewBox="0 0 24 24"
+          fill="none"
+          stroke="currentColor"
+          strokeWidth="2"
+          strokeLinecap="round"
+          strokeLinejoin="round"
+        >
           <circle cx="12" cy="12" r="10"></circle>
           <line x1="12" y1="8" x2="12" y2="12"></line>
           <line x1="12" y1="16" x2="12.01" y2="16"></line>
         </svg>
         <h3>Erreur</h3>
         <p>{error}</p>
-        <button onClick={() => window.location.reload()} className="retry-button">
+        <button
+          onClick={() => window.location.reload()}
+          className="retry-button"
+        >
           Réessayer
         </button>
       </div>
@@ -295,7 +334,17 @@ const RestaurantDetail: React.FC = () => {
   if (!restaurant) {
     return (
       <div className="not-found-container">
-        <svg xmlns="http://www.w3.org/2000/svg" width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+        <svg
+          xmlns="http://www.w3.org/2000/svg"
+          width="48"
+          height="48"
+          viewBox="0 0 24 24"
+          fill="none"
+          stroke="currentColor"
+          strokeWidth="2"
+          strokeLinecap="round"
+          strokeLinejoin="round"
+        >
           <circle cx="12" cy="12" r="10"></circle>
           <line x1="8" y1="15" x2="16" y2="15"></line>
           <line x1="9" y1="9" x2="9.01" y2="9"></line>
@@ -312,33 +361,48 @@ const RestaurantDetail: React.FC = () => {
 
   const rating = calculateAverageRating();
   const reviewCount = reviews.length;
-  const selectedMenuData = menus.find(menu => menu.menu_id === selectedMenu);
-  const menuItemsByCategory = selectedMenuData ? groupItemsByCategory(selectedMenuData.items) : {};
+  const selectedMenuData = menus.find((menu) => menu.menu_id === selectedMenu);
+  const menuItemsByCategory = selectedMenuData
+    ? groupItemsByCategory(selectedMenuData.items)
+    : {};
 
   return (
     <div className="restaurant-detail-page">
       <div className="back-navigation">
         <Link to="/restaurants" className="back-link">
-          <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-            <path d="M19 12H5M12 19l-7-7 7-7"/>
+          <svg
+            xmlns="http://www.w3.org/2000/svg"
+            width="20"
+            height="20"
+            viewBox="0 0 24 24"
+            fill="none"
+            stroke="currentColor"
+            strokeWidth="2"
+            strokeLinecap="round"
+            strokeLinejoin="round"
+          >
+            <path d="M19 12H5M12 19l-7-7 7-7" />
           </svg>
           Retour aux restaurants
         </Link>
       </div>
 
-      <div className="restaurant-header" style={{ backgroundImage: `url(${getImageUrl(restaurant)})` }}>
+      <div
+        className="restaurant-header"
+        style={{ backgroundImage: `url(${getImageUrl(restaurant)})` }}
+      >
         <div className="restaurant-header-overlay"></div>
         <div className="restaurant-header-content">
           <h1 className="restaurant-name">{restaurant.name}</h1>
           <div className="restaurant-type-badge">{restaurant.type}</div>
-          
+
           <div className="restaurant-rating">
             <div className="stars">{renderStars(rating)}</div>
             <span className="reviews-count">({reviewCount} avis)</span>
           </div>
 
           <div className="restaurant-tags">
-            {restaurant.tagRestaurants?.map(tag => (
+            {restaurant.tagRestaurants?.map((tag) => (
               <span key={tag.tag_id} className="restaurant-tag">
                 {tag.tag?.name || 'Tag'}
               </span>
@@ -349,19 +413,19 @@ const RestaurantDetail: React.FC = () => {
 
       <div className="restaurant-content">
         <div className="restaurant-tabs">
-          <button 
+          <button
             className={`tab-button ${activeTab === 'info' ? 'active' : ''}`}
             onClick={() => setActiveTab('info')}
           >
             Informations
           </button>
-          <button 
+          <button
             className={`tab-button ${activeTab === 'menu' ? 'active' : ''}`}
             onClick={() => setActiveTab('menu')}
           >
             Menu ({menus.length})
           </button>
-          <button 
+          <button
             className={`tab-button ${activeTab === 'reviews' ? 'active' : ''}`}
             onClick={() => setActiveTab('reviews')}
           >
@@ -377,7 +441,17 @@ const RestaurantDetail: React.FC = () => {
                 <h3>À propos</h3>
                 <div className="info-grid">
                   <div className="info-item">
-                    <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                    <svg
+                      xmlns="http://www.w3.org/2000/svg"
+                      width="20"
+                      height="20"
+                      viewBox="0 0 24 24"
+                      fill="none"
+                      stroke="currentColor"
+                      strokeWidth="2"
+                      strokeLinecap="round"
+                      strokeLinejoin="round"
+                    >
                       <path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"></path>
                       <circle cx="12" cy="10" r="3"></circle>
                     </svg>
@@ -388,7 +462,17 @@ const RestaurantDetail: React.FC = () => {
                   </div>
 
                   <div className="info-item">
-                    <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                    <svg
+                      xmlns="http://www.w3.org/2000/svg"
+                      width="20"
+                      height="20"
+                      viewBox="0 0 24 24"
+                      fill="none"
+                      stroke="currentColor"
+                      strokeWidth="2"
+                      strokeLinecap="round"
+                      strokeLinejoin="round"
+                    >
                       <circle cx="12" cy="12" r="10"></circle>
                       <polyline points="12 6 12 12 16 14"></polyline>
                     </svg>
@@ -399,7 +483,17 @@ const RestaurantDetail: React.FC = () => {
                   </div>
 
                   <div className="info-item">
-                    <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                    <svg
+                      xmlns="http://www.w3.org/2000/svg"
+                      width="20"
+                      height="20"
+                      viewBox="0 0 24 24"
+                      fill="none"
+                      stroke="currentColor"
+                      strokeWidth="2"
+                      strokeLinecap="round"
+                      strokeLinejoin="round"
+                    >
                       <path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72 12.84 12.84 0 0 0 .7 2.81 2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45 12.84 12.84 0 0 0 2.81.7A2 2 0 0 1 22 16.92z"></path>
                     </svg>
                     <div>
@@ -409,13 +503,26 @@ const RestaurantDetail: React.FC = () => {
                   </div>
 
                   <div className="info-item">
-                    <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                    <svg
+                      xmlns="http://www.w3.org/2000/svg"
+                      width="20"
+                      height="20"
+                      viewBox="0 0 24 24"
+                      fill="none"
+                      stroke="currentColor"
+                      strokeWidth="2"
+                      strokeLinecap="round"
+                      strokeLinejoin="round"
+                    >
                       <path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"></path>
                       <polyline points="22,6 12,13 2,6"></polyline>
                     </svg>
                     <div>
                       <h4>Email</h4>
-                      <p>contact@{restaurant.name.toLowerCase().replace(/\s+/g, '')}.com</p>
+                      <p>
+                        contact@
+                        {restaurant.name.toLowerCase().replace(/\s+/g, '')}.com
+                      </p>
                     </div>
                   </div>
                 </div>
@@ -425,27 +532,41 @@ const RestaurantDetail: React.FC = () => {
                 <div className="info-section">
                   <h3>Propriétaire</h3>
                   <div className="owner-info">
-                    <CustomAvatar fileId={restaurant.owner.image_file_id || 0}/>
+                    <CustomAvatar
+                      fileId={restaurant.owner.image_file_id || 0}
+                    />
                     <div className="owner-details">
                       <h4>{restaurant.owner.username}</h4>
-                      <p>Membre depuis {new Date(restaurant.owner.created_at).toLocaleDateString('fr-FR', {
-                        month: 'long',
-                        year: 'numeric'
-                      })}</p>
+                      <p>
+                        Membre depuis{' '}
+                        {new Date(
+                          restaurant.owner.created_at
+                        ).toLocaleDateString('fr-FR', {
+                          month: 'long',
+                          year: 'numeric',
+                        })}
+                      </p>
                     </div>
                   </div>
                 </div>
               )}
 
-              <div className="info-section" style={{ zIndex: 1, position: 'relative'}}>
+              <div
+                className="info-section"
+                style={{ zIndex: 1, position: 'relative' }}
+              >
                 <h3>Localisation</h3>
                 <div className="map-container">
-                 <MapComponent restaurants={(() =>{
-                  const tmp = restaurant as RestaurantForMap;
-                  tmp.coordinates = localisation     
-                  console.log("Restaurant pour la carte:", tmp);
-                  return [tmp];
-                 })()} longitude={localisation?.longitude} latitude={localisation?.latitude} />
+                  <MapComponent
+                    restaurants={(() => {
+                      const tmp = restaurant as RestaurantForMap;
+                      tmp.coordinates = localisation;
+                      console.log('Restaurant pour la carte:', tmp);
+                      return [tmp];
+                    })()}
+                    longitude={localisation?.longitude}
+                    latitude={localisation?.latitude}
+                  />
                 </div>
               </div>
             </div>
@@ -457,14 +578,16 @@ const RestaurantDetail: React.FC = () => {
               {menus && menus.length > 0 ? (
                 <>
                   <div className="menu-selector">
-                    {menus.map(menu => (
+                    {menus.map((menu) => (
                       <button
                         key={menu.menu_id}
                         className={`menu-button ${selectedMenu === menu.menu_id ? 'active' : ''}`}
                         onClick={() => setSelectedMenu(menu.menu_id)}
                       >
                         {menu.name}
-                        <span className="menu-items-count">({menu.items?.length || 0} plats)</span>
+                        <span className="menu-items-count">
+                          ({menu.items?.length || 0} plats)
+                        </span>
                       </button>
                     ))}
                   </div>
@@ -473,31 +596,51 @@ const RestaurantDetail: React.FC = () => {
                     <div className="selected-menu">
                       <div className="menu-header">
                         <h3>{selectedMenuData.name}</h3>
-                        <p className="menu-description">{selectedMenuData.description}</p>
+                        <p className="menu-description">
+                          {selectedMenuData.description}
+                        </p>
                       </div>
 
                       {Object.keys(menuItemsByCategory).length > 0 ? (
-                        Object.entries(menuItemsByCategory).map(([category, items]) => (
-                          <div key={category} className="menu-category">
-                            <h4 className="category-name">{category}</h4>
-                            <div className="menu-items">
-                              {items.map(item => (
-                                <div key={item.meal_id || item.item_id} className="menu-item">
-                                  {item.image && (
-                                    <div className="menu-item-image" style={{ backgroundImage: `url(${getMenuItemImageUrl(item)})` }}></div>
-                                  )}
-                                  <div className="menu-item-content">
-                                    <div className="menu-item-header">
-                                      <h5 className="menu-item-name">{item.name}</h5>
-                                      <span className="menu-item-price">{formatPrice(parseFloat(item.price) || 0)}</span>
+                        Object.entries(menuItemsByCategory).map(
+                          ([category, items]) => (
+                            <div key={category} className="menu-category">
+                              <h4 className="category-name">{category}</h4>
+                              <div className="menu-items">
+                                {items.map((item) => (
+                                  <div
+                                    key={item.meal_id || item.item_id}
+                                    className="menu-item"
+                                  >
+                                    {item.image && (
+                                      <div
+                                        className="menu-item-image"
+                                        style={{
+                                          backgroundImage: `url(${getMenuItemImageUrl(item)})`,
+                                        }}
+                                      ></div>
+                                    )}
+                                    <div className="menu-item-content">
+                                      <div className="menu-item-header">
+                                        <h5 className="menu-item-name">
+                                          {item.name}
+                                        </h5>
+                                        <span className="menu-item-price">
+                                          {formatPrice(
+                                            parseFloat(item.price) || 0
+                                          )}
+                                        </span>
+                                      </div>
+                                      <p className="menu-item-description">
+                                        {item.description}
+                                      </p>
                                     </div>
-                                    <p className="menu-item-description">{item.description}</p>
                                   </div>
-                                </div>
-                              ))}
+                                ))}
+                              </div>
                             </div>
-                          </div>
-                        ))
+                          )
+                        )
                       ) : (
                         <div className="empty-menu-items">
                           <p>Aucun plat disponible pour ce menu.</p>
@@ -508,7 +651,17 @@ const RestaurantDetail: React.FC = () => {
                 </>
               ) : (
                 <div className="empty-menu">
-                  <svg xmlns="http://www.w3.org/2000/svg" width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                  <svg
+                    xmlns="http://www.w3.org/2000/svg"
+                    width="48"
+                    height="48"
+                    viewBox="0 0 24 24"
+                    fill="none"
+                    stroke="currentColor"
+                    strokeWidth="2"
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                  >
                     <path d="M3 3h18v18H3z"></path>
                     <path d="M3 9h18"></path>
                     <path d="M3 15h18"></path>
@@ -516,7 +669,10 @@ const RestaurantDetail: React.FC = () => {
                     <path d="M15 3v18"></path>
                   </svg>
                   <h3>Menu non disponible</h3>
-                  <p>Ce restaurant n'a pas encore ajouté son menu. Veuillez réessayer ultérieurement.</p>
+                  <p>
+                    Ce restaurant n'a pas encore ajouté son menu. Veuillez
+                    réessayer ultérieurement.
+                  </p>
                 </div>
               )}
             </div>
@@ -530,31 +686,48 @@ const RestaurantDetail: React.FC = () => {
                   <div className="rating-number">{rating.toFixed(1)}</div>
                   <div className="stars-summary">{renderStars(rating)}</div>
                   <div className="review-count">
-                    {reviews.filter(review => review.rating !== null && review.rating !== undefined).length} notes
+                    {
+                      reviews.filter(
+                        (review) =>
+                          review.rating !== null && review.rating !== undefined
+                      ).length
+                    }{' '}
+                    note
+                    {reviews.filter(
+                      (review) =>
+                        review.rating !== null && review.rating !== undefined
+                    ).length > 1
+                      ? 's'
+                      : ''}
                   </div>
                 </div>
 
                 <div className="rating-breakdown">
-                  {[5, 4, 3, 2, 1].map(star => {
+                  {[5, 4, 3, 2, 1].map((star) => {
                     // Compter les avis avec cette note exacte
-                    const count = reviews.filter(review => 
-                      review.rating !== null && 
-                      review.rating !== undefined && 
-                      Math.floor(review.rating) === star
+                    const count = reviews.filter(
+                      (review) =>
+                        review.rating !== null &&
+                        review.rating !== undefined &&
+                        Math.floor(review.rating) === star
                     ).length;
-                    
+
                     // Calculer le pourcentage basé sur le nombre total d'avis avec rating
-                    const totalWithRating = reviews.filter(review => 
-                      review.rating !== null && 
-                      review.rating !== undefined
+                    const totalWithRating = reviews.filter(
+                      (review) =>
+                        review.rating !== null && review.rating !== undefined
                     ).length;
-                    const percentage = totalWithRating > 0 ? (count / totalWithRating) * 100 : 0;
-                    
+                    const percentage =
+                      totalWithRating > 0 ? (count / totalWithRating) * 100 : 0;
+
                     return (
                       <div key={star} className="rating-bar">
                         <div className="star-label">{star} étoiles</div>
                         <div className="progress-bar">
-                          <div className="progress-fill" style={{ width: `${percentage}%` }}></div>
+                          <div
+                            className="progress-fill"
+                            style={{ width: `${percentage}%` }}
+                          ></div>
                         </div>
                         <div className="count-label">{count}</div>
                       </div>
@@ -563,26 +736,39 @@ const RestaurantDetail: React.FC = () => {
                 </div>
               </div>
 
-              <ReviewForm 
-                restaurantId={parseInt(id!)} 
+              <ReviewForm
+                restaurantId={parseInt(id!)}
                 onReviewSubmitted={handleReviewSubmitted}
               />
 
               <div className="reviews-list">
                 {reviews.length > 0 ? (
-                  reviews.map(review => (
+                  reviews.map((review) => (
                     <Review key={review.review_id} review={review} />
                   ))
                 ) : (
                   <div className="empty-reviews">
-                    <svg xmlns="http://www.w3.org/2000/svg" width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                    <svg
+                      xmlns="http://www.w3.org/2000/svg"
+                      width="48"
+                      height="48"
+                      viewBox="0 0 24 24"
+                      fill="none"
+                      stroke="currentColor"
+                      strokeWidth="2"
+                      strokeLinecap="round"
+                      strokeLinejoin="round"
+                    >
                       <circle cx="12" cy="12" r="10"></circle>
                       <path d="M8 14s1.5 2 4 2 4-2 4-2"></path>
                       <line x1="9" y1="9" x2="9.01" y2="9"></line>
                       <line x1="15" y1="9" x2="15.01" y2="9"></line>
                     </svg>
                     <h3>Aucun avis</h3>
-                    <p>Ce restaurant n'a pas encore reçu d'avis. Soyez le premier à partager votre expérience!</p>
+                    <p>
+                      Ce restaurant n'a pas encore reçu d'avis. Soyez le premier
+                      à partager votre expérience!
+                    </p>
                     <button className="write-first-review-button">
                       Écrire le premier avis
                     </button>
@@ -595,9 +781,12 @@ const RestaurantDetail: React.FC = () => {
       </div>
 
       <div className="restaurant-actions-footer">
-        <Bookmark restaurantId={id || -1} text='Enregistrer' />
-        <ShareButton text={`Découvrez ${restaurant.name} sur MenuFinder`} url={`${window.location.origin}/restaurants/${id}`} />
-        <ReportButton RestaurantId={Number.parseInt(id || "-1") || -1}/>
+        <Bookmark restaurantId={id || -1} text="Enregistrer" />
+        <ShareButton
+          text={`Découvrez ${restaurant.name} sur MenuFinder`}
+          url={`${window.location.origin}/restaurants/${id}`}
+        />
+        <ReportButton RestaurantId={Number.parseInt(id || '-1') || -1} />
       </div>
     </div>
   );

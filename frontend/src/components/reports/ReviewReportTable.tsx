@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState, useEffect } from 'react';
 import {
   Table,
   TableBody,
@@ -13,21 +13,34 @@ import {
   CircularProgress,
 } from '@mui/material';
 import { FaSync } from 'react-icons/fa';
-import ReportLign from './ReportLign';
-import { useReports } from '../../hooks/useReports';
-import { ReportService } from '../../services/report.service';
+import ReviewReportLign from './ReviewReportLign';
+import {
+  ReviewReport,
+  getAllReports,
+} from '../../services/reviewReport.service';
 
-const ReportTable: React.FC = () => {
-  const { reports, setReports, loading, refetch } = useReports();
+const ReviewReportTable: React.FC = () => {
+  const [reports, setReports] = useState<ReviewReport[]>([]);
+  const [loading, setLoading] = useState(false);
 
-  const DeleteReport = (id: number) => {
+  const fetchReports = async () => {
     try {
-      ReportService.remove(id);
-      // Optionally, you can update the state to remove the report from the list
+      setLoading(true);
+      const data = await getAllReports();
+      setReports(data);
     } catch (error) {
-      console.error('Error deleting report:', error);
+      console.error('Erreur lors du chargement des signalements:', error);
+    } finally {
+      setLoading(false);
     }
-    setReports(reports.filter((report) => report.id !== id));
+  };
+
+  useEffect(() => {
+    fetchReports();
+  }, []);
+
+  const handleStatusChange = () => {
+    fetchReports(); // Recharger les données après un changement de statut
   };
 
   return (
@@ -39,12 +52,12 @@ const ReportTable: React.FC = () => {
         mb={2}
       >
         <Typography variant="h6" gutterBottom>
-          Signalements des utilisateurs
+          Signalements d'avis
         </Typography>
         <Button
           variant="outlined"
           startIcon={loading ? <CircularProgress size={16} /> : <FaSync />}
-          onClick={refetch}
+          onClick={fetchReports}
           disabled={loading}
         >
           Actualiser
@@ -56,18 +69,17 @@ const ReportTable: React.FC = () => {
           <TableHead>
             <TableRow>
               <TableCell>ID</TableCell>
-              <TableCell>Utilisateur</TableCell>
-              <TableCell>Restaurant</TableCell>
-              <TableCell>Motif</TableCell>
-              <TableCell>Description</TableCell>
-              <TableCell>Date de création</TableCell>
-              <TableCell></TableCell>
+              <TableCell>Avis signalé</TableCell>
+              <TableCell>Signalé par</TableCell>
+              <TableCell>Date de signalement</TableCell>
+              <TableCell>Statut</TableCell>
+              <TableCell>Actions</TableCell>
             </TableRow>
           </TableHead>
           <TableBody>
             {loading ? (
               <TableRow>
-                <TableCell colSpan={7} align="center">
+                <TableCell colSpan={6} align="center">
                   <Box
                     display="flex"
                     justifyContent="center"
@@ -83,18 +95,18 @@ const ReportTable: React.FC = () => {
               </TableRow>
             ) : reports.length === 0 ? (
               <TableRow>
-                <TableCell colSpan={7} align="center">
+                <TableCell colSpan={6} align="center">
                   <Typography variant="body2" color="textSecondary" py={3}>
-                    Aucun signalement de restaurant trouvé
+                    Aucun signalement d'avis trouvé
                   </Typography>
                 </TableCell>
               </TableRow>
             ) : (
               reports.map((report) => (
-                <ReportLign
-                  key={report.id}
-                  onDelete={() => DeleteReport(report.id)}
+                <ReviewReportLign
+                  key={report.report_id}
                   report={report}
+                  onStatusChange={handleStatusChange}
                 />
               ))
             )}
@@ -105,4 +117,4 @@ const ReportTable: React.FC = () => {
   );
 };
 
-export default ReportTable;
+export default ReviewReportTable;
