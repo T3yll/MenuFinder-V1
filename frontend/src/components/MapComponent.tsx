@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import "../styles/components/MapComponent.scss";
 import "../styles/components/leaflet.css";
 
@@ -8,6 +8,7 @@ import {
   Popup,
   TileLayer,
   useMapEvent,
+  useMap,
 } from "react-leaflet";
 import { RestaurantForMap } from "../types/Restaurant";
 import L from "leaflet";
@@ -446,6 +447,14 @@ const ModernRestaurantPopup: React.FC<{ restaurant: RestaurantForMap }> = ({ res
   );
 };
 
+const MapCenterUpdater = ({ lat, lng }: { lat: number, lng: number }) => {
+  const map = useMap();
+  useEffect(() => {
+    map.setView([lat, lng]);
+  }, [lat, lng, map]);
+  return null;
+};
+
 const MapComponent: React.FC<MapComponentProps> = ({ latitude, longitude, restaurants }) => {
   const [lat, setLat] = React.useState<number>(latitude || 48.8566);
   const [lng, setLng] = React.useState<number>(longitude || 2.3522);
@@ -460,6 +469,8 @@ const MapComponent: React.FC<MapComponentProps> = ({ latitude, longitude, restau
     }
   }, [longitude]);
   const [zoom, setZoom] = React.useState<number>(13);
+
+  console.log("[MapComponent] latitude longitude", lat, lng);
 
 
   // Créer une icône personnalisée pour les restaurants (votre logique existante améliorée)
@@ -506,6 +517,8 @@ const MapComponent: React.FC<MapComponentProps> = ({ latitude, longitude, restau
     });
   };
 
+  console.log([lat, lng]);
+
   return (
     <MapContainer 
       center={[lat, lng]} 
@@ -514,6 +527,7 @@ const MapComponent: React.FC<MapComponentProps> = ({ latitude, longitude, restau
       touchZoom
       style={{ height: '100%', width: '100%' }}
     >
+      <MapCenterUpdater lat={lat} lng={lng} />
       <ZoomListener onZoomChange={setZoom} />
 
       <TileLayer

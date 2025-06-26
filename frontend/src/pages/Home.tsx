@@ -1,11 +1,18 @@
 import React, { useState, useEffect } from 'react';
-import { Link } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 import '../styles/pages/Home.scss';
-import SearchBar from '../components/commom/SearchBar';
+
+interface Suggestion {
+    id: number;
+    name: string;
+}
 
 const Home: React.FC = () => {
-    const [searchQuery, setSearchQuery] = useState('');
+    const [searchQuery, setSearchQuery] = useState<Suggestion>({id: 0, name: ''});
     const [userCity, setUserCity] = useState('Paris');
+    const [suggestions, setSuggestions] = useState<Suggestion[]>([]);
+    const [showSuggestions, setShowSuggestions] = useState(false);
+    const navigate = useNavigate();
 
     useEffect(() => {
         if (navigator.geolocation) {
@@ -32,7 +39,9 @@ const Home: React.FC = () => {
 
     const handleSearch = (e: React.FormEvent) => {
         e.preventDefault();
-        console.log('Recherche de:', searchQuery);
+        if (searchQuery.id !== 0) {
+             navigate(`/restaurants/${searchQuery.id}`);
+        }
     };
 
     return (
@@ -59,19 +68,51 @@ const Home: React.FC = () => {
                             <div className="search-wrapper">
                                 <div className="search-icon">📍</div>
                                 <input 
-                                    type="text" 
+                                    type="text"
                                     placeholder={`Trouvez un restaurant à ${userCity}...`}
                                     className="search-input"
-                                    value={searchQuery}
-                                    onChange={(e) => setSearchQuery(e.target.value)}
+                                    value={searchQuery.name}
+                                    onChange={async (e) => {
+                                        const value = e.target.value;
+                                        setSearchQuery({id: 0, name: value});
+                                        if (value.length > 1) {
+                                            // Fetch suggestions from your backend API
+                                            const res = await fetch(`/api/restaurants/autocomplete?query=${encodeURIComponent(value)}`);
+                                            const data = await res.json();
+                                            setSuggestions(data); // data should be an array of restaurant names
+                                            setShowSuggestions(true);
+                                        } else {
+                                            setShowSuggestions(false);
+                                        }
+                                    }}
+                                    onBlur={() => setTimeout(() => setShowSuggestions(false), 100)}
+                                    onFocus={() => suggestions.length > 0 && setShowSuggestions(true)}
                                 />
-                                <button className="search-btn">
+                                <button className="search-btn" onClick={handleSearch}>
                                     <svg width="20" height="20" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                         <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
                                     </svg>
                                 </button>
                             </div>
                         </div>
+
+                        {showSuggestions && suggestions.length > 0 && (
+                            <ul className="autocomplete-dropdown">
+                                {suggestions.map((s, i) => (
+                                    <li
+                                        key={i}
+                                        onMouseDown={() => {
+                                            setSearchQuery(s);
+                                            setShowSuggestions(false);
+                                            // Optionally trigger search here
+                                        }}
+                                        style={{ cursor: 'pointer', padding: '2px 8px' }}
+                                    >
+                                        {s.name}
+                                    </li>
+                                ))}
+                            </ul>
+                        )}
 
                         <div className="quick-actions">
                             <span className="quick-label">Populaires:</span>

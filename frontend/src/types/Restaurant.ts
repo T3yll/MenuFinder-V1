@@ -36,7 +36,7 @@ export interface Adress {
   street: string;
   city: string;
   state?: string;
-  zip_code: string;
+  postal_code: string;
   country: string;
   latitude?: number;
   longitude?: number;
@@ -154,7 +154,7 @@ export const adaptRestaurantForMap = (restaurant: Restaurant): RestaurantForMap 
   // Formater l'adresse
   const getFormattedAddress = (restaurant: Restaurant): string => {
     if (restaurant.adress) {
-      return `${restaurant.adress.street}, ${restaurant.adress.zip_code} ${restaurant.adress.city}`;
+      return `${restaurant.adress.street}, ${restaurant.adress.postal_code} ${restaurant.adress.city}`;
     }
     return "Adresse non disponible";
   };

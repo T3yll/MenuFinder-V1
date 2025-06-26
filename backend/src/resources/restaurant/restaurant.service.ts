@@ -1,6 +1,6 @@
 import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
-import { Repository } from 'typeorm';
+import { ILike, Like, Repository } from 'typeorm';
 import { Restaurant } from './entities/restaurant.entity';
 import { CreateRestaurantDto } from './dto/create-restaurant.dto';
 import { UpdateRestaurantDto } from './dto/update-restaurant.dto';
@@ -69,5 +69,15 @@ export class RestaurantService {
 
   async remove(id: number): Promise<void> {
     await this.restaurantRepository.delete(id);
+  }
+
+  async findNamesLike(query: string): Promise<object[]> {
+    const decodedQuery = decodeURIComponent(query).normalize('NFD');
+    const restaurants = await this.restaurantRepository.find({
+      where: {
+        name: ILike(`%${decodedQuery}%`)
+      }
+    });
+    return restaurants.map(restaurant => ({ id: restaurant.restaurant_id, name: restaurant.name }));
   }
 }

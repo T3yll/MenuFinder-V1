@@ -223,6 +223,18 @@
   margin-bottom: 20px;
 }
 
+.autocomplete-dropdown {
+  border: 1px solid #ccc;
+  position: absolute;
+  background: #fff;
+  color: #2D3748;
+  z-index: 10;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+  width: 100%;
+}
+
 .search-bar-mini {
   background: white;
   border-radius: 8px;

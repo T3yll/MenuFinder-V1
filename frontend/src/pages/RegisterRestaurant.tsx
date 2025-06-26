@@ -11,17 +11,17 @@ interface FormData {
   // Restaurant info
   name: string;
   type: string;
-  
+
   // Adresse
   street: string;
   city: string;
   zipCode: string;
   country: string;
   state: string;
-  
+
   // Fichiers
   image: File | null;
-  
+
   // Autres infos utiles
   description: string;
   phoneNumber: string;
@@ -107,10 +107,10 @@ const RegisterRestaurant: React.FC = () => {
 
   const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const { name, files } = e.target;
-    
+
     if (files && files.length > 0) {
       setFormData(prev => ({ ...prev, [name]: files[0] }));
-      
+
       // Créer une prévisualisation
       const reader = new FileReader();
       reader.onloadend = () => {
@@ -147,7 +147,7 @@ const RegisterRestaurant: React.FC = () => {
     }
 
     setError(null);
-    
+
     if (currentStep < 3) {
       setCurrentStep(currentStep + 1);
       window.scrollTo(0, 0);
@@ -163,77 +163,77 @@ const RegisterRestaurant: React.FC = () => {
 
   // Dans ton composant RegisterRestaurant, remplace la fonction handleSubmit par :
 
-const handleSubmit = async (e: React.FormEvent) => {
-  e.preventDefault();
-  
-  if (!userData) {
-    setError("Vous devez être connecté pour inscrire votre restaurant.");
-    return;
-  }
-  
-  if (!formData.image) {
-    setError("Une image du restaurant est obligatoire");
-    return;
-  }
-  
-  setIsSubmitting(true);
-  setError(null);
-  
-  try {
-    // Extraire le numéro du début de la rue ou utiliser 1 par défaut
-    const streetParts = formData.street.trim().split(' ');
-    const streetNumber = parseInt(streetParts[0]) || 1;
-    const streetName = streetParts.length > 1 ? streetParts.slice(1).join(' ') : formData.street;
-    
-    // Préparer les données d'adresse selon la structure attendue par ton service
-    const adressInfo = {
-      number: streetNumber,
-      street: streetName,
-      city: formData.city,
-      postal_code: parseInt(formData.zipCode) || 0,
-      country: formData.country
-    };
-    
-    console.log('Données à envoyer:', {
-      restaurantName: formData.name,
-      restaurantType: formData.type,
-      adressInfo,
-      ownerId: userData.id,
-      image: formData.image
-    });
-    
-    // Utiliser ton service existant RegisterRestaurantService
-    await RegisterRestaurantService.registerRestaurant(
-      formData.name,        // restaurantName
-      formData.type,        // restaurantType  
-      formData.image,       // image (Blob)
-      adressInfo,          // adressInfo
-      userData.id          // ownerId
-    );
-    
-    setIsSubmitted(true);
-  } catch (error: any) {
-    console.error('Erreur lors de l\'enregistrement du restaurant:', error);
-    
-    // Gestion d'erreur améliorée
-    let errorMessage = "Une erreur s'est produite lors de l'enregistrement.";
-    
-    if (error.response?.data?.message) {
-      // Si c'est un message d'erreur de l'API
-      if (Array.isArray(error.response.data.message)) {
-        errorMessage = error.response.data.message.join(', ');
-      } else {
-        errorMessage = error.response.data.message;
-      }
-    } else if (error.message) {
-      errorMessage = error.message;
+  const handleSubmit = async (e: React.FormEvent) => {
+    e.preventDefault();
+
+    if (!userData) {
+      setError("Vous devez être connecté pour inscrire votre restaurant.");
+      return;
     }
-    
-    setError(errorMessage);
-  } finally {
-    setIsSubmitting(false);
-  }
-};
+
+    if (!formData.image) {
+      setError("Une image du restaurant est obligatoire");
+      return;
+    }
+
+    setIsSubmitting(true);
+    setError(null);
+
+    try {
+      // Extraire le numéro du début de la rue ou utiliser 1 par défaut
+      const streetParts = formData.street.trim().split(' ');
+      const streetNumber = parseInt(streetParts[0]) || 1;
+      const streetName = streetParts.length > 1 ? streetParts.slice(1).join(' ') : formData.street;
+
+      // Préparer les données d'adresse selon la structure attendue par ton service
+      const adressInfo = {
+        number: streetNumber,
+        street: streetName,
+        city: formData.city,
+        postal_code: parseInt(formData.zipCode) || 0,
+        country: formData.country
+      };
+
+      console.log('Données à envoyer:', {
+        restaurantName: formData.name,
+        restaurantType: formData.type,
+        adressInfo,
+        ownerId: userData.id,
+        image: formData.image
+      });
+
+      // Utiliser ton service existant RegisterRestaurantService
+      await RegisterRestaurantService.registerRestaurant(
+        formData.name,        // restaurantName
+        formData.type,        // restaurantType  
+        formData.image,       // image (Blob)
+        adressInfo,          // adressInfo
+        userData.id          // ownerId
+      );
+
+      setIsSubmitted(true);
+    } catch (error: any) {
+      console.error('Erreur lors de l\'enregistrement du restaurant:', error);
+
+      // Gestion d'erreur améliorée
+      let errorMessage = "Une erreur s'est produite lors de l'enregistrement.";
+
+      if (error.response?.data?.message) {
+        // Si c'est un message d'erreur de l'API
+        if (Array.isArray(error.response.data.message)) {
+          errorMessage = error.response.data.message.join(', ');
+        } else {
+          errorMessage = error.response.data.message;
+        }
+      } else if (error.message) {
+        errorMessage = error.message;
+      }
+
+      setError(errorMessage);
+    } finally {
+      setIsSubmitting(false);
+    }
+  };
 
   if (isSubmitted) {
     return (
@@ -247,6 +247,52 @@ const handleSubmit = async (e: React.FormEvent) => {
             <Link to="/dashboard" className="btn-primary">Gérer mon restaurant</Link>
           </div>
         </div>
+      </div>
+    );
+  }
+
+  if (localStorage.getItem('user') === null) {
+    return (
+      <div className="register-restaurant-page">
+        <section className="register-hero">
+          <div className="hero-bg">
+            <div className="hero-overlay"></div>
+            <div className="hero-image" style={{ backgroundImage: "url('https://images.unsplash.com/photo-1555396273-367ea4eb4db5?ixlib=rb-1.2.1&auto=format&fit=crop&w=1074&q=80')" }}></div>
+          </div>
+          <div className="hero-content">
+            <h1 className="hero-title">Rejoignez MenuFinder</h1>
+            <p className="hero-subtitle">Faites découvrir votre établissement à des milliers de clients potentiels</p>
+            <div className="step-indicators">
+              <div className={`step-indicator inactive`}>
+                <span className="step-number inactive">1</span>
+                <span className="step-label inactive">Informations générales</span>
+              </div>
+              <div className="step-line"></div>
+              <div className={`step-indicator inactive`}>
+                <span className="step-number inactive">2</span>
+                <span className="step-label inactive">Adresse et médias</span>
+              </div>
+              <div className="step-line"></div>
+              <div className={`step-indicator inactive`}>
+                <span className="step-number inactive">3</span>
+                <span className="step-label inactive">Confirmation</span>
+              </div>
+            </div>
+          </div>
+        </section>
+        <section className="section section-light">
+        <div className="section-container">
+          <div className="register-form-container">
+            <div className="form-step">
+              <h2 className="form-section-title">Vous devez être connecté pour inscrire votre restaurant.</h2>   
+              <div className="form-group" style={{ display: 'flex', justifyContent: 'space-evenly', marginTop: '20px' }}>
+                <Link to="/login" className="btn-primary text-white py-2 px-4 rounded">Se connecter</Link>
+                <Link to="/register" className="btn-outline py-2 px-4 rounded border">Créer un compte</Link>
+              </div>
+            </div>
+          </div>
+          </div>
+        </section>
       </div>
     );
   }
@@ -290,14 +336,14 @@ const handleSubmit = async (e: React.FormEvent) => {
               <button onClick={() => setError(null)} className="error-close">×</button>
             </div>
           )}
-          
+
           <div className="register-form-container">
             <form onSubmit={handleSubmit} className="register-form">
               {/* Step 1: Basic Information */}
               {currentStep === 1 && (
                 <div className="form-step">
                   <h2 className="form-section-title">Informations du restaurant</h2>
-                  
+
                   <div className="form-group">
                     <label htmlFor="name">Nom du restaurant *</label>
                     <input
@@ -310,7 +356,7 @@ const handleSubmit = async (e: React.FormEvent) => {
                       placeholder="Ex: La Belle Assiette"
                     />
                   </div>
-                  
+
                   <div className="form-group">
                     <label htmlFor="type">Type de cuisine *</label>
                     <select
@@ -328,7 +374,7 @@ const handleSubmit = async (e: React.FormEvent) => {
                       ))}
                     </select>
                   </div>
-                  
+
                   <div className="form-group">
                     <label htmlFor="description">Description de votre restaurant</label>
                     <textarea
@@ -340,7 +386,7 @@ const handleSubmit = async (e: React.FormEvent) => {
                       rows={4}
                     />
                   </div>
-                  
+
                   <div className="form-row">
                     <div className="form-group">
                       <label htmlFor="email">Email professionnel</label>
@@ -353,7 +399,7 @@ const handleSubmit = async (e: React.FormEvent) => {
                         placeholder="contact@votrerestaurant.fr"
                       />
                     </div>
-                    
+
                     <div className="form-group">
                       <label htmlFor="phoneNumber">Téléphone</label>
                       <input
@@ -366,7 +412,7 @@ const handleSubmit = async (e: React.FormEvent) => {
                       />
                     </div>
                   </div>
-                  
+
                   <div className="form-group">
                     <label htmlFor="website">Site web (optionnel)</label>
                     <input
@@ -378,7 +424,7 @@ const handleSubmit = async (e: React.FormEvent) => {
                       placeholder="https://www.votrerestaurant.fr"
                     />
                   </div>
-                  
+
                   <div className="form-group">
                     <label htmlFor="priceRange">Gamme de prix</label>
                     <select
@@ -395,7 +441,7 @@ const handleSubmit = async (e: React.FormEvent) => {
                       ))}
                     </select>
                   </div>
-                  
+
                   <div className="form-actions">
                     <Link to="/" className="btn-secondary">Annuler</Link>
                     <button type="button" className="btn-primary" onClick={nextStep}>
@@ -404,14 +450,14 @@ const handleSubmit = async (e: React.FormEvent) => {
                   </div>
                 </div>
               )}
-              
+
               {/* Step 2: Address and Media */}
               {currentStep === 2 && (
                 <div className="form-step">
                   <h2 className="form-section-title">Adresse et photo</h2>
-                  
+
                   <div className="form-row">
-                  <div className="form-group">
+                    <div className="form-group">
                       <label htmlFor="zipCode">Code postal *</label>
                       <PostcodeAutocomplete
                         name={'zipCode'}
@@ -430,8 +476,8 @@ const handleSubmit = async (e: React.FormEvent) => {
                         setPostcode={setField('zipCode')}
                       />
                     </div>
-                    
-                   
+
+
                   </div>
 
                   <div className="form-group">
@@ -443,9 +489,9 @@ const handleSubmit = async (e: React.FormEvent) => {
                       setAddress={setField('street')}
                     />
                   </div>
-                  
-                  
-                  
+
+
+
                   <div className="form-row">
                     <div className="form-group">
                       <label htmlFor="state">Région/Département *</label>
@@ -459,7 +505,7 @@ const handleSubmit = async (e: React.FormEvent) => {
                         placeholder="Île-de-France"
                       />
                     </div>
-                    
+
                     <div className="form-group">
                       <label htmlFor="country">Pays *</label>
                       <input
@@ -473,10 +519,10 @@ const handleSubmit = async (e: React.FormEvent) => {
                       />
                     </div>
                   </div>
-                  
+
                   <div className="form-media-section">
                     <h3>Photo principale du restaurant *</h3>
-                    
+
                     <div className="media-upload-container">
                       <div className="media-upload-box cover-upload">
                         <label htmlFor="image" className="upload-label">
@@ -503,7 +549,7 @@ const handleSubmit = async (e: React.FormEvent) => {
                       </div>
                     </div>
                   </div>
-                  
+
                   <div className="form-actions">
                     <button type="button" className="btn-secondary" onClick={prevStep}>
                       Retour
@@ -514,39 +560,39 @@ const handleSubmit = async (e: React.FormEvent) => {
                   </div>
                 </div>
               )}
-              
+
               {/* Step 3: Review and Confirm */}
               {currentStep === 3 && (
                 <div className="form-step">
                   <h2 className="form-section-title">Confirmation des informations</h2>
-                  
+
                   <div className="confirmation-section">
                     <div className="confirmation-visual">
                       {imagePreview ? (
                         <div className="confirmation-cover" style={{ backgroundImage: `url(${imagePreview})` }}>
                           <div className="restaurant-type-badge">
-                            {RESTAURANT_TYPES.find(t => t.id === formData.type)?.emoji || '🍽️'} 
+                            {RESTAURANT_TYPES.find(t => t.id === formData.type)?.emoji || '🍽️'}
                             {RESTAURANT_TYPES.find(t => t.id === formData.type)?.name || 'Restaurant'}
                           </div>
                         </div>
                       ) : (
                         <div className="confirmation-cover default-cover">
                           <div className="restaurant-type-badge">
-                            {RESTAURANT_TYPES.find(t => t.id === formData.type)?.emoji || '🍽️'} 
+                            {RESTAURANT_TYPES.find(t => t.id === formData.type)?.emoji || '🍽️'}
                             {RESTAURANT_TYPES.find(t => t.id === formData.type)?.name || 'Restaurant'}
                           </div>
                         </div>
                       )}
-                      
+
                       <h3 className="confirmation-restaurant-name">{formData.name || 'Nom du restaurant'}</h3>
-                      
+
                       {formData.priceRange && (
                         <div className="confirmation-price-range">
                           {formData.priceRange}
                         </div>
                       )}
                     </div>
-                    
+
                     <div className="confirmation-details">
                       <div className="confirmation-detail-group">
                         <h4>Coordonnées</h4>
@@ -556,7 +602,7 @@ const handleSubmit = async (e: React.FormEvent) => {
                         {formData.email && <p><strong>Email:</strong> {formData.email}</p>}
                         {formData.website && <p><strong>Site web:</strong> {formData.website}</p>}
                       </div>
-                      
+
                       {formData.description && (
                         <div className="confirmation-detail-group">
                           <h4>Description</h4>
@@ -565,14 +611,14 @@ const handleSubmit = async (e: React.FormEvent) => {
                       )}
                     </div>
                   </div>
-                  
+
                   <div className="terms-agreement">
                     <input type="checkbox" id="terms" required />
                     <label htmlFor="terms">
                       J'accepte les <a href="/terms" target="_blank">conditions d'utilisation</a> et la <a href="/privacy" target="_blank">politique de confidentialité</a> de MenuFinder
                     </label>
                   </div>
-                  
+
                   <div className="form-actions">
                     <button type="button" className="btn-secondary" onClick={prevStep}>
                       Retour
@@ -587,31 +633,31 @@ const handleSubmit = async (e: React.FormEvent) => {
           </div>
         </div>
       </section>
-      
+
       {/* Benefits Section */}
       <section className="benefits-section">
         <div className="section-container">
           <h2 className="section-title">Les avantages de MenuFinder</h2>
-          
+
           <div className="benefits-grid">
             <div className="benefit-card">
               <div className="benefit-icon">👁️</div>
               <h3>Visibilité accrue</h3>
               <p>Faites-vous connaître auprès de milliers de clients potentiels dans votre région</p>
             </div>
-            
+
             <div className="benefit-card">
               <div className="benefit-icon">📱</div>
               <h3>Menu digital</h3>
               <p>Affichez votre menu en ligne et mettez à jour vos plats en temps réel</p>
             </div>
-            
+
             <div className="benefit-card">
               <div className="benefit-icon">📊</div>
               <h3>Statistiques</h3>
               <p>Suivez les performances de votre établissement et analysez les tendances</p>
             </div>
-            
+
             <div className="benefit-card">
               <div className="benefit-icon">⭐</div>
               <h3>Avis clients</h3>
@@ -620,12 +666,12 @@ const handleSubmit = async (e: React.FormEvent) => {
           </div>
         </div>
       </section>
-      
+
       {/* Testimonials Section */}
       <section className="testimonials-section">
         <div className="section-container">
           <h2 className="section-title">Ils nous font confiance</h2>
-          
+
           <div className="testimonials-slider">
             <div className="testimonial">
               <div className="testimonial-content">
