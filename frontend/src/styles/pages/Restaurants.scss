@@ -475,11 +475,10 @@ div.restaurants-modern div.restaurants-section div.container div.restaurants-gri
       max-height: 140px !important;
       
       .card-image {
-        width: 160px !important;
+        width: 100% !important;
         flex-shrink: 0;
         
         @media (max-width: 768px) {
-          width: 100px !important;
         }
       }
       
