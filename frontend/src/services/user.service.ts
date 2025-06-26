@@ -120,3 +120,234 @@ export async function updateUserProfile(info:UpdateProfileFormData ,id:string): 
         throw error;
         }
 }
+
+// Nouvelles interfaces pour l'admin (en plus de vos existantes)
+interface PaginatedUsersResponse {
+  data: UserFromDB[];
+  total: number;
+  page: number;
+  totalPages: number;
+}
+
+// Interface pour créer un utilisateur depuis l'admin (différent de UserRegister)
+interface AdminCreateUserData {
+  prenom: string;
+  nom: string;
+  email: string;
+  password: string;
+  username?: string;
+  bAdmin?: boolean;
+  image_file_id?: number;
+}
+
+// Interface pour mettre à jour un utilisateur depuis l'admin (différent de UserUpdate)
+interface AdminUpdateUserData {
+  prenom?: string;
+  nom?: string;
+  email?: string;
+  password?: string;
+  username?: string;
+  bAdmin?: boolean;
+  image_file_id?: number;
+}
+
+/**
+ * NOUVELLES FONCTIONS POUR L'ADMIN - Ajoutez ces fonctions à votre service existant
+ */
+
+/**
+ * Récupère tous les utilisateurs avec pagination et recherche (ADMIN)
+ */
+export const getAllUsers = async (
+  page: number = 1,
+  offset: number = 10,
+  search?: string
+): Promise<PaginatedUsersResponse> => {
+  try {
+    const params = new URLSearchParams();
+    params.append('page', page.toString());
+    params.append('offset', offset.toString());
+    if (search) {
+      params.append('search', search);
+    }
+
+    const response: AxiosResponse<PaginatedUsersResponse> = await axios.get(
+      `${process.env.VITE_API_URL}/users?${params.toString()}`,
+      {
+        headers: {
+          Authorization: `Bearer ${localStorage.getItem('token')}`
+        }
+      }
+    );
+
+    if (response.status !== 200) {
+      throw new Error('Failed to fetch users');
+    }
+
+    // Ajouter les chemins d'images aux utilisateurs
+    const usersWithImages = await Promise.all(
+      response.data.data.map(async (user) => ({
+        ...user,
+        image_path: await getPath(user.image_file_id?.toString() || "-1") || 'public/default.png'
+      }))
+    );
+
+    return {
+      ...response.data,
+      data: usersWithImages
+    };
+  } catch (error) {
+    console.error('Error fetching users:', error);
+    throw new Error('Failed to fetch users');
+  }
+};
+
+/**
+ * Crée un nouvel utilisateur depuis l'admin (différent de registerUser)
+ */
+export const createUser = async (userData: AdminCreateUserData): Promise<User> => {
+  try {
+    // Générer le username si pas fourni
+    const userToCreate = {
+      ...userData,
+      username: userData.username || generateUsername(userData.prenom, userData.nom)
+    };
+
+    const response: AxiosResponse<User> = await axios.post(
+      `${process.env.VITE_API_URL}/users`,
+      userToCreate,
+      {
+        headers: {
+          'Content-Type': 'application/json',
+          Authorization: `Bearer ${localStorage.getItem('token')}`
+        }
+      }
+    );
+
+    if (response.status !== 201) {
+      throw new Error('Failed to create user');
+    }
+
+    console.log('Admin: User created successfully');
+    return response.data;
+  } catch (error) {
+    console.error('Error creating user:', error);
+    if (axios.isAxiosError(error) && error.response?.data?.message) {
+      throw new Error(error.response.data.message);
+    }
+    throw new Error('Failed to create user');
+  }
+};
+
+/**
+ * Met à jour un utilisateur depuis l'admin (différent de updateUserProfile)
+ */
+export const updateUser = async (
+  userId: number,
+  userData: AdminUpdateUserData
+): Promise<User> => {
+  try {
+    // Générer le username si prénom/nom changent mais pas de username fourni
+    const userToUpdate = { ...userData };
+    if ((userData.prenom || userData.nom) && !userData.username) {
+      // Récupérer l'utilisateur actuel pour avoir les infos manquantes
+      const currentUser = await getUserById(userId);
+      const prenom = userData.prenom || currentUser.firstName;
+      const nom = userData.nom || currentUser.lastName;
+      userToUpdate.username = generateUsername(prenom, nom);
+    }
+
+    const response: AxiosResponse<User> = await axios.patch(
+      `${process.env.VITE_API_URL}/users/${userId}`,
+      userToUpdate,
+      {
+        headers: {
+          'Content-Type': 'application/json',
+          Authorization: `Bearer ${localStorage.getItem('token')}`
+        }
+      }
+    );
+
+    if (response.status !== 200) {
+      throw new Error('Failed to update user');
+    }
+
+    console.log('Admin: User updated successfully');
+    return response.data;
+  } catch (error) {
+    console.error('Error updating user:', error);
+    if (axios.isAxiosError(error) && error.response?.data?.message) {
+      throw new Error(error.response.data.message);
+    }
+    throw new Error('Failed to update user');
+  }
+};
+
+/**
+ * Supprime un utilisateur (ADMIN)
+ */
+export const deleteUser = async (userId: number): Promise<void> => {
+  try {
+    const response = await axios.delete(
+      `${process.env.VITE_API_URL}/users/${userId}`,
+      {
+        headers: {
+          Authorization: `Bearer ${localStorage.getItem('token')}`
+        }
+      }
+    );
+
+    if (response.status !== 200) {
+      throw new Error('Failed to delete user');
+    }
+
+    console.log('Admin: User deleted successfully');
+  } catch (error) {
+    console.error('Error deleting user:', error);
+    if (axios.isAxiosError(error) && error.response?.data?.message) {
+      throw new Error(error.response.data.message);
+    }
+    throw new Error('Failed to delete user');
+  }
+};
+
+/**
+ * Récupère le nombre total d'utilisateurs
+ */
+export const getUsersCount = async (): Promise<number> => {
+  try {
+    const response = await axios.get(
+      `${process.env.VITE_API_URL}/users/count`,
+      {
+        headers: {
+          Authorization: `Bearer ${localStorage.getItem('token')}`
+        }
+      }
+    );
+
+    if (response.status !== 200) {
+      throw new Error('Failed to fetch users count');
+    }
+
+    return response.data.count;
+  } catch (error) {
+    console.error('Error fetching users count:', error);
+    throw new Error('Failed to fetch users count');
+  }
+};
+
+/**
+ * Recherche des utilisateurs par terme
+ */
+export const searchUsers = async (searchTerm: string): Promise<UserFromDB[]> => {
+  try {
+    const response = await getAllUsers(1, 50, searchTerm);
+    return response.data;
+  } catch (error) {
+    console.error('Error searching users:', error);
+    throw new Error('Failed to search users');
+  }
+};
+
+// Export des nouvelles interfaces pour utilisation dans d'autres fichiers
+export type { PaginatedUsersResponse, AdminCreateUserData, AdminUpdateUserData };
