@@ -1,85 +1,53 @@
 import React, { useState } from 'react';
-import { Card, Statistic, Row, Col, Tabs, TabsProps } from 'antd';
-import { Line } from 'react-chartjs-2';
+import { Card, Statistic, Row, Col, Tabs, TabsProps, Progress, Avatar, Typography, Space, Badge } from 'antd';
 import { 
   DashboardOutlined, 
   UserOutlined, 
   FileTextOutlined,
-  ShopOutlined 
+  ShopOutlined,
+  TrophyOutlined,
+  RiseOutlined,
+  CalendarOutlined,
+  StarOutlined
 } from '@ant-design/icons';
 import { useAdminStats } from '../hooks/useAdminStats';
 import ReportTable from '../components/reports/ReportTable';
 import UserManagement from '../components/UserManagement';
-import {
-  Chart as ChartJS,
-  CategoryScale,
-  LinearScale,
-  PointElement,
-  LineElement,
-  Title,
-  Tooltip,
-  Legend,
-} from 'chart.js';
+import { Line } from 'react-chartjs-2';
 
-ChartJS.register(
-  CategoryScale,
-  LinearScale,
-  PointElement,
-  LineElement,
-  Title,
-  Tooltip,
-  Legend
-);
-
-const lineData = {
-  labels: ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun'],
-  datasets: [
-    {
-      label: 'New Users',
-      data: [120, 200, 150, 220, 300, 250],
-      fill: false,
-      borderColor: '#ff4d4f',
-      tension: 0.1,
-    },
-    {
-      label: 'New Restaurants',
-      data: [120, 200, 150, 220, 300, 250],
-      fill: false,
-      borderColor: '#52c41a',
-      tension: 0.1,
-    },
-    {
-      label: 'New Reviews',
-      data: [100, 180, 130, 210, 280, 240],
-      fill: false,
-      borderColor: '#1890ff',
-      tension: 0.1,
-    },
-  ],
-};
-
-const lineOptions = {
-  responsive: true,
-  plugins: {
-    legend: { display: true, position: 'top' as const },
-  },
-};
+const { Title, Text } = Typography;
 
 const Dashboard: React.FC = () => {
   const { stats } = useAdminStats();
   const [activeTab, setActiveTab] = useState('overview');
 
-  const list = [
-    { title: 'Total Users', value: stats.users ?? 0, icon: <UserOutlined /> },
-    { title: 'Total Restaurants', value: stats.restaurants ?? 0, icon: <ShopOutlined /> },
-    { title: 'Total Reviews', value: stats.reviews ?? 0, icon: <FileTextOutlined /> },
+  // Données des statistiques réelles seulement
+  const statisticsData = [
+    { 
+      title: 'Total Utilisateurs', 
+      value: stats.users ?? 0, 
+      icon: <UserOutlined />,
+      bgColor: 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)',
+    },
+    { 
+      title: 'Total Restaurants', 
+      value: stats.restaurants ?? 0, 
+      icon: <ShopOutlined />,
+      bgColor: 'linear-gradient(135deg, #f093fb 0%, #f5576c 100%)',
+    },
+    { 
+      title: 'Total Avis', 
+      value: stats.reviews ?? 0, 
+      icon: <StarOutlined />,
+      bgColor: 'linear-gradient(135deg, #4facfe 0%, #00f2fe 100%)',
+    },
   ];
 
   // Composant Overview (tableau de bord principal)
   const OverviewTab = () => (
     <div>
       <Row gutter={16} style={{ marginBottom: 24 }}>
-        {list.map((stat) => (
+        {statisticsData.map((stat) => (
           <Col xs={24} sm={12} md={6} key={stat.title}>
             <Card>
               <Statistic 
@@ -92,41 +60,6 @@ const Dashboard: React.FC = () => {
         ))}
       </Row>
 
-      <Row gutter={16} style={{ marginBottom: 24 }}>
-        <Col xs={24} lg={16}>
-          <Card title="Évolution des données">
-            <Line data={lineData} options={lineOptions} />
-          </Card>
-        </Col>
-        <Col xs={24} lg={8}>
-          <Card title="Statistiques rapides">
-            <div style={{ padding: '20px 0' }}>
-              <Statistic
-                title="Nouveaux utilisateurs ce mois"
-                value={45}
-                suffix="/ 100"
-                valueStyle={{ color: '#3f8600' }}
-              />
-              <Statistic
-                title="Restaurants actifs"
-                value={(stats.restaurants ?? 0) - 5}
-                suffix={`/ ${stats.restaurants ?? 0}`}
-                valueStyle={{ color: '#1890ff' }}
-                style={{ marginTop: 16 }}
-              />
-              <Statistic
-                title="Taux de croissance"
-                value={9.8}
-                precision={1}
-                suffix="%"
-                valueStyle={{ color: '#cf1322' }}
-                style={{ marginTop: 16 }}
-              />
-            </div>
-          </Card>
-        </Col>
-      </Row>
-
       <ReportTable />
     </div>
   );
@@ -136,33 +69,49 @@ const Dashboard: React.FC = () => {
     {
       key: 'overview',
       label: (
-        <span>
-          <DashboardOutlined />
-          Vue d'ensemble
-        </span>
+        <Space style={{ padding: '8px 16px' }}>
+          <DashboardOutlined style={{ fontSize: '16px' }} />
+          <span style={{ fontWeight: 500 }}>Vue d'ensemble</span>
+        </Space>
       ),
       children: <OverviewTab />,
     },
     {
       key: 'users',
       label: (
-        <span>
-          <UserOutlined />
-          Gestion des Utilisateurs
-        </span>
+        <Space style={{ padding: '8px 16px' }}>
+          <UserOutlined style={{ fontSize: '16px' }} />
+          <span style={{ fontWeight: 500 }}>Gestion des Utilisateurs</span>
+          <Badge count={stats.users ?? 0} style={{ backgroundColor: '#52c41a' }} />
+        </Space>
       ),
       children: <UserManagement />,
     },
     {
       key: 'reports',
       label: (
-        <span>
-          <FileTextOutlined />
-          Rapports
-        </span>
+        <Space style={{ padding: '8px 16px' }}>
+          <FileTextOutlined style={{ fontSize: '16px' }} />
+          <span style={{ fontWeight: 500 }}>Rapports</span>
+        </Space>
       ),
       children: (
-        <Card title="Rapports détaillés">
+        <Card 
+          title={
+            <Space>
+              <FileTextOutlined />
+              <span>Rapports détaillés</span>
+            </Space>
+          }
+          style={{ 
+            borderRadius: '12px',
+            boxShadow: '0 2px 8px rgba(0,0,0,0.1)' 
+          }}
+          headStyle={{ 
+            backgroundColor: '#fafafa',
+            borderRadius: '12px 12px 0 0'
+          }}
+        >
           <ReportTable />
         </Card>
       ),
@@ -170,14 +119,35 @@ const Dashboard: React.FC = () => {
   ];
 
   return (
-    <div style={{ padding: 24 }}>
-      <div style={{ marginBottom: 24 }}>
-        <h1 style={{ margin: 0, fontSize: '28px', fontWeight: 'bold' }}>
+    <div style={{ 
+      padding: '24px', 
+      background: 'linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%)',
+      minHeight: '100vh'
+    }}>
+      <div style={{ 
+        marginBottom: 32,
+        textAlign: 'center',
+        padding: '32px 0'
+      }}>
+        <Title level={1} style={{ 
+          margin: 0, 
+          fontSize: '36px', 
+          fontWeight: 'bold',
+          background: 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)',
+          WebkitBackgroundClip: 'text',
+          WebkitTextFillColor: 'transparent',
+          backgroundClip: 'text'
+        }}>
           Admin Dashboard
-        </h1>
-        <p style={{ color: '#666', marginTop: 8 }}>
+        </Title>
+        <Text style={{ 
+          fontSize: '16px', 
+          color: '#666', 
+          marginTop: 8,
+          display: 'block'
+        }}>
           Gérez vos utilisateurs, surveillez les statistiques et consultez les rapports
-        </p>
+        </Text>
       </div>
 
       <Tabs
@@ -187,8 +157,14 @@ const Dashboard: React.FC = () => {
         size="large"
         style={{
           backgroundColor: 'white',
-          borderRadius: '8px',
+          borderRadius: '16px',
           padding: '0 24px',
+          boxShadow: '0 8px 24px rgba(0, 0, 0, 0.1)',
+          backdropFilter: 'blur(10px)',
+        }}
+        tabBarStyle={{
+          marginBottom: '24px',
+          borderBottom: '2px solid #f0f0f0'
         }}
       />
     </div>
