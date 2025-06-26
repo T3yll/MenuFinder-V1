@@ -46,6 +46,9 @@ export class User {
   @JoinColumn({ name: 'image_file_id' })
   image: File;
 
+  @Column('date', { nullable: true })
+  last_login: Date;
+
   @OneToMany(() => Restaurant, restaurant => restaurant.owner)
   restaurants: Restaurant[];
 
