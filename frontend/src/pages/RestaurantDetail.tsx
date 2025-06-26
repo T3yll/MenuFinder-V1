@@ -99,6 +99,7 @@ const RestaurantDetail: React.FC = () => {
         // Récupérer les avis
         await fetchReviews(restaurantId);
 
+        console.log("[RestaurantDetail] restaurantData", restaurantData);
         setRestaurant(restaurantData);
         
         // 2. Récupérer les menus du restaurant
@@ -231,7 +232,7 @@ const RestaurantDetail: React.FC = () => {
   // Obtenir l'adresse formatée
   const getFormattedAddress = (restaurant: Restaurant) => {
     if (restaurant.adress) {
-      return `${restaurant.adress.street}, ${restaurant.adress.zip_code} ${restaurant.adress.city}, ${restaurant.adress.country}`;
+      return `${restaurant.adress.street}, ${restaurant.adress.postal_code || ''} ${restaurant.adress.city}, ${restaurant.adress.country}`;
     }
     return "Adresse non disponible";
   };
