@@ -51,6 +51,17 @@ export class UserController {
     return {code:200,count : await this.userService.count()};
   }
 
+  @Get('active')
+  @ApiOperation({ summary: 'Get the total number of active users' })
+  @ApiResponse({
+    status: 200,
+    description: 'The total number of active users',
+    type: Number,
+  })
+  async active(): Promise<object> {
+    return {code:200,count : await this.userService.active()};
+  }
+
   @Get(':id')
   async findOne(@Param('id') id: string): Promise<User> {
     try {

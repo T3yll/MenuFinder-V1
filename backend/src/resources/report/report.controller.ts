@@ -26,6 +26,17 @@ export class ReportController {
     return this.reportService.findAll();
   }
 
+  @Get('count')
+  @ApiOperation({ summary: 'Get the total number of reports' })
+  @ApiResponse({
+    status: 200,
+    description: 'The total number of reports',
+    type: Number,
+  })
+  async count(): Promise<object> {
+    return {code:200,count : await this.reportService.count()};
+  }
+
   
 
   @Public()

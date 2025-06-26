@@ -31,3 +31,22 @@ export const getNumberOfReviews = async (): Promise<number> => {
     return response.data.count;
 };
 
+export const getNumberOfActiveUsers = async (): Promise<number> => {
+    const response = await axios.get<{ count: number }>(`${API_URL}users/active`,{
+        headers: {
+            'Authorization': `Bearer ${localStorage.getItem('token')}`
+        }
+    });
+    return response.data.count;
+};
+
+export const getNumberOfReports = async (): Promise<number> => {
+    const response = await axios.get<{ count: number }>(`${API_URL}report/count`,{
+        headers: {
+            'Authorization': `Bearer ${localStorage.getItem('token')}`
+        }
+    });
+    return response.data.count;
+};
+
+

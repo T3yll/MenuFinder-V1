@@ -35,6 +35,10 @@ export class ReportService {
         });
     }
 
+    async count(): Promise<number> {
+        return this.reportRepository.count();
+    }
+
     async remove(id: number): Promise<void> {
         const result = await this.reportRepository.delete(id);
         if (result.affected === 0) {
