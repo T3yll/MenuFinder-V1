@@ -15,7 +15,6 @@ import '../styles/pages/RestaurantDetail.scss';
 import ShareButton from '../components/ShareButton';
 import CustomAvatar from '../components/Avatar';
 import ReportButton from '../components/ReportButton';
-import { number } from 'react-admin';
 
 
 
@@ -47,6 +46,7 @@ const RestaurantDetail: React.FC = () => {
   const [selectedMenu, setSelectedMenu] = useState<number | null>(null);
   const { localisation, error: localisationError, loading: localisationLoading } = useLocalisation(id ? parseInt(id) : 0);
   const { formatPrice } = useCurrency();
+  const [isAuthenticated, setIsAuthenticated] = useState<boolean>(false);
 
   const API_URL = process.env.VITE_API_URL;
 
@@ -76,6 +76,12 @@ const RestaurantDetail: React.FC = () => {
       fetchReviews(parseInt(id));
     }
   };
+
+  useEffect(() => {
+    const userStr = localStorage.getItem('user');
+    const token = localStorage.getItem('token');
+    setIsAuthenticated(!!userStr && !!token);
+  }, []);
 
   useEffect(() => {
     const fetchRestaurantDetails = async () => {
@@ -566,6 +572,7 @@ const RestaurantDetail: React.FC = () => {
               <ReviewForm 
                 restaurantId={parseInt(id!)} 
                 onReviewSubmitted={handleReviewSubmitted}
+                isAuthenticated={isAuthenticated}
               />
 
               <div className="reviews-list">

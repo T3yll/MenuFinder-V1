@@ -7,9 +7,15 @@ interface ReviewFormProps {
   restaurantId: number;
   onReviewSubmitted: () => void;
   existingUserReview?: boolean;
+  isAuthenticated?: boolean; // Nouvelle prop pour l'authentification
 }
 
-const ReviewForm: React.FC<ReviewFormProps> = ({ restaurantId, onReviewSubmitted, existingUserReview }) => {
+const ReviewForm: React.FC<ReviewFormProps> = ({ 
+  restaurantId, 
+  onReviewSubmitted, 
+  existingUserReview,
+  isAuthenticated = true // Par défaut true pour maintenir la compatibilité
+}) => {
   const [rating, setRating] = useState<number>(0);
   const [hoverRating, setHoverRating] = useState<number>(0);
   const [text, setText] = useState<string>('');
@@ -40,6 +46,17 @@ const ReviewForm: React.FC<ReviewFormProps> = ({ restaurantId, onReviewSubmitted
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
+    
+    if (!isAuthenticated) {
+      dispatch(showToast({
+        message: 'Vous devez être connecté pour laisser un avis',
+        severity: 'error',
+        duration: 3000,
+        vertical: 'bottom',
+        horizontal: 'right',
+      }));
+      return;
+    }
     
     if (rating === 0) {
       dispatch(showToast({
@@ -136,6 +153,38 @@ const ReviewForm: React.FC<ReviewFormProps> = ({ restaurantId, onReviewSubmitted
     }
   };
 
+  // Fonction pour déterminer le texte et le title du bouton
+  const getButtonProps = () => {
+    if (!isAuthenticated) {
+      return {
+        text: 'Connectez-vous pour laisser un avis',
+        title: 'Vous devez être connecté pour publier un avis',
+        disabled: true
+      };
+    }
+    if (userHasReview) {
+      return {
+        text: 'Vous avez déjà posté un avis',
+        title: 'Vous avez déjà publié un avis pour ce restaurant',
+        disabled: true
+      };
+    }
+    if (isSubmitting) {
+      return {
+        text: 'Publication...',
+        title: 'Publication en cours...',
+        disabled: true
+      };
+    }
+    return {
+      text: 'Publier mon avis',
+      title: 'Publier votre avis sur ce restaurant',
+      disabled: rating === 0 || text.trim() === ''
+    };
+  };
+
+  const buttonProps = getButtonProps();
+
   return (
     <div className="review-form">
       <h3>Laisser un avis</h3>
@@ -182,18 +231,17 @@ const ReviewForm: React.FC<ReviewFormProps> = ({ restaurantId, onReviewSubmitted
           </div>
         </div>
 
-        <fieldset disabled={isSubmitting || userHasReview} style={{ border: 0, padding: 0, margin: 0 }}>
-          <button 
-            type="submit" 
-            className="submit-button"
-            disabled={isSubmitting || userHasReview || rating === 0 || text.trim() === ''}
-          >
-            {userHasReview ? 'Vous avez déjà posté un avis' : isSubmitting ? 'Publication...' : 'Publier mon avis'}
-          </button>
-        </fieldset>
+        <button 
+          type="submit" 
+          className="submit-button"
+          disabled={buttonProps.disabled}
+          title={buttonProps.title}
+        >
+          {buttonProps.text}
+        </button>
       </form>
     </div>
   );
 };
 
-export default ReviewForm; 
+export default ReviewForm;

@@ -1,89 +1,174 @@
-import React from 'react';
-import { Card, Statistic, Row, Col } from 'antd';
-import { Line } from 'react-chartjs-2';
+import React, { useState } from 'react';
+import { Card, Statistic, Row, Col, Tabs, TabsProps, Progress, Avatar, Typography, Space, Badge } from 'antd';
+import { 
+  DashboardOutlined, 
+  UserOutlined, 
+  FileTextOutlined,
+  ShopOutlined,
+  TrophyOutlined,
+  RiseOutlined,
+  CalendarOutlined,
+  StarOutlined
+} from '@ant-design/icons';
 import { useAdminStats } from '../hooks/useAdminStats';
 import ReportTable from '../components/reports/ReportTable';
-import {
+import UserManagement from '../components/UserManagement';
+import { Line } from 'react-chartjs-2';
 
-Chart as ChartJS,
-CategoryScale,
-LinearScale,
-PointElement,
-LineElement,
-Title,
-Tooltip,
-Legend,
-} from 'chart.js';
-
-ChartJS.register(
-CategoryScale,
-LinearScale,
-PointElement,
-LineElement,
-Title,
-Tooltip,
-Legend
-);
-
-
-const lineData = {
-labels: ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun'],
-datasets: [
-    {
-        label: 'New Users',
-        data: [120, 200, 150, 220, 300, 250],
-        fill: false,
-        borderColor: '#ff4d4f',
-        tension: 0.1,
-    },
-    {
-        label: 'New Restaurants',
-        data: [120, 200, 150, 220, 300, 250],
-        fill: false,
-        borderColor: '#52c41a',
-        tension: 0.1,
-    },
-    {
-        label: 'New Reviews',
-        data: [100, 180, 130, 210, 280, 240],
-        fill: false,
-        borderColor: '#1890ff',
-        tension: 0.1,
-    },
-],
-
-};
-
-const lineOptions = {
-responsive: true,
-plugins: {
-    legend: { display: true, position: 'top' as const },
-},
-};
+const { Title, Text } = Typography;
 
 const Dashboard: React.FC = () => {
-    const {stats} = useAdminStats();
-    const list = [
-        { title: 'Total Users', value: stats.users ?? 0 },
-        { title: 'Total Restaurants', value: stats.restaurants ?? 0 },
-        { title: 'Total Reviews', value: stats.reviews ?? 0 },
-    ];
+  const { stats } = useAdminStats();
+  const [activeTab, setActiveTab] = useState('overview');
 
-    return (
-        <div style={{ padding: 24 }}>
-            <h1>Admin Dashboard</h1>
-            <Row gutter={16} style={{ marginBottom: 24 }}>
-                {list.map((stat) => (
-                    <Col xs={24} sm={12} md={6} key={stat.title}>
-                        <Card>
-                            <Statistic title={stat.title} value={stat.value} />
-                        </Card>
-                    </Col>
-                ))}
-            </Row>
-            <ReportTable />
-        </div>
-    );
+  // Données des statistiques réelles seulement
+  const statisticsData = [
+    { 
+      title: 'Total Utilisateurs', 
+      value: stats.users ?? 0, 
+      icon: <UserOutlined />,
+      bgColor: 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)',
+    },
+    { 
+      title: 'Total Restaurants', 
+      value: stats.restaurants ?? 0, 
+      icon: <ShopOutlined />,
+      bgColor: 'linear-gradient(135deg, #f093fb 0%, #f5576c 100%)',
+    },
+    { 
+      title: 'Total Avis', 
+      value: stats.reviews ?? 0, 
+      icon: <StarOutlined />,
+      bgColor: 'linear-gradient(135deg, #4facfe 0%, #00f2fe 100%)',
+    },
+  ];
+
+  // Composant Overview (tableau de bord principal)
+  const OverviewTab = () => (
+    <div>
+      <Row gutter={16} style={{ marginBottom: 24 }}>
+        {statisticsData.map((stat) => (
+          <Col xs={24} sm={12} md={6} key={stat.title}>
+            <Card>
+              <Statistic 
+                title={stat.title} 
+                value={stat.value}
+                prefix={stat.icon}
+              />
+            </Card>
+          </Col>
+        ))}
+      </Row>
+
+      <ReportTable />
+    </div>
+  );
+
+  // Configuration des onglets
+  const tabItems: TabsProps['items'] = [
+    {
+      key: 'overview',
+      label: (
+        <Space style={{ padding: '8px 16px' }}>
+          <DashboardOutlined style={{ fontSize: '16px' }} />
+          <span style={{ fontWeight: 500 }}>Vue d'ensemble</span>
+        </Space>
+      ),
+      children: <OverviewTab />,
+    },
+    {
+      key: 'users',
+      label: (
+        <Space style={{ padding: '8px 16px' }}>
+          <UserOutlined style={{ fontSize: '16px' }} />
+          <span style={{ fontWeight: 500 }}>Gestion des Utilisateurs</span>
+          <Badge count={stats.users ?? 0} style={{ backgroundColor: '#52c41a' }} />
+        </Space>
+      ),
+      children: <UserManagement />,
+    },
+    {
+      key: 'reports',
+      label: (
+        <Space style={{ padding: '8px 16px' }}>
+          <FileTextOutlined style={{ fontSize: '16px' }} />
+          <span style={{ fontWeight: 500 }}>Rapports</span>
+        </Space>
+      ),
+      children: (
+        <Card 
+          title={
+            <Space>
+              <FileTextOutlined />
+              <span>Rapports détaillés</span>
+            </Space>
+          }
+          style={{ 
+            borderRadius: '12px',
+            boxShadow: '0 2px 8px rgba(0,0,0,0.1)' 
+          }}
+          headStyle={{ 
+            backgroundColor: '#fafafa',
+            borderRadius: '12px 12px 0 0'
+          }}
+        >
+          <ReportTable />
+        </Card>
+      ),
+    },
+  ];
+
+  return (
+    <div style={{ 
+      padding: '24px', 
+      background: 'linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%)',
+      minHeight: '100vh'
+    }}>
+      <div style={{ 
+        marginBottom: 32,
+        textAlign: 'center',
+        padding: '32px 0'
+      }}>
+        <Title level={1} style={{ 
+          margin: 0, 
+          fontSize: '36px', 
+          fontWeight: 'bold',
+          background: 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)',
+          WebkitBackgroundClip: 'text',
+          WebkitTextFillColor: 'transparent',
+          backgroundClip: 'text'
+        }}>
+          Admin Dashboard
+        </Title>
+        <Text style={{ 
+          fontSize: '16px', 
+          color: '#666', 
+          marginTop: 8,
+          display: 'block'
+        }}>
+          Gérez vos utilisateurs, surveillez les statistiques et consultez les rapports
+        </Text>
+      </div>
+
+      <Tabs
+        activeKey={activeTab}
+        onChange={setActiveTab}
+        items={tabItems}
+        size="large"
+        style={{
+          backgroundColor: 'white',
+          borderRadius: '16px',
+          padding: '0 24px',
+          boxShadow: '0 8px 24px rgba(0, 0, 0, 0.1)',
+          backdropFilter: 'blur(10px)',
+        }}
+        tabBarStyle={{
+          marginBottom: '24px',
+          borderBottom: '2px solid #f0f0f0'
+        }}
+      />
+    </div>
+  );
 };
 
 export default Dashboard;
