@@ -8,6 +8,8 @@ import { User } from '@/resources/user/entities/user.entity';
 import * as bcrypt from 'bcryptjs';
 import { UpdateUserDto } from './dto/update-user.dto';
 import { CreateUserDto } from './dto/create-user.dto';
+import { MoreThan } from 'typeorm';
+
 
 
 
@@ -190,5 +192,14 @@ export class UserService {
       throw new NotFoundException(`User with ID ${id} not found`);
     }
     await this.usersRepository.delete(id);
+  }
+
+  async updateLastLogin(id: number, last_login: Date): Promise<void> {
+    await this.usersRepository.update(id, { last_login });
+  }
+
+  async active(): Promise<number> {
+    const count = await this.usersRepository.count({ where: { last_login: MoreThan(new Date(Date.now() - 24 * 60 * 60 * 1000)) } });
+    return count;
   }
 }

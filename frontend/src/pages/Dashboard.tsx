@@ -25,35 +25,6 @@ Tooltip,
 Legend
 );
 
-
-const lineData = {
-labels: ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun'],
-datasets: [
-    {
-        label: 'New Users',
-        data: [120, 200, 150, 220, 300, 250],
-        fill: false,
-        borderColor: '#ff4d4f',
-        tension: 0.1,
-    },
-    {
-        label: 'New Restaurants',
-        data: [120, 200, 150, 220, 300, 250],
-        fill: false,
-        borderColor: '#52c41a',
-        tension: 0.1,
-    },
-    {
-        label: 'New Reviews',
-        data: [100, 180, 130, 210, 280, 240],
-        fill: false,
-        borderColor: '#1890ff',
-        tension: 0.1,
-    },
-],
-
-};
-
 const lineOptions = {
 responsive: true,
 plugins: {
@@ -65,8 +36,11 @@ const Dashboard: React.FC = () => {
     const {stats} = useAdminStats();
     const list = [
         { title: 'Total Users', value: stats.users ?? 0 },
+        { title: 'Total active users', value: stats.activeUsers ?? 0 },
         { title: 'Total Restaurants', value: stats.restaurants ?? 0 },
         { title: 'Total Reviews', value: stats.reviews ?? 0 },
+        { title: 'Total Reports', value: stats.reports ?? 0 },
+
     ];
 
     return (
