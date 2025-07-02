@@ -163,7 +163,7 @@ const Restaurants: React.FC = () => {
   // Obtenir l'adresse formatée
   const getFormattedAddress = (restaurant: RestaurantWithUI) => {
     if (restaurant.adress) {
-      return `${restaurant.adress.street}, ${restaurant.adress.zip_code} ${restaurant.adress.city}`;
+      return `${restaurant.adress.street}, ${restaurant.adress.postal_code} ${restaurant.adress.city}`;
     }
     return "Adresse non disponible";
   };

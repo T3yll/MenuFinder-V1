@@ -11,24 +11,30 @@ export interface AvatarProps {
     }
 
  const CustomAvatar: React.FC<AvatarProps> = ({ fileId, className }) => {
-    const [avatarUrl, setAvatarUrl] = useState<string>('/public/default.png');
+    const [avatarUrl, setAvatarUrl] = useState<string>('/default.png');
 
     useEffect(() => {
         const fetchAvatar = async () => {
             try {
-                setAvatarUrl("/"+await getPath(fileId.toString()));
-                console.log('Avatar URL:', avatarUrl);
+                const url = "/" + await getPath(fileId.toString());
+                setAvatarUrl(url);
+                console.log('Avatar URL:', url);
             } catch (error) {
                 console.error('Error fetching avatar:', error);
+                setAvatarUrl('/default.png');
             }
         };
 
-        fetchAvatar();
+        if (fileId) {
+            fetchAvatar();
+        } else {
+            setAvatarUrl('/default.png');
+        }
     }, [fileId]);
 
     return (
-       <div className="avatar">
-                    <img src={avatarUrl} alt="Avatar utilisateur" />
+        <div className="avatar">
+            <img src={avatarUrl} alt="Avatar utilisateur" className={className} />
         </div>
     );
 }

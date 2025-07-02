@@ -434,10 +434,6 @@ const RestaurantDetail: React.FC = () => {
                     <CustomAvatar fileId={restaurant.owner.image_file_id || 0}/>
                     <div className="owner-details">
                       <h4>{restaurant.owner.username}</h4>
-                      <p>Membre depuis {new Date(restaurant.owner.created_at).toLocaleDateString('fr-FR', {
-                        month: 'long',
-                        year: 'numeric'
-                      })}</p>
                     </div>
                   </div>
                 </div>
