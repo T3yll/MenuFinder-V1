@@ -21,17 +21,9 @@ import MenuItems from './pages/MenuItems';
 import Dashboard from './pages/Dashboard';
 import DashboardRestaurant from './pages/DashboardRestaurant';
 import AdminMiddleware from './Middleware/AdminMiddleware';
-import Loading from './components/Loading';
 import UpdateProfile from './pages/UpdateProfile';
 
 function App() {
-   const [loading, setLoading] = useState(true)
-    useEffect(() => {
-        setTimeout(() => setLoading(false), 1000)
-    }, [])
-    if (loading) {
-        return <Loading/>
-    }
   return (
     <Provider store={store}>
       <CurrencyProvider>
